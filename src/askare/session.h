@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QTimer>
+#include <QVariantMap>
 #include <QVector>
 
 #include "config.h"
@@ -69,6 +70,7 @@ public:
     Q_INVOKABLE void deleteTask(const QString &href);
     Q_INVOKABLE void toggleDone(const QString &href);
     Q_INVOKABLE QString renderNotes(const QString &markdown) const;
+    Q_INVOKABLE QVariantMap taskFields(const QString &href) const;
 
 signals:
     void readyChanged();

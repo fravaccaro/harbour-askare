@@ -6,12 +6,88 @@ import "pages"
 ApplicationWindow {
     id: app
 
+    // Tracks live reminder notices so Open keeps reaching onClicked, and the
+    // href a pending openTask() is waiting on while the stack settles.
+    property var reminderNotices: []
+    property string pendingTaskHref: ""
+
     function showMain() {
         if (pageStack.busy) {
             navigateAgain.restart()
             return
         }
         pageStack.replaceAbove(null, Askare.configured ? tasksPage : loginPage)
+    }
+
+    // A passing message: shown inside the window when the app is in front,
+    // otherwise a banner that is gone once it has been read.
+    function notify(text) {
+        if (text === "")
+            return
+        if (app.applicationActive) {
+            Notices.show(text, Notice.Short)
+            return
+        }
+        backgroundNotice.previewBody = text
+        backgroundNotice.publish()
+    }
+
+    function openTask(href) {
+        if (href === "")
+            return
+        if (pageStack.busy) {
+            app.pendingTaskHref = href
+            openTaskAgain.restart()
+            return
+        }
+        app.pendingTaskHref = ""
+        if (!Askare.configured) {
+            app.showMain()
+            return
+        }
+        app.pushTask(href)
+    }
+
+    function pushTask(href) {
+        var fields = Askare.taskFields(href)
+        if (!fields.href) {
+            app.notify(qsTr("That task is no longer here."))
+            return
+        }
+        var current = pageStack.currentPage
+        if (current && current.href === href)
+            return
+        pageStack.push(Qt.resolvedUrl("pages/TaskDetailPage.qml"), fields)
+    }
+
+    function publishReminder(href, summary, dueText) {
+        var notice = reminderNoticeComponent.createObject(app, { "href": href })
+        if (notice === null)
+            return
+        notice.summary = summary
+        notice.body = dueText === "" ? qsTr("Task reminder") : qsTr("Due %1").arg(dueText)
+        notice.previewSummary = notice.summary
+        notice.previewBody = notice.body
+        notice.remoteActions = app.reminderActions()
+        notice.publish()
+        app.reminderNotices.push(notice)
+    }
+
+    function reminderActions() {
+        return [{ "name": "default" }, {
+                    "name": "open",
+                    "displayName": qsTr("Open"),
+                    "icon": "icon-s-task"
+                }]
+    }
+
+    function forgetReminder(notice) {
+        var kept = []
+        for (var i = 0; i < app.reminderNotices.length; ++i) {
+            if (app.reminderNotices[i] !== notice)
+                kept.push(app.reminderNotices[i])
+        }
+        app.reminderNotices = kept
     }
 
     initialPage: Askare.ready ? (Askare.configured ? tasksPage : loginPage) : startPage
@@ -23,6 +99,13 @@ ApplicationWindow {
 
         interval: 100
         onTriggered: app.showMain()
+    }
+
+    Timer {
+        id: openTaskAgain
+
+        interval: 100
+        onTriggered: app.openTask(app.pendingTaskHref)
     }
 
     Component {
@@ -56,26 +139,43 @@ ApplicationWindow {
             if (!Askare.configured)
                 app.showMain()
         }
+        onErrorMessageChanged: app.notify(Askare.errorMessage)
+        onBusyChanged: {
+            if (!Askare.busy)
+                Reminders.check()
+        }
     }
 
     Notification {
-        id: reminderNotification
+        id: backgroundNotice
 
         appName: "Askare"
-        icon: "image://theme/icon-lock-information"
-        category: "x-nemo.generic"
+        appIcon: "harbour-askare"
+        isTransient: true
+        urgency: Notification.Low
+        previewSummary: qsTr("Askare")
+    }
+
+    Component {
+        id: reminderNoticeComponent
+
+        Notification {
+            id: notice
+
+            property string href
+
+            appName: "Askare"
+            appIcon: "harbour-askare"
+            isTransient: false
+            urgency: Notification.Normal
+            onClicked: app.openTask(notice.href)
+            onActionInvoked: app.openTask(notice.href)
+            onClosed: app.forgetReminder(notice)
+        }
     }
 
     Connections {
         target: Reminders
-        onDue: {
-            reminderNotification.summary = summary
-            reminderNotification.body = dueText === ""
-                    ? qsTr("Task reminder") : qsTr("Due %1").arg(dueText)
-            reminderNotification.previewSummary = reminderNotification.summary
-            reminderNotification.previewBody = reminderNotification.body
-            reminderNotification.replacesId = 0
-            reminderNotification.publish()
-        }
+        onDue: app.publishReminder(href, summary, dueText)
     }
 }

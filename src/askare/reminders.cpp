@@ -44,6 +44,9 @@ Reminders::Reminders(Store *store, QObject *parent)
     m_timer.setInterval(kCheckIntervalMs);
     connect(&m_timer, &QTimer::timeout, this, &Reminders::check);
     m_timer.start();
+    // The periodic timer only fires after a full interval, so a reminder that
+    // is already due would wait up to a minute; check once the store is ready.
+    QTimer::singleShot(0, this, &Reminders::check);
 }
 
 void Reminders::check()

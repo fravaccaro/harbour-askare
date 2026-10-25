@@ -463,3 +463,25 @@ QString Session::renderNotes(const QString &markdown) const
 {
     return Markdown::toHtml(markdown);
 }
+
+// The snapshot TaskDetailPage expects, so a reminder tap can open a task from
+// its href alone. An unknown href yields an empty map.
+QVariantMap Session::taskFields(const QString &href) const
+{
+    const LocalTask task = m_store->task(href);
+    if (task.href.isEmpty())
+        return QVariantMap();
+
+    QVariantMap fields;
+    fields.insert(QStringLiteral("href"), task.href);
+    fields.insert(QStringLiteral("calendarHref"), task.calendarHref);
+    fields.insert(QStringLiteral("summary"), task.summary);
+    fields.insert(QStringLiteral("description"), task.description);
+    fields.insert(QStringLiteral("dueDate"), Ics::dateFromDue(task.due));
+    fields.insert(QStringLiteral("dueTime"), Ics::timeFromDue(task.due));
+    fields.insert(QStringLiteral("priority"), task.priority);
+    fields.insert(QStringLiteral("percent"),
+                  Ics::percentFromStatus(task.status, Ics::parse(task.ics).percent));
+    fields.insert(QStringLiteral("reminder"), task.reminder);
+    return fields;
+}
