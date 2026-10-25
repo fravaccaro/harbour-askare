@@ -68,17 +68,7 @@ Page {
             id: delegate
 
             contentHeight: Theme.itemSizeMedium
-            onClicked: pageStack.push(Qt.resolvedUrl("TaskDetailPage.qml"), {
-                                          "href": href,
-                                          "calendarHref": calendarHref,
-                                          "summary": summary,
-                                          "description": description,
-                                          "dueDate": dueDate,
-                                          "dueTime": dueTime,
-                                          "priority": priority,
-                                          "percent": percent,
-                                          "reminder": reminder
-                                      })
+            onClicked: app.pushTask(href)
             menu: ContextMenu {
                 MenuItem {
                     text: done ? qsTr("Mark open") : qsTr("Mark done")
@@ -86,9 +76,12 @@ Page {
                 }
                 MenuItem {
                     text: qsTr("Delete")
-                    onClicked: remorseAction(qsTr("Deleting"), function() {
-                        Askare.deleteTask(href)
-                    })
+                    onClicked: {
+                        var total = Askare.subtreeSize(href)
+                        var label = total > 1 ? qsTr("Deleting %n tasks", "", total)
+                                              : qsTr("Deleting")
+                        remorseAction(label, function() { Askare.deleteTask(href) })
+                    }
                 }
             }
 
@@ -129,6 +122,15 @@ Page {
                     color: Theme.secondaryColor
                     font.pixelSize: Theme.fontSizeExtraSmall
                     text: dueTime === "" ? dueDate : dueDate + " " + dueTime
+                }
+
+                Label {
+                    width: parent.width
+                    visible: childCount > 0
+                    truncationMode: TruncationMode.Fade
+                    color: Theme.secondaryColor
+                    font.pixelSize: Theme.fontSizeExtraSmall
+                    text: qsTr("Subtasks %1/%2").arg(childDoneCount).arg(childCount)
                 }
             }
         }

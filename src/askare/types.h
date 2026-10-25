@@ -67,6 +67,7 @@ struct TodoFields
     QString description;
     QString status;
     QString completed;
+    QString start;
     QString due;
     QString parentUid;
     int priority;

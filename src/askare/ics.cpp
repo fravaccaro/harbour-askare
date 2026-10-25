@@ -10,11 +10,18 @@
 namespace {
 
 const char *kKnown[] = {
-    "UID", "SUMMARY", "DESCRIPTION", "STATUS", "COMPLETED", "DUE", "PRIORITY",
-    "PERCENT-COMPLETE", "DTSTAMP"
+    "UID", "SUMMARY", "DESCRIPTION", "STATUS", "COMPLETED", "DTSTART", "DUE",
+    "PRIORITY", "PERCENT-COMPLETE", "DTSTAMP"
 };
 
 const int kKnownCount = sizeof(kKnown) / sizeof(kKnown[0]);
+
+// A point in time the user picks by day, so it is written as a date unless a
+// time of day was set.
+bool isDateOrTime(const QString &name)
+{
+    return name == QLatin1String("DUE") || name == QLatin1String("DTSTART");
+}
 
 bool isKnown(const QString &name)
 {
@@ -44,8 +51,8 @@ QString fieldLine(const QString &name, const QString &value)
 {
     if (value.isEmpty())
         return QString();
-    if (name == QLatin1String("DUE") && !value.contains(QLatin1Char('T')))
-        return QStringLiteral("DUE;VALUE=DATE:") + value.left(8);
+    if (isDateOrTime(name) && !value.contains(QLatin1Char('T')))
+        return name + QStringLiteral(";VALUE=DATE:") + value.left(8);
     if (name == QLatin1String("SUMMARY") || name == QLatin1String("DESCRIPTION"))
         return name + QLatin1Char(':') + Ics::escape(value);
     return name + QLatin1Char(':') + value;
@@ -176,6 +183,8 @@ QString valueOrEmpty(const TodoFields &fields, const QString &name)
         return fields.status;
     if (name == QLatin1String("COMPLETED"))
         return fields.completed;
+    if (name == QLatin1String("DTSTART"))
+        return fields.start;
     if (name == QLatin1String("DUE"))
         return fields.due;
     if (name == QLatin1String("PRIORITY"))
@@ -199,6 +208,8 @@ void applyLine(TodoFields *fields, const QString &name, const QString &value)
         fields->status = value;
     else if (name == QLatin1String("COMPLETED"))
         fields->completed = value;
+    else if (name == QLatin1String("DTSTART"))
+        fields->start = value;
     else if (name == QLatin1String("DUE"))
         fields->due = value;
     else if (name == QLatin1String("PRIORITY"))
@@ -386,8 +397,9 @@ QString normalize(const QString &ics)
     const QStringList lines = unfold(ics).split(QLatin1Char('\n'), QString::SkipEmptyParts);
     QStringList out;
     for (const QString &line : lines) {
-        if (propertyName(line) == QLatin1String("DUE"))
-            out.append(fieldLine(QStringLiteral("DUE"), propertyValue(line)));
+        const QString name = propertyName(line);
+        if (isDateOrTime(name))
+            out.append(fieldLine(name, propertyValue(line)));
         else
             out.append(line);
     }
@@ -417,6 +429,7 @@ QString create(const TodoFields &fields)
     appendLine(&lines, fieldLine(QStringLiteral("DESCRIPTION"), copy.description));
     appendLine(&lines, fieldLine(QStringLiteral("STATUS"), copy.status));
     appendLine(&lines, fieldLine(QStringLiteral("COMPLETED"), copy.completed));
+    appendLine(&lines, fieldLine(QStringLiteral("DTSTART"), copy.start));
     appendLine(&lines, fieldLine(QStringLiteral("DUE"), copy.due));
     appendLine(&lines, fieldLine(QStringLiteral("PRIORITY"),
                                  copy.priority > 0 ? QString::number(copy.priority)

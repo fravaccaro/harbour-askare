@@ -376,6 +376,7 @@ void Session::onDavFailed(const QString &error)
 
 LocalTask Session::editedTask(const QVariantMap &input) const
 {
+    const QString startDate = input.value(QStringLiteral("startDate")).toString();
     const QString dueDate = input.value(QStringLiteral("dueDate")).toString();
     const int percent = input.value(QStringLiteral("percent")).toInt();
     LocalTask task = m_store->task(input.value(QStringLiteral("href")).toString());
@@ -385,6 +386,10 @@ LocalTask Session::editedTask(const QVariantMap &input) const
     fields.uid = task.uid.isEmpty() ? fields.uid : task.uid;
     fields.summary = input.value(QStringLiteral("summary")).toString();
     fields.description = input.value(QStringLiteral("description")).toString();
+    fields.start = startDate.isEmpty()
+            ? QString()
+            : Ics::dueFromDateTime(startDate,
+                                   input.value(QStringLiteral("startTime")).toString());
     fields.due = dueDate.isEmpty()
             ? QString()
             : Ics::dueFromDateTime(dueDate, input.value(QStringLiteral("dueTime")).toString());
@@ -483,6 +488,9 @@ QVariantMap Session::taskFields(const QString &href) const
     if (task.href.isEmpty())
         return QVariantMap();
 
+    // The start date is only kept in the ICS, so it is read from there.
+    const TodoFields parsed = Ics::parse(task.ics);
+
     QVariantMap fields;
     fields.insert(QStringLiteral("href"), task.href);
     fields.insert(QStringLiteral("calendarHref"), task.calendarHref);
@@ -490,11 +498,13 @@ QVariantMap Session::taskFields(const QString &href) const
     fields.insert(QStringLiteral("parentUid"), task.parentUid);
     fields.insert(QStringLiteral("summary"), task.summary);
     fields.insert(QStringLiteral("description"), task.description);
+    fields.insert(QStringLiteral("startDate"), Ics::dateFromDue(parsed.start));
+    fields.insert(QStringLiteral("startTime"), Ics::timeFromDue(parsed.start));
     fields.insert(QStringLiteral("dueDate"), Ics::dateFromDue(task.due));
     fields.insert(QStringLiteral("dueTime"), Ics::timeFromDue(task.due));
     fields.insert(QStringLiteral("priority"), task.priority);
     fields.insert(QStringLiteral("percent"),
-                  Ics::percentFromStatus(task.status, Ics::parse(task.ics).percent));
+                  Ics::percentFromStatus(task.status, parsed.percent));
     fields.insert(QStringLiteral("reminder"), task.reminder);
     fields.insert(QStringLiteral("done"), Ics::isCompleted(task.status));
     return fields;

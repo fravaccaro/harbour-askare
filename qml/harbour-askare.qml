@@ -87,12 +87,17 @@ ApplicationWindow {
         pageStack.push(Qt.resolvedUrl("pages/TaskDetailPage.qml"), fields)
     }
 
-    function publishReminder(href, summary, dueText) {
+    function reminderBody(dueText, parentSummary) {
+        var due = dueText === "" ? qsTr("Task reminder") : qsTr("Due %1").arg(dueText)
+        return parentSummary === "" ? due : parentSummary + " - " + due
+    }
+
+    function publishReminder(href, summary, dueText, parentSummary) {
         var notice = reminderNoticeComponent.createObject(app, { "href": href })
         if (notice === null)
             return
         notice.summary = summary
-        notice.body = dueText === "" ? qsTr("Task reminder") : qsTr("Due %1").arg(dueText)
+        notice.body = app.reminderBody(dueText, parentSummary)
         notice.previewSummary = notice.summary
         notice.previewBody = notice.body
         notice.remoteActions = app.reminderActions()
@@ -210,6 +215,6 @@ ApplicationWindow {
 
     Connections {
         target: Reminders
-        onDue: app.publishReminder(href, summary, dueText)
+        onDue: app.publishReminder(href, summary, dueText, parentSummary)
     }
 }

@@ -77,3 +77,12 @@ int CalendarModel::indexOfHref(const QString &href) const
     }
     return 0;
 }
+
+QString CalendarModel::nameOfHref(const QString &href) const
+{
+    for (const CalendarInfo &info : m_items) {
+        if (Url::pathWithSlash(info.href) == Url::pathWithSlash(href))
+            return info.displayName;
+    }
+    return QString();
+}
