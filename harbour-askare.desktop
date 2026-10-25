@@ -1,0 +1,16 @@
+[Desktop Entry]
+Type=Application
+X-Nemo-Application-Type=silica-qt5
+Icon=harbour-askare
+Exec=harbour-askare
+Name=Askare
+Comment=Nextcloud tasks
+Comment[it]=Attività Nextcloud
+
+[X-Sailjail]
+OrganizationName=org.frapps
+ApplicationName=harbour-askare
+Permissions=Internet;Secrets;WebView
+
+[X-HarbourBackup]
+BackupPathList=.config/org.frapps/harbour-askare/:.local/share/org.frapps/harbour-askare/

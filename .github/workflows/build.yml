@@ -1,0 +1,33 @@
+name: Build SailfishOS RPM
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - SailfishOS-4.6.0.13-aarch64
+          - SailfishOS-4.6.0.13-armv7hl
+          - SailfishOS-5.0.0.62-aarch64
+          - SailfishOS-5.0.0.62-armv7hl
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build RPM
+        uses: CODeRUS/github-sfos-build@master
+        with:
+          release: ${{ matrix.target }}
+
+      - name: Upload RPM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rpm-${{ matrix.target }}
+          path: RPMS/*.rpm
