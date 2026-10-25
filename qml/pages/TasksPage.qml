@@ -88,7 +88,7 @@ Page {
             Rectangle {
                 id: listColor
 
-                width: Math.round(3 * Theme.pixelRatio)
+                width: Math.round(6 * Theme.pixelRatio)
                 height: parent.height - 2 * Theme.paddingMedium
                 radius: width / 2
 
@@ -97,8 +97,10 @@ Page {
                     verticalCenter: parent.verticalCenter
                 }
 
-                visible: Tasks.filter !== "calendar" && calendarColor !== ""
-                color: calendarColor
+                // Every row in a mixed view keeps the bar so the rows stay
+                // aligned, even where the list was left without a colour.
+                visible: Tasks.filter !== "calendar"
+                color: calendarColor !== "" ? calendarColor : Theme.secondaryColor
             }
 
             TextSwitch {
