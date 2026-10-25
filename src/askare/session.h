@@ -53,7 +53,7 @@ public:
     Q_INVOKABLE void sync();
     Q_INVOKABLE void saveTask(const QString &href, const QString &calendarHref,
                               const QString &summary, const QString &description,
-                              const QString &dueDate, int priority, bool done);
+                              const QString &dueDate, int priority, int percent);
     Q_INVOKABLE void deleteTask(const QString &href);
     Q_INVOKABLE void toggleDone(const QString &href);
 
@@ -85,7 +85,7 @@ private:
     void pushDirty();
     LocalTask editedTask(const QString &href, const QString &calendarHref,
                          const QString &summary, const QString &description,
-                         const QString &dueDate, int priority, bool done) const;
+                         const QString &dueDate, int priority, int percent) const;
     void onLoginUrl(const QString &url);
     void onLoggedIn(const QString &server, const QString &user,
                     const QString &password);

@@ -79,6 +79,7 @@ QHash<int, QByteArray> TaskModel::roleNames() const
     roles.insert(DueRole, "due");
     roles.insert(DueDateRole, "dueDate");
     roles.insert(PriorityRole, "priority");
+    roles.insert(PercentRole, "percent");
     roles.insert(CompletedRole, "completed");
     roles.insert(DoneRole, "done");
     return roles;
@@ -109,6 +110,8 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         return Ics::dateFromDue(task.due);
     case PriorityRole:
         return task.priority;
+    case PercentRole:
+        return Ics::percentFromStatus(task.status, Ics::parse(task.ics).percent);
     case CompletedRole:
         return task.completed;
     case DoneRole:

@@ -75,7 +75,7 @@ Page {
                                           "description": description,
                                           "dueDate": dueDate,
                                           "priority": priority,
-                                          "done": done
+                                          "percent": percent
                                       })
             menu: ContextMenu {
                 MenuItem {

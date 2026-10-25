@@ -9,12 +9,14 @@ namespace {
 
 const char *kKnown[] = {
     "UID", "SUMMARY", "DESCRIPTION", "STATUS", "COMPLETED", "DUE", "PRIORITY",
-    "DTSTAMP"
+    "PERCENT-COMPLETE", "DTSTAMP"
 };
+
+const int kKnownCount = sizeof(kKnown) / sizeof(kKnown[0]);
 
 bool isKnown(const QString &name)
 {
-    for (int i = 0; i < 8; ++i) {
+    for (int i = 0; i < kKnownCount; ++i) {
         if (name == QLatin1String(kKnown[i]))
             return true;
     }
@@ -84,6 +86,8 @@ QString valueOrEmpty(const TodoFields &fields, const QString &name)
         return fields.due;
     if (name == QLatin1String("PRIORITY"))
         return fields.priority > 0 ? QString::number(fields.priority) : QString();
+    if (name == QLatin1String("PERCENT-COMPLETE"))
+        return fields.percent > 0 ? QString::number(fields.percent) : QString();
     if (name == QLatin1String("DTSTAMP"))
         return Ics::nowStamp();
     return QString();
@@ -105,6 +109,8 @@ void applyLine(TodoFields *fields, const QString &name, const QString &value)
         fields->due = value;
     else if (name == QLatin1String("PRIORITY"))
         fields->priority = value.toInt();
+    else if (name == QLatin1String("PERCENT-COMPLETE"))
+        fields->percent = value.toInt();
 }
 
 }
@@ -172,6 +178,7 @@ TodoFields parse(const QString &ics)
 {
     TodoFields fields;
     fields.priority = 0;
+    fields.percent = 0;
     const QStringList lines = unfold(ics).split(QLatin1Char('\n'), QString::SkipEmptyParts);
     for (const QString &line : todoBlock(lines))
         applyLine(&fields, propertyName(line), propertyValue(line));
@@ -180,7 +187,7 @@ TodoFields parse(const QString &ics)
 
 void appendMissing(QStringList *out, QStringList *seen, const TodoFields &fields)
 {
-    for (int i = 0; i < 8; ++i) {
+    for (int i = 0; i < kKnownCount; ++i) {
         const QString name = QLatin1String(kKnown[i]);
         if (seen->contains(name))
             continue;
@@ -263,6 +270,9 @@ QString create(const TodoFields &fields)
     appendLine(&lines, fieldLine(QStringLiteral("PRIORITY"),
                                  copy.priority > 0 ? QString::number(copy.priority)
                                                    : QString()));
+    appendLine(&lines, fieldLine(QStringLiteral("PERCENT-COMPLETE"),
+                                 copy.percent > 0 ? QString::number(copy.percent)
+                                                  : QString()));
     lines << QStringLiteral("END:VTODO")
           << QStringLiteral("END:VCALENDAR");
     return fold(lines.join(QLatin1Char('\n')));
@@ -296,6 +306,22 @@ QString dateFromDue(const QString &due)
 bool isCompleted(const QString &status)
 {
     return status.compare(QLatin1String("COMPLETED"), Qt::CaseInsensitive) == 0;
+}
+
+QString statusFromPercent(int percent)
+{
+    if (percent >= 100)
+        return QStringLiteral("COMPLETED");
+    if (percent > 0)
+        return QStringLiteral("IN-PROCESS");
+    return QStringLiteral("NEEDS-ACTION");
+}
+
+int percentFromStatus(const QString &status, int percent)
+{
+    if (isCompleted(status))
+        return 100;
+    return percent;
 }
 
 bool isCurrent(const QString &status, const QString &due)

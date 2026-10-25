@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 
-Page {
+Dialog {
     id: page
 
     property string href
@@ -10,7 +10,7 @@ Page {
     property string description
     property string dueDate
     property int priority: 0
-    property bool done: false
+    property int percent: 0
     property bool listIndexReady: false
 
     function dueAsDate() {
@@ -40,14 +40,6 @@ Page {
         return Calendars.hrefAt(index)
     }
 
-    function priorityIndex() {
-        if (page.priority === 1)
-            return 1
-        if (page.priority === 9)
-            return 3
-        return page.priority > 0 ? 2 : 0
-    }
-
     function applyListIndex() {
         if (page.listIndexReady || Calendars.count === 0)
             return
@@ -55,31 +47,23 @@ Page {
         page.listIndexReady = true
     }
 
-    function save() {
-        Askare.saveTask(page.href, page.chosenCalendar(), summaryField.text,
-                        notesField.text, page.dueDate, page.priority, page.done)
-        pageStack.pop()
-    }
-
     allowedOrientations: Orientation.All
+    canAccept: page.chosenCalendar() !== "" && summaryField.text.length > 0
+    onAccepted: Askare.saveTask(page.href, page.chosenCalendar(), summaryField.text,
+                                notesField.text, page.dueDate, page.priority,
+                                page.percent)
 
     SilicaFlickable {
         anchors.fill: parent
         contentHeight: column.height + Theme.paddingLarge
-
-        PullDownMenu {
-            MenuItem {
-                text: qsTr("Save")
-                onClicked: page.save()
-            }
-        }
 
         Column {
             id: column
 
             width: page.width
 
-            PageHeader {
+            DialogHeader {
+                acceptText: page.href === "" ? qsTr("Add task") : qsTr("Save")
                 title: page.href === "" ? qsTr("New task") : qsTr("Task")
             }
 
@@ -113,13 +97,30 @@ Page {
                 text: page.summary
                 label: qsTr("Title")
                 placeholderText: qsTr("Title")
+                EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                EnterKey.onClicked: notesField.focus = true
             }
 
-            TextSwitch {
+            Slider {
                 width: parent.width
-                text: qsTr("Completed")
-                checked: page.done
-                onCheckedChanged: page.done = checked
+                label: qsTr("Completion")
+                minimumValue: 0
+                maximumValue: 100
+                stepSize: 5
+                valueText: value + "%"
+                Component.onCompleted: value = page.percent
+                onValueChanged: page.percent = value
+            }
+
+            Slider {
+                width: parent.width
+                label: qsTr("Priority")
+                minimumValue: 0
+                maximumValue: 9
+                stepSize: 1
+                valueText: value === 0 ? qsTr("None") : value
+                Component.onCompleted: value = page.priority
+                onValueChanged: page.priority = value
             }
 
             ValueButton {
@@ -134,24 +135,6 @@ Page {
                 visible: page.dueDate !== ""
                 text: qsTr("Clear due date")
                 onClicked: page.dueDate = ""
-            }
-
-            ComboBox {
-                width: parent.width
-                label: qsTr("Priority")
-                Component.onCompleted: currentIndex = page.priorityIndex()
-                onCurrentIndexChanged: {
-                    var values = [0, 1, 5, 9]
-                    if (currentIndex >= 0)
-                        page.priority = values[currentIndex]
-                }
-
-                menu: ContextMenu {
-                    MenuItem { text: qsTr("None") }
-                    MenuItem { text: qsTr("High") }
-                    MenuItem { text: qsTr("Normal") }
-                    MenuItem { text: qsTr("Low") }
-                }
             }
 
             TextArea {

@@ -27,6 +27,7 @@ public:
         DueRole,
         DueDateRole,
         PriorityRole,
+        PercentRole,
         CompletedRole,
         DoneRole
     };

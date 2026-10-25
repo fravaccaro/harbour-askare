@@ -288,7 +288,7 @@ void Session::onDavFailed(const QString &error)
 
 LocalTask Session::editedTask(const QString &href, const QString &calendarHref,
                               const QString &summary, const QString &description,
-                              const QString &dueDate, int priority, bool done) const
+                              const QString &dueDate, int priority, int percent) const
 {
     LocalTask task = m_store->task(href);
     ensureIdentity(&task, calendarHref);
@@ -298,13 +298,15 @@ LocalTask Session::editedTask(const QString &href, const QString &calendarHref,
     fields.description = description;
     fields.due = dueDate.isEmpty() ? QString() : Ics::dueFromDate(dueDate);
     fields.priority = priority;
-    fields.status = done ? QStringLiteral("COMPLETED") : QStringLiteral("NEEDS-ACTION");
-    fields.completed = done ? Ics::nowStamp() : QString();
+    fields.percent = percent;
+    fields.status = Ics::statusFromPercent(percent);
+    fields.completed = percent >= 100 ? Ics::nowStamp() : QString();
     task.ics = task.ics.isEmpty() ? Ics::create(fields) : Ics::rewrite(task.ics, fields);
     task.summary = summary;
     task.description = description;
     task.due = fields.due;
     task.priority = priority;
+    task.percent = percent;
     task.status = fields.status;
     task.completed = fields.completed;
     task.dirty = true;
@@ -327,7 +329,7 @@ void Session::pushDirty()
 
 void Session::saveTask(const QString &href, const QString &calendarHref,
                        const QString &summary, const QString &description,
-                       const QString &dueDate, int priority, bool done)
+                       const QString &dueDate, int priority, int percent)
 {
     if (calendarHref.isEmpty()) {
         setError(tr("Choose a list for the task."));
@@ -335,7 +337,7 @@ void Session::saveTask(const QString &href, const QString &calendarHref,
     }
 
     m_store->upsertLocal(editedTask(href, calendarHref, summary, description,
-                                    dueDate, priority, done));
+                                    dueDate, priority, percent));
     reloadModels();
     pushDirty();
 }
@@ -357,6 +359,7 @@ void Session::toggleDone(const QString &href)
     if (task.href.isEmpty())
         return;
 
+    const int percent = Ics::isCompleted(task.status) ? 0 : 100;
     saveTask(task.href, task.calendarHref, task.summary, task.description,
-             Ics::dateFromDue(task.due), task.priority, !Ics::isCompleted(task.status));
+             Ics::dateFromDue(task.due), task.priority, percent);
 }

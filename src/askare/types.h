@@ -37,11 +37,13 @@ struct LocalTask
     QString completed;
     QString due;
     int priority;
+    int percent;
     bool dirty;
     bool deleted;
 
     LocalTask()
         : priority(0)
+        , percent(0)
         , dirty(false)
         , deleted(false)
     {
@@ -57,9 +59,11 @@ struct TodoFields
     QString completed;
     QString due;
     int priority;
+    int percent;
 
     TodoFields()
         : priority(0)
+        , percent(0)
     {
     }
 };

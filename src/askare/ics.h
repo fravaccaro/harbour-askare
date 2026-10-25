@@ -23,6 +23,8 @@ QString dueFromDate(const QString &isoDate);
 QString dateFromDue(const QString &due);
 bool isCompleted(const QString &status);
 bool isCurrent(const QString &status, const QString &due);
+QString statusFromPercent(int percent);
+int percentFromStatus(const QString &status, int percent);
 
 }
 
