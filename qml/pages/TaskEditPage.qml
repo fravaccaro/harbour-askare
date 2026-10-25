@@ -78,6 +78,9 @@ Dialog {
                         page.reminder)
     }
 
+    // The window looks for this page by name, so a request to add a task from
+    // the cover raises it instead of opening a second copy of it.
+    objectName: "taskEditPage"
     allowedOrientations: Orientation.All
     canAccept: page.chosenCalendar() !== "" && summaryField.text.length > 0
     onAccepted: page.save()

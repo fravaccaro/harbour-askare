@@ -53,6 +53,17 @@ QString taskColumns()
                           " reminder, reminded_for, dirty, deleted FROM tasks");
 }
 
+// Open tasks come before completed ones: the task list groups by that flag, and
+// a list view only draws a group header where the value differs from the row
+// above, so an order that interleaves the two would scatter the headers. The
+// comparison is case-insensitive to match Ics::isCompleted(). Within a group a
+// missing due date sorts last, so dated tasks lead and undated ones trail.
+QString taskOrder()
+{
+    return QStringLiteral(" ORDER BY upper(status) = 'COMPLETED',"
+                          " due IS NULL OR due = '', due, summary COLLATE NOCASE");
+}
+
 void bindTask(QSqlQuery *query, const LocalTask &task)
 {
     query->bindValue(QStringLiteral(":href"), task.href);
@@ -216,12 +227,11 @@ QVector<LocalTask> Store::tasks(const QString &calendarHref) const
 
     QSqlQuery query(m_db);
     if (calendarHref.isEmpty()) {
-        query.exec(taskColumns() + QStringLiteral(" WHERE deleted = 0"
-                                                  " ORDER BY due, summary COLLATE NOCASE"));
+        query.exec(taskColumns() + QStringLiteral(" WHERE deleted = 0") + taskOrder());
     } else {
         query.prepare(taskColumns() + QStringLiteral(" WHERE deleted = 0"
-                                                     " AND calendar_href = :calendar"
-                                                     " ORDER BY due, summary COLLATE NOCASE"));
+                                                     " AND calendar_href = :calendar")
+                      + taskOrder());
         query.bindValue(QStringLiteral(":calendar"), calendarHref);
         query.exec();
     }

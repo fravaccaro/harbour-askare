@@ -31,12 +31,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>No open tasks</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>open</source>
-        <comment>goes under the number of open tasks</comment>
+        <source>No tasks</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -500,6 +495,18 @@
     </message>
     <message>
         <source>Due %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>That task is no longer here.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Askare</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

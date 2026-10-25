@@ -10,6 +10,7 @@ ApplicationWindow {
     // href a pending openTask() is waiting on while the stack settles.
     property var reminderNotices: []
     property string pendingTaskHref: ""
+    property bool newTaskWanted: false
 
     function showMain() {
         if (pageStack.busy) {
@@ -46,6 +47,32 @@ ApplicationWindow {
             return
         }
         app.pushTask(href)
+    }
+
+    // Asked for from the cover, which can be tapped before the app has a page
+    // to put in front of anyone, so the request waits for the stack to settle.
+    function openNewTask() {
+        if (!Askare.configured || Calendars.count === 0)
+            return
+        activate()
+        app.newTaskWanted = true
+        app.takePendingNewTask()
+    }
+
+    function takePendingNewTask() {
+        if (!app.newTaskWanted || !Askare.ready || !Askare.configured)
+            return
+        if (pageStack.busy) {
+            newTaskAgain.restart()
+            return
+        }
+        app.newTaskWanted = false
+        // An editor left open from an earlier tap is raised rather than buried
+        // under a second copy of itself.
+        if (pageStack.find(function(item) { return item.objectName === "taskEditPage" }))
+            return
+        pageStack.push(Qt.resolvedUrl("pages/TaskEditPage.qml"),
+                       { "calendarHref": Tasks.calendarHref })
     }
 
     function pushTask(href) {
@@ -106,6 +133,13 @@ ApplicationWindow {
 
         interval: 100
         onTriggered: app.openTask(app.pendingTaskHref)
+    }
+
+    Timer {
+        id: newTaskAgain
+
+        interval: 100
+        onTriggered: app.takePendingNewTask()
     }
 
     Component {
