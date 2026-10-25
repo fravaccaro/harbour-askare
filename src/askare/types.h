@@ -11,9 +11,11 @@ struct CalendarInfo
     QString ctag;
     QString syncToken;
     bool allowsTodos;
+    bool writable;
 
     CalendarInfo()
         : allowsTodos(true)
+        , writable(true)
     {
     }
 };

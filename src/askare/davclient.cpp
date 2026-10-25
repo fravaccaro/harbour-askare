@@ -25,6 +25,7 @@ const QByteArray ListBody =
         "<d:displayname/>"
         "<d:resourcetype/>"
         "<c:supported-calendar-component-set/>"
+        "<d:current-user-privilege-set/>"
         "<a:calendar-color/>"
         "<cs:getctag/>"
         "<d:sync-token/>"
