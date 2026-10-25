@@ -28,6 +28,7 @@ public:
 
     void reload();
     Q_INVOKABLE QString hrefAt(int row) const;
+    Q_INVOKABLE int indexOfHref(const QString &href) const;
 
 private:
     Store *m_store;

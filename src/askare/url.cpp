@@ -22,7 +22,13 @@ QUrl join(const QUrl &base, const QString &href)
     if (href.isEmpty())
         return base;
 
-    return base.resolved(QUrl(href));
+    const QUrl absolute(href);
+    if (absolute.isValid() && !absolute.scheme().isEmpty())
+        return absolute;
+
+    QUrl relative;
+    relative.setPath(href);
+    return base.resolved(relative);
 }
 
 QString origin(const QUrl &url)

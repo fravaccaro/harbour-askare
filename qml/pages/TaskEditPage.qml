@@ -33,9 +33,10 @@ Page {
     }
 
     function chosenCalendar() {
-        if (page.calendarHref !== "")
+        if (page.href !== "" && page.calendarHref !== "")
             return page.calendarHref
-        return Calendars.hrefAt(listBox.currentIndex)
+        var index = listBox.currentIndex < 0 ? 0 : listBox.currentIndex
+        return Calendars.hrefAt(index)
     }
 
     function save() {
@@ -70,8 +71,9 @@ Page {
                 id: listBox
 
                 width: parent.width
-                visible: page.href === "" && page.calendarHref === ""
+                visible: page.href === ""
                 label: qsTr("List")
+                currentIndex: Calendars.indexOfHref(page.calendarHref)
 
                 menu: ContextMenu {
                     Repeater {

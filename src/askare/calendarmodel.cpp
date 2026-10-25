@@ -2,6 +2,7 @@
 
 #include "ics.h"
 #include "store.h"
+#include "url.h"
 
 CalendarModel::CalendarModel(Store *store, QObject *parent)
     : QAbstractListModel(parent)
@@ -57,4 +58,13 @@ QString CalendarModel::hrefAt(int row) const
     if (row < 0 || row >= m_items.size())
         return QString();
     return m_items.at(row).href;
+}
+
+int CalendarModel::indexOfHref(const QString &href) const
+{
+    for (int i = 0; i < m_items.size(); ++i) {
+        if (Url::pathWithSlash(m_items.at(i).href) == Url::pathWithSlash(href))
+            return i;
+    }
+    return 0;
 }

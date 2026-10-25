@@ -56,7 +56,7 @@ private:
     void handleHome(int status, const QByteArray &body);
     void handleList(int status, const QByteArray &body);
     void handleReport(int status, const QByteArray &body);
-    void handlePut(int status, const QString &etag);
+    void handlePut(int status, const QByteArray &body, const QString &etag);
     void handleDelete(int status);
     void failStatus(int status);
 

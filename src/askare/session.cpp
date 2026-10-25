@@ -5,6 +5,20 @@
 #include "taskmodel.h"
 #include "url.h"
 
+namespace {
+
+void ensureIdentity(LocalTask *task, const QString &calendarHref)
+{
+    if (!task->href.isEmpty())
+        return;
+
+    task->uid = Ics::newUid();
+    task->href = Url::pathWithSlash(calendarHref) + task->uid + QStringLiteral(".ics");
+    task->calendarHref = Url::pathWithSlash(calendarHref);
+}
+
+}
+
 Session::Session(Config *config, Store *store, CalendarModel *calendars,
                  TaskModel *tasks, QObject *parent)
     : QObject(parent)
@@ -236,13 +250,14 @@ void Session::pushNext()
     if (task.deleted)
         m_dav.remove(task.href, task.etag);
     else
-        m_dav.upload(task.href, task.ics, task.etag);
+        m_dav.upload(task.href, Ics::normalize(task.ics), task.etag);
 }
 
 void Session::finishSync()
 {
     setBusy(false);
     reloadModels();
+    pushDirty();
 }
 
 void Session::onUploaded(const QString &href, const QString &etag)
@@ -276,12 +291,7 @@ LocalTask Session::editedTask(const QString &href, const QString &calendarHref,
                               const QString &dueDate, int priority, bool done) const
 {
     LocalTask task = m_store->task(href);
-    if (task.href.isEmpty()) {
-        task.uid = Ics::newUid();
-        task.href = Url::pathWithSlash(calendarHref) + task.uid + QStringLiteral(".ics");
-        task.calendarHref = Url::pathWithSlash(calendarHref);
-        task.ics = Ics::create(TodoFields());
-    }
+    ensureIdentity(&task, calendarHref);
     TodoFields fields = Ics::parse(task.ics);
     fields.uid = task.uid.isEmpty() ? fields.uid : task.uid;
     fields.summary = summary;
@@ -304,7 +314,7 @@ LocalTask Session::editedTask(const QString &href, const QString &calendarHref,
 
 void Session::pushDirty()
 {
-    if (m_busy || !m_config->isConfigured())
+    if (!m_config->isConfigured() || m_busy)
         return;
 
     m_pendingUploads = m_store->dirtyTasks();
@@ -319,6 +329,11 @@ void Session::saveTask(const QString &href, const QString &calendarHref,
                        const QString &summary, const QString &description,
                        const QString &dueDate, int priority, bool done)
 {
+    if (calendarHref.isEmpty()) {
+        setError(tr("Choose a list for the task."));
+        return;
+    }
+
     m_store->upsertLocal(editedTask(href, calendarHref, summary, description,
                                     dueDate, priority, done));
     reloadModels();

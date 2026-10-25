@@ -16,6 +16,7 @@ QString propertyValue(const QString &line);
 TodoFields parse(const QString &ics);
 QString rewrite(const QString &ics, const TodoFields &fields);
 QString create(const TodoFields &fields);
+QString normalize(const QString &ics);
 QString nowStamp();
 QString newUid();
 QString dueFromDate(const QString &isoDate);

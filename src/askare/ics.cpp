@@ -40,8 +40,17 @@ QString fieldLine(const QString &name, const QString &value)
 {
     if (value.isEmpty())
         return QString();
-
+    if (name == QLatin1String("DUE") && !value.contains(QLatin1Char('T')))
+        return QStringLiteral("DUE;VALUE=DATE:") + value.left(8);
+    if (name == QLatin1String("SUMMARY") || name == QLatin1String("DESCRIPTION"))
+        return name + QLatin1Char(':') + Ics::escape(value);
     return name + QLatin1Char(':') + value;
+}
+
+void appendLine(QStringList *lines, const QString &line)
+{
+    if (!line.isEmpty())
+        lines->append(line);
 }
 
 QStringList todoBlock(const QStringList &lines)
@@ -214,6 +223,19 @@ QString rewrite(const QString &ics, const TodoFields &fields)
     return fold(out.join(QLatin1Char('\n')));
 }
 
+QString normalize(const QString &ics)
+{
+    const QStringList lines = unfold(ics).split(QLatin1Char('\n'), QString::SkipEmptyParts);
+    QStringList out;
+    for (const QString &line : lines) {
+        if (propertyName(line) == QLatin1String("DUE"))
+            out.append(fieldLine(QStringLiteral("DUE"), propertyValue(line)));
+        else
+            out.append(line);
+    }
+    return fold(out.join(QLatin1Char('\n')));
+}
+
 QString create(const TodoFields &fields)
 {
     TodoFields copy = fields;
@@ -223,19 +245,24 @@ QString create(const TodoFields &fields)
         copy.status = QStringLiteral("NEEDS-ACTION");
 
     QStringList lines;
+    const QString stamp = nowStamp();
     lines << QStringLiteral("BEGIN:VCALENDAR")
           << QStringLiteral("VERSION:2.0")
-          << QStringLiteral("PRODID:-//Askare//EN")
-          << QStringLiteral("BEGIN:VTODO")
-          << fieldLine(QStringLiteral("UID"), copy.uid)
-          << fieldLine(QStringLiteral("DTSTAMP"), nowStamp())
-          << fieldLine(QStringLiteral("SUMMARY"), escape(copy.summary))
-          << fieldLine(QStringLiteral("DESCRIPTION"), escape(copy.description))
-          << fieldLine(QStringLiteral("STATUS"), copy.status)
-          << fieldLine(QStringLiteral("COMPLETED"), copy.completed)
-          << fieldLine(QStringLiteral("DUE"), copy.due);
-    if (copy.priority > 0)
-        lines << fieldLine(QStringLiteral("PRIORITY"), QString::number(copy.priority));
+          << QStringLiteral("PRODID:-//Askare//Askare//EN")
+          << QStringLiteral("CALSCALE:GREGORIAN")
+          << QStringLiteral("BEGIN:VTODO");
+    appendLine(&lines, fieldLine(QStringLiteral("UID"), copy.uid));
+    appendLine(&lines, fieldLine(QStringLiteral("DTSTAMP"), stamp));
+    appendLine(&lines, fieldLine(QStringLiteral("CREATED"), stamp));
+    appendLine(&lines, fieldLine(QStringLiteral("LAST-MODIFIED"), stamp));
+    appendLine(&lines, fieldLine(QStringLiteral("SUMMARY"), copy.summary));
+    appendLine(&lines, fieldLine(QStringLiteral("DESCRIPTION"), copy.description));
+    appendLine(&lines, fieldLine(QStringLiteral("STATUS"), copy.status));
+    appendLine(&lines, fieldLine(QStringLiteral("COMPLETED"), copy.completed));
+    appendLine(&lines, fieldLine(QStringLiteral("DUE"), copy.due));
+    appendLine(&lines, fieldLine(QStringLiteral("PRIORITY"),
+                                 copy.priority > 0 ? QString::number(copy.priority)
+                                                   : QString()));
     lines << QStringLiteral("END:VTODO")
           << QStringLiteral("END:VCALENDAR");
     return fold(lines.join(QLatin1Char('\n')));
@@ -243,7 +270,9 @@ QString create(const TodoFields &fields)
 
 QString nowStamp()
 {
-    return QDateTime::currentDateTimeUtc().toString(QStringLiteral("yyyyMMddTHHmmssZ"));
+    const QDateTime now = QDateTime::currentDateTimeUtc();
+    return now.toString(QStringLiteral("yyyyMMdd")) + QLatin1Char('T')
+            + now.toString(QStringLiteral("HHmmss")) + QLatin1Char('Z');
 }
 
 QString newUid()

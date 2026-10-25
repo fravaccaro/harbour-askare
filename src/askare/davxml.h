@@ -13,6 +13,7 @@ QString currentUserPrincipal(const QByteArray &xml);
 QString calendarHomeSet(const QByteArray &xml);
 QVector<CalendarInfo> calendars(const QByteArray &xml);
 QVector<RemoteTask> report(const QByteArray &xml);
+QString errorMessage(const QByteArray &xml);
 
 }
 

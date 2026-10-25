@@ -28,70 +28,36 @@ QString readHref(QXmlStreamReader *reader)
     return QString();
 }
 
-void readComponentSet(QXmlStreamReader *reader, CalendarInfo *info, bool *sawSet)
-{
-    *sawSet = true;
-    info->allowsTodos = false;
-    while (!reader->atEnd()) {
-        reader->readNext();
-        if (localIs(*reader, "comp") && reader->isStartElement()) {
-            if (reader->attributes().value(QStringLiteral("name")) == QLatin1String("VTODO"))
-                info->allowsTodos = true;
-        } else if (localIs(*reader, "supported-calendar-component-set")
-                   && reader->isEndElement()) {
-            break;
-        }
-    }
-}
-
-void readResourceType(QXmlStreamReader *reader, bool *isCalendar)
-{
-    *isCalendar = false;
-    while (!reader->atEnd()) {
-        reader->readNext();
-        if (localIs(*reader, "calendar") && reader->isStartElement())
-            *isCalendar = true;
-        else if (localIs(*reader, "resourcetype") && reader->isEndElement())
-            break;
-    }
-}
-
-void readProp(QXmlStreamReader *reader, CalendarInfo *info, bool *isCalendar)
-{
-    bool sawSet = false;
-    info->allowsTodos = true;
-    while (!reader->atEnd()) {
-        reader->readNext();
-        if (localIs(*reader, "displayname") && reader->isStartElement())
-            info->displayName = readText(reader);
-        else if (localIs(*reader, "getctag") && reader->isStartElement())
-            info->ctag = readText(reader);
-        else if (localIs(*reader, "sync-token") && reader->isStartElement())
-            info->syncToken = readText(reader);
-        else if (localIs(*reader, "resourcetype") && reader->isStartElement())
-            readResourceType(reader, isCalendar);
-        else if (localIs(*reader, "supported-calendar-component-set")
-                 && reader->isStartElement())
-            readComponentSet(reader, info, &sawSet);
-        else if (localIs(*reader, "prop") && reader->isEndElement())
-            break;
-    }
-}
-
 void readResponse(QXmlStreamReader *reader, QVector<CalendarInfo> *out)
 {
     CalendarInfo info;
     bool isCalendar = false;
+    bool sawSet = false;
+    info.allowsTodos = false;
     while (!reader->atEnd()) {
         reader->readNext();
-        if (localIs(*reader, "href") && reader->isStartElement())
-            info.href = QUrl::fromPercentEncoding(readText(reader).toUtf8());
-        else if (localIs(*reader, "prop") && reader->isStartElement())
-            readProp(reader, &info, &isCalendar);
-        else if (localIs(*reader, "response") && reader->isEndElement())
+        if (reader->isEndElement() && localIs(*reader, "response"))
             break;
+        if (!reader->isStartElement())
+            continue;
+        if (localIs(*reader, "href") && info.href.isEmpty())
+            info.href = QUrl::fromPercentEncoding(readText(reader).toUtf8());
+        else if (localIs(*reader, "displayname"))
+            info.displayName = readText(reader);
+        else if (localIs(*reader, "getctag"))
+            info.ctag = readText(reader);
+        else if (localIs(*reader, "sync-token"))
+            info.syncToken = readText(reader);
+        else if (localIs(*reader, "calendar"))
+            isCalendar = true;
+        else if (localIs(*reader, "comp")) {
+            sawSet = true;
+            if (reader->attributes().value(QStringLiteral("name"))
+                    .compare(QLatin1String("VTODO"), Qt::CaseInsensitive) == 0)
+                info.allowsTodos = true;
+        }
     }
-    if (isCalendar && info.allowsTodos)
+    if (isCalendar && (info.allowsTodos || !sawSet))
         out->append(info);
 }
 
@@ -160,6 +126,17 @@ QVector<RemoteTask> report(const QByteArray &xml)
             readReportResponse(&reader, &out);
     }
     return out;
+}
+
+QString errorMessage(const QByteArray &xml)
+{
+    QXmlStreamReader reader(xml);
+    while (!reader.atEnd()) {
+        reader.readNext();
+        if (localIs(reader, "message") && reader.isStartElement())
+            return readText(&reader);
+    }
+    return QString();
 }
 
 }

@@ -176,6 +176,13 @@
     </message>
 </context>
 <context>
+    <name>Session</name>
+    <message>
+        <source>Choose a list for the task.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SettingsPage</name>
     <message>
         <source>Settings</source>

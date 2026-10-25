@@ -65,14 +65,26 @@ void HttpClient::send(const QByteArray &method, const QUrl &url,
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::UserAgentHeader, m_userAgent);
     applyAuth(&request);
-    for (int i = 0; i < headers.size(); ++i)
+    for (int i = 0; i < headers.size(); ++i) {
         request.setRawHeader(headers.at(i).first, headers.at(i).second);
+        if (headers.at(i).first.toLower() == "content-type") {
+            request.setHeader(QNetworkRequest::ContentTypeHeader,
+                              QString::fromUtf8(headers.at(i).second));
+        }
+    }
 
-    QBuffer *buffer = new QBuffer;
-    buffer->setData(body);
-    buffer->open(QIODevice::ReadOnly);
-    QNetworkReply *reply = m_manager.sendCustomRequest(request, method, buffer);
-    buffer->setParent(reply);
+    QNetworkReply *reply = 0;
+    if (method == "PUT") {
+        reply = m_manager.put(request, body);
+    } else if (method == "DELETE") {
+        reply = m_manager.deleteResource(request);
+    } else {
+        QBuffer *buffer = new QBuffer;
+        buffer->setData(body);
+        buffer->open(QIODevice::ReadOnly);
+        reply = m_manager.sendCustomRequest(request, method, buffer);
+        buffer->setParent(reply);
+    }
     reply->setProperty("requestUrl", url);
     connect(reply, &QNetworkReply::finished, this, &HttpClient::onFinished);
     if (m_ignoreSsl) {

@@ -1,5 +1,7 @@
 #include "davclient.h"
 
+#include <QDebug>
+
 #include "davxml.h"
 #include "url.h"
 
@@ -113,7 +115,9 @@ void DavClient::upload(const QString &href, const QString &ics, const QString &e
     HttpClient::Headers headers;
     headers.append(qMakePair(QByteArray("Content-Type"),
                              QByteArray("text/calendar; charset=utf-8")));
-    if (!etag.isEmpty())
+    if (etag.isEmpty())
+        headers.append(qMakePair(QByteArray("If-None-Match"), QByteArray("*")));
+    else
         headers.append(qMakePair(QByteArray("If-Match"), etag.toUtf8()));
     m_http.send("PUT", resolve(href), ics.toUtf8(), headers);
 }
@@ -157,7 +161,7 @@ void DavClient::onFinished(int status, const QByteArray &body, const QString &et
         handleReport(status, body);
         return;
     case Put:
-        handlePut(status, etag);
+        handlePut(status, body, etag);
         return;
     case Del:
         handleDelete(status);
@@ -217,12 +221,16 @@ void DavClient::handleReport(int status, const QByteArray &body)
     emit todosReady(DavXml::report(body));
 }
 
-void DavClient::handlePut(int status, const QString &etag)
+void DavClient::handlePut(int status, const QByteArray &body, const QString &etag)
 {
     const QString href = m_pendingHref;
     m_operation = Idle;
     if (status != 200 && status != 201 && status != 204) {
-        emit failed(tr("The task could not be saved (%1).").arg(status));
+        const QString detail = DavXml::errorMessage(body);
+        qWarning() << "askare: PUT" << resolve(href) << "status" << status << detail;
+        emit failed(detail.isEmpty()
+                    ? tr("The task could not be saved (%1).").arg(status)
+                    : detail);
         return;
     }
     emit uploaded(href, etag);
