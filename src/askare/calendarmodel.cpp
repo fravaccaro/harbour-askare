@@ -10,6 +10,11 @@ CalendarModel::CalendarModel(Store *store, QObject *parent)
 {
 }
 
+int CalendarModel::count() const
+{
+    return m_items.size();
+}
+
 int CalendarModel::rowCount(const QModelIndex &parent) const
 {
     return parent.isValid() ? 0 : m_items.size();
@@ -51,6 +56,7 @@ void CalendarModel::reload()
     beginResetModel();
     m_items = m_store->calendars();
     endResetModel();
+    emit countChanged();
 }
 
 QString CalendarModel::hrefAt(int row) const

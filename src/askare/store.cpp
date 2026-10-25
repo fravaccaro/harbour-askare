@@ -6,6 +6,7 @@
 #include <QSqlQuery>
 #include <QStandardPaths>
 #include <QStringList>
+#include <QUrl>
 #include <QVariant>
 
 #include "ics.h"
@@ -18,6 +19,30 @@ QString databasePath()
     const QString dir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     QDir().mkpath(dir);
     return dir + QStringLiteral("/askare.db");
+}
+
+QString displayNameFromHref(const QString &href)
+{
+    const QStringList parts = href.split(QLatin1Char('/'), QString::SkipEmptyParts);
+    if (parts.isEmpty())
+        return QObject::tr("Tasks");
+    return QUrl::fromPercentEncoding(parts.last().toUtf8());
+}
+
+QVector<CalendarInfo> calendarsFromTasks(const QSqlDatabase &db)
+{
+    QVector<CalendarInfo> out;
+    QSqlQuery query(db);
+    query.exec(QStringLiteral("SELECT DISTINCT calendar_href FROM tasks"
+                              " WHERE calendar_href != ''"
+                              " ORDER BY calendar_href"));
+    while (query.next()) {
+        CalendarInfo info;
+        info.href = query.value(0).toString();
+        info.displayName = displayNameFromHref(info.href);
+        out.append(info);
+    }
+    return out;
 }
 
 void bindTask(QSqlQuery *query, const LocalTask &task)
@@ -139,6 +164,8 @@ QVector<CalendarInfo> Store::calendars() const
         info.allowsTodos = true;
         out.append(info);
     }
+    if (out.isEmpty())
+        return calendarsFromTasks(m_db);
     return out;
 }
 

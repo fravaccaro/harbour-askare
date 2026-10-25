@@ -32,8 +32,6 @@ void readResponse(QXmlStreamReader *reader, QVector<CalendarInfo> *out)
 {
     CalendarInfo info;
     bool isCalendar = false;
-    bool sawSet = false;
-    info.allowsTodos = false;
     while (!reader->atEnd()) {
         reader->readNext();
         if (reader->isEndElement() && localIs(*reader, "response"))
@@ -50,14 +48,8 @@ void readResponse(QXmlStreamReader *reader, QVector<CalendarInfo> *out)
             info.syncToken = readText(reader);
         else if (localIs(*reader, "calendar"))
             isCalendar = true;
-        else if (localIs(*reader, "comp")) {
-            sawSet = true;
-            if (reader->attributes().value(QStringLiteral("name"))
-                    .compare(QLatin1String("VTODO"), Qt::CaseInsensitive) == 0)
-                info.allowsTodos = true;
-        }
     }
-    if (isCalendar && (info.allowsTodos || !sawSet))
+    if (isCalendar)
         out->append(info);
 }
 

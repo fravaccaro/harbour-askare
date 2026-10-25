@@ -174,6 +174,10 @@
         <source>The network did not answer.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Tasks</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Session</name>

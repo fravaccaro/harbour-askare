@@ -11,6 +11,7 @@ Page {
     property string dueDate
     property int priority: 0
     property bool done: false
+    property bool listIndexReady: false
 
     function dueAsDate() {
         if (page.dueDate === "")
@@ -37,6 +38,21 @@ Page {
             return page.calendarHref
         var index = listBox.currentIndex < 0 ? 0 : listBox.currentIndex
         return Calendars.hrefAt(index)
+    }
+
+    function priorityIndex() {
+        if (page.priority === 1)
+            return 1
+        if (page.priority === 9)
+            return 3
+        return page.priority > 0 ? 2 : 0
+    }
+
+    function applyListIndex() {
+        if (page.listIndexReady || Calendars.count === 0)
+            return
+        listBox.currentIndex = Calendars.indexOfHref(page.calendarHref)
+        page.listIndexReady = true
     }
 
     function save() {
@@ -73,7 +89,7 @@ Page {
                 width: parent.width
                 visible: page.href === ""
                 label: qsTr("List")
-                currentIndex: Calendars.indexOfHref(page.calendarHref)
+                Component.onCompleted: page.applyListIndex()
 
                 menu: ContextMenu {
                     Repeater {
@@ -82,6 +98,11 @@ Page {
                             text: displayName
                         }
                     }
+                }
+
+                Connections {
+                    target: Calendars
+                    onCountChanged: page.applyListIndex()
                 }
             }
 
@@ -118,10 +139,11 @@ Page {
             ComboBox {
                 width: parent.width
                 label: qsTr("Priority")
-                currentIndex: page.priority === 1 ? 1 : page.priority === 9 ? 3 : page.priority > 0 ? 2 : 0
+                Component.onCompleted: currentIndex = page.priorityIndex()
                 onCurrentIndexChanged: {
                     var values = [0, 1, 5, 9]
-                    page.priority = values[currentIndex]
+                    if (currentIndex >= 0)
+                        page.priority = values[currentIndex]
                 }
 
                 menu: ContextMenu {

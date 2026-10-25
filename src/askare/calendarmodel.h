@@ -12,6 +12,7 @@ class Store;
 class CalendarModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
 
 public:
     enum Roles {
@@ -22,6 +23,7 @@ public:
 
     explicit CalendarModel(Store *store, QObject *parent = nullptr);
 
+    int count() const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
@@ -29,6 +31,9 @@ public:
     void reload();
     Q_INVOKABLE QString hrefAt(int row) const;
     Q_INVOKABLE int indexOfHref(const QString &href) const;
+
+signals:
+    void countChanged();
 
 private:
     Store *m_store;

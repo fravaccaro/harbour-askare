@@ -56,7 +56,7 @@ Page {
                 onClicked: Askare.sync()
             }
             MenuItem {
-                enabled: Calendars.count > 0
+                enabled: Askare.configured && Calendars.count > 0
                 text: qsTr("New task")
                 onClicked: pageStack.push(Qt.resolvedUrl("TaskEditPage.qml"), {
                                               "calendarHref": Tasks.calendarHref
