@@ -2,6 +2,7 @@
 
 #include "ics.h"
 #include "store.h"
+#include "url.h"
 
 namespace {
 
@@ -22,6 +23,16 @@ QVector<LocalTask> completedOf(const QVector<LocalTask> &tasks)
         if (Ics::isCompleted(task.status))
             out.append(task);
     }
+    return out;
+}
+
+// A row shows which list owns it by colour, so the colours are read once per
+// reload instead of once per row.
+QHash<QString, QString> colorsOf(const QVector<CalendarInfo> &calendars)
+{
+    QHash<QString, QString> out;
+    for (const CalendarInfo &info : calendars)
+        out.insert(Url::pathWithSlash(info.href), info.color);
     return out;
 }
 
@@ -104,6 +115,7 @@ QHash<int, QByteArray> TaskModel::roleNames() const
     QHash<int, QByteArray> roles;
     roles.insert(HrefRole, "href");
     roles.insert(CalendarHrefRole, "calendarHref");
+    roles.insert(CalendarColorRole, "calendarColor");
     roles.insert(UidRole, "uid");
     roles.insert(SummaryRole, "summary");
     roles.insert(DescriptionRole, "description");
@@ -132,6 +144,8 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         return task.href;
     case CalendarHrefRole:
         return task.calendarHref;
+    case CalendarColorRole:
+        return m_colors.value(Url::pathWithSlash(task.calendarHref));
     case UidRole:
         return task.uid;
     case SummaryRole:
@@ -184,5 +198,6 @@ void TaskModel::reload()
     else
         m_items = m_store->topLevelTasks();
     m_tallies = talliesOf(m_store->tasks());
+    m_colors = colorsOf(m_store->calendars());
     endResetModel();
 }

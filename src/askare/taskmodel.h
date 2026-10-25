@@ -22,6 +22,7 @@ public:
     enum Roles {
         HrefRole = Qt::UserRole + 1,
         CalendarHrefRole,
+        CalendarColorRole,
         UidRole,
         SummaryRole,
         DescriptionRole,
@@ -72,6 +73,7 @@ private:
     QString m_filter;
     QVector<LocalTask> m_items;
     QHash<QString, ChildTally> m_tallies;
+    QHash<QString, QString> m_colors;
 };
 
 #endif

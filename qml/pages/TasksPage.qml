@@ -85,6 +85,22 @@ Page {
                 }
             }
 
+            Rectangle {
+                id: listColor
+
+                width: Math.round(3 * Theme.pixelRatio)
+                height: parent.height - 2 * Theme.paddingMedium
+                radius: width / 2
+
+                anchors {
+                    left: parent.left
+                    verticalCenter: parent.verticalCenter
+                }
+
+                visible: Tasks.filter !== "calendar" && calendarColor !== ""
+                color: calendarColor
+            }
+
             TextSwitch {
                 id: doneSwitch
 
@@ -95,6 +111,7 @@ Page {
 
                 anchors {
                     left: parent.left
+                    leftMargin: listColor.visible ? listColor.width + Theme.paddingSmall : 0
                     verticalCenter: parent.verticalCenter
                 }
             }

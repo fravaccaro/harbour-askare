@@ -350,6 +350,22 @@
         <source>Completion</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Add subtask</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Starts %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subtasks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 of %2 done</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TaskEditPage</name>
@@ -421,6 +437,26 @@
         <source>Set a due date first.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New subtask</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear start date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The start must not be after the due date.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TaskModel</name>
@@ -477,6 +513,17 @@
     </message>
     <message>
         <source>Deleting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>Deleting %n tasks</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Subtasks %1/%2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
