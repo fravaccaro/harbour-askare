@@ -50,14 +50,19 @@ Page {
             }
 
             ComboBox {
-                id: intervalBox
+                // Guards the stored value against the index changes that happen
+                // while the menu is still being built.
+                property bool ready: false
 
                 width: parent.width
                 label: qsTr("Automatic sync")
                 description: qsTr("Only while Askare is running.")
-                Component.onCompleted: currentIndex = page.intervalIndex(Askare.syncInterval)
+                Component.onCompleted: {
+                    currentIndex = page.intervalIndex(Askare.syncInterval)
+                    ready = true
+                }
                 onCurrentIndexChanged: {
-                    if (currentIndex >= 0)
+                    if (ready && currentIndex >= 0)
                         Askare.syncInterval = page.intervals[currentIndex]
                 }
 
