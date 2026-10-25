@@ -20,11 +20,17 @@ Config::Config(QObject *parent)
     : QObject(parent)
     , m_settings(settingsFilePath(), QSettings::IniFormat)
     , m_ignoreSslErrors(false)
+    , m_syncOnStart(true)
+    , m_syncInterval(0)
+    , m_syncAfterPush(true)
     , m_ready(false)
 {
     m_serverUrl = m_settings.value(QStringLiteral("server/url")).toString();
     m_username = m_settings.value(QStringLiteral("server/username")).toString();
     m_ignoreSslErrors = m_settings.value(QStringLiteral("server/ignoreSslErrors"), false).toBool();
+    m_syncOnStart = m_settings.value(QStringLiteral("sync/onStart"), true).toBool();
+    m_syncInterval = m_settings.value(QStringLiteral("sync/intervalMinutes"), 0).toInt();
+    m_syncAfterPush = m_settings.value(QStringLiteral("sync/afterPush"), true).toBool();
     connect(&m_secrets, &SecretsStore::loaded, this, &Config::applyStoredPassword);
     connect(&m_secrets, &SecretsStore::failed, this, [this](const QString &error) {
         m_secretsError = error;
@@ -115,6 +121,37 @@ void Config::setIgnoreSslErrors(bool ignore)
     m_ignoreSslErrors = ignore;
     store(QStringLiteral("server/ignoreSslErrors"), m_ignoreSslErrors);
     emit ignoreSslErrorsChanged();
+}
+
+void Config::setSyncOnStart(bool enabled)
+{
+    if (enabled == m_syncOnStart)
+        return;
+
+    m_syncOnStart = enabled;
+    store(QStringLiteral("sync/onStart"), m_syncOnStart);
+    emit syncOnStartChanged();
+}
+
+void Config::setSyncInterval(int minutes)
+{
+    const int safe = minutes < 0 ? 0 : minutes;
+    if (safe == m_syncInterval)
+        return;
+
+    m_syncInterval = safe;
+    store(QStringLiteral("sync/intervalMinutes"), m_syncInterval);
+    emit syncIntervalChanged();
+}
+
+void Config::setSyncAfterPush(bool enabled)
+{
+    if (enabled == m_syncAfterPush)
+        return;
+
+    m_syncAfterPush = enabled;
+    store(QStringLiteral("sync/afterPush"), m_syncAfterPush);
+    emit syncAfterPushChanged();
 }
 
 void Config::clearCredentials()

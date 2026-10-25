@@ -4,6 +4,17 @@ import Sailfish.Silica 1.0
 Page {
     id: page
 
+    readonly property var intervals: [0, 5, 15, 30, 60]
+
+    function intervalIndex(minutes) {
+        var index = page.intervals.indexOf(minutes)
+        return index < 0 ? 0 : index
+    }
+
+    function intervalLabel(minutes) {
+        return minutes === 0 ? qsTr("Off") : qsTr("Every %n minute(s)", "", minutes)
+    }
+
     allowedOrientations: Orientation.All
 
     SilicaFlickable {
@@ -25,6 +36,51 @@ Page {
                 wrapMode: Text.WordWrap
                 color: Theme.secondaryColor
                 text: Askare.serverUrl
+            }
+
+            SectionHeader {
+                text: qsTr("Synchronisation")
+            }
+
+            TextSwitch {
+                width: parent.width
+                text: qsTr("Sync when the app starts")
+                checked: Askare.syncOnStart
+                onCheckedChanged: Askare.syncOnStart = checked
+            }
+
+            ComboBox {
+                id: intervalBox
+
+                width: parent.width
+                label: qsTr("Automatic sync")
+                description: qsTr("Only while Askare is running.")
+                Component.onCompleted: currentIndex = page.intervalIndex(Askare.syncInterval)
+                onCurrentIndexChanged: {
+                    if (currentIndex >= 0)
+                        Askare.syncInterval = page.intervals[currentIndex]
+                }
+
+                menu: ContextMenu {
+                    Repeater {
+                        model: page.intervals
+                        MenuItem {
+                            text: page.intervalLabel(modelData)
+                        }
+                    }
+                }
+            }
+
+            TextSwitch {
+                width: parent.width
+                text: qsTr("Sync after saving a task")
+                description: qsTr("Fetches server changes once the task has been uploaded.")
+                checked: Askare.syncAfterPush
+                onCheckedChanged: Askare.syncAfterPush = checked
+            }
+
+            SectionHeader {
+                text: qsTr("Connection")
             }
 
             TextSwitch {

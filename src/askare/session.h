@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QTimer>
 #include <QVector>
 
 #include "config.h"
@@ -26,6 +27,11 @@ class Session : public QObject
     Q_PROPERTY(QString serverUrl READ serverUrl NOTIFY serverUrlChanged)
     Q_PROPERTY(bool ignoreSslErrors READ ignoreSslErrors WRITE setIgnoreSslErrors
                NOTIFY ignoreSslErrorsChanged)
+    Q_PROPERTY(bool syncOnStart READ syncOnStart WRITE setSyncOnStart NOTIFY syncOnStartChanged)
+    Q_PROPERTY(int syncInterval READ syncInterval WRITE setSyncInterval
+               NOTIFY syncIntervalChanged)
+    Q_PROPERTY(bool syncAfterPush READ syncAfterPush WRITE setSyncAfterPush
+               NOTIFY syncAfterPushChanged)
     Q_PROPERTY(int openCount READ openCount NOTIFY coverChanged)
     Q_PROPERTY(int currentCount READ currentCount NOTIFY coverChanged)
     Q_PROPERTY(int completedCount READ completedCount NOTIFY coverChanged)
@@ -43,6 +49,9 @@ public:
     QString loginUrl() const { return m_loginUrl; }
     QString serverUrl() const;
     bool ignoreSslErrors() const;
+    bool syncOnStart() const;
+    int syncInterval() const;
+    bool syncAfterPush() const;
     int openCount() const;
     int currentCount() const;
     int completedCount() const;
@@ -69,6 +78,9 @@ signals:
     void loginUrlChanged();
     void serverUrlChanged();
     void ignoreSslErrorsChanged();
+    void syncOnStartChanged();
+    void syncIntervalChanged();
+    void syncAfterPushChanged();
     void coverChanged();
     void loginUrlReady(const QString &url);
     void loginSucceeded();
@@ -76,11 +88,16 @@ signals:
 
 public slots:
     void setIgnoreSslErrors(bool ignore);
+    void setSyncOnStart(bool enabled);
+    void setSyncInterval(int minutes);
+    void setSyncAfterPush(bool enabled);
 
 private:
     void setBusy(bool busy);
     void setError(const QString &error);
     void applyCredentials();
+    void applySyncTimer();
+    void syncIfStartupWanted();
     void reloadModels();
     void fetchNextCalendar();
     void pushNext();
@@ -108,12 +125,17 @@ private:
     TaskModel *m_tasks;
     LoginFlow m_login;
     DavClient m_dav;
+    QTimer m_syncTimer;
     QVector<CalendarInfo> m_pendingCalendars;
     QVector<LocalTask> m_pendingUploads;
     QString m_currentCalendarHref;
     QString m_loginUrl;
     QString m_error;
     bool m_busy;
+    // True while a run only uploads, so it can be followed by a full sync.
+    bool m_pushOnly;
+    int m_uploaded;
+    bool m_syncedOnStart;
 };
 
 #endif

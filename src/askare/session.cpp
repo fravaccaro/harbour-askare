@@ -28,7 +28,12 @@ Session::Session(Config *config, Store *store, CalendarModel *calendars,
     , m_calendars(calendars)
     , m_tasks(tasks)
     , m_busy(false)
+    , m_pushOnly(false)
+    , m_uploaded(0)
+    , m_syncedOnStart(false)
 {
+    m_syncTimer.setSingleShot(false);
+    connect(&m_syncTimer, &QTimer::timeout, this, &Session::sync);
     connect(&m_login, &LoginFlow::loginUrlReady, this, &Session::onLoginUrl);
     connect(&m_login, &LoginFlow::finished, this, &Session::onLoggedIn);
     connect(&m_login, &LoginFlow::failed, this, &Session::onLoginFailed);
@@ -44,9 +49,16 @@ Session::Session(Config *config, Store *store, CalendarModel *calendars,
     connect(m_config, &Config::secretsErrorChanged, this, &Session::secretsErrorChanged);
     connect(m_config, &Config::serverUrlChanged, this, &Session::serverUrlChanged);
     connect(m_config, &Config::ignoreSslErrorsChanged, this, &Session::ignoreSslErrorsChanged);
+    connect(m_config, &Config::syncOnStartChanged, this, &Session::syncOnStartChanged);
+    connect(m_config, &Config::syncAfterPushChanged, this, &Session::syncAfterPushChanged);
+    connect(m_config, &Config::syncIntervalChanged, this, &Session::syncIntervalChanged);
+    connect(m_config, &Config::syncIntervalChanged, this, &Session::applySyncTimer);
+    connect(m_config, &Config::readyChanged, this, &Session::syncIfStartupWanted);
     m_store->open();
     if (m_config->isReady() && m_config->isConfigured())
         applyCredentials();
+    applySyncTimer();
+    syncIfStartupWanted();
 }
 
 bool Session::isReady() const
@@ -77,6 +89,59 @@ bool Session::ignoreSslErrors() const
 void Session::setIgnoreSslErrors(bool ignore)
 {
     m_config->setIgnoreSslErrors(ignore);
+}
+
+bool Session::syncOnStart() const
+{
+    return m_config->syncOnStart();
+}
+
+void Session::setSyncOnStart(bool enabled)
+{
+    m_config->setSyncOnStart(enabled);
+}
+
+int Session::syncInterval() const
+{
+    return m_config->syncInterval();
+}
+
+void Session::setSyncInterval(int minutes)
+{
+    m_config->setSyncInterval(minutes);
+}
+
+bool Session::syncAfterPush() const
+{
+    return m_config->syncAfterPush();
+}
+
+void Session::setSyncAfterPush(bool enabled)
+{
+    m_config->setSyncAfterPush(enabled);
+}
+
+void Session::applySyncTimer()
+{
+    const int minutes = m_config->syncInterval();
+    if (minutes <= 0 || !m_config->isConfigured()) {
+        m_syncTimer.stop();
+        return;
+    }
+
+    m_syncTimer.setInterval(minutes * 60 * 1000);
+    m_syncTimer.start();
+}
+
+void Session::syncIfStartupWanted()
+{
+    if (m_syncedOnStart || !m_config->isReady() || !m_config->isConfigured())
+        return;
+    if (!m_config->syncOnStart())
+        return;
+
+    m_syncedOnStart = true;
+    sync();
 }
 
 int Session::openCount() const
@@ -138,6 +203,8 @@ void Session::onConfiguredChanged()
     emit configuredChanged();
     if (m_config->isConfigured())
         applyCredentials();
+    applySyncTimer();
+    syncIfStartupWanted();
 }
 
 void Session::startLogin(const QString &serverUrl)
@@ -161,6 +228,8 @@ void Session::cancelLogin()
 void Session::logout()
 {
     cancelLogin();
+    m_syncTimer.stop();
+    m_syncedOnStart = false;
     m_store->clear();
     m_config->clearCredentials();
     m_tasks->showAll();
@@ -188,6 +257,7 @@ void Session::onLoggedIn(const QString &server, const QString &user,
     m_config->setPassword(password);
     applyCredentials();
     emit loginSucceeded();
+    m_syncedOnStart = true;
     sync();
 }
 
@@ -203,6 +273,8 @@ void Session::sync()
     if (!m_config->isConfigured() || m_busy)
         return;
 
+    m_pushOnly = false;
+    m_uploaded = 0;
     setError(QString());
     setBusy(true);
     applyCredentials();
@@ -261,19 +333,28 @@ void Session::pushNext()
 
 void Session::finishSync()
 {
+    // Only a run that uploaded something may pull afterwards: a task the server
+    // keeps rejecting stays dirty, and pushDirty() below would re-queue it.
+    const bool pullAfterPush = m_pushOnly && m_uploaded > 0 && m_config->syncAfterPush();
     setBusy(false);
     reloadModels();
+    if (m_syncTimer.isActive())
+        m_syncTimer.start();
     pushDirty();
+    if (pullAfterPush && !m_busy)
+        QTimer::singleShot(0, this, &Session::sync);
 }
 
 void Session::onUploaded(const QString &href, const QString &etag)
 {
+    ++m_uploaded;
     m_store->markClean(href, etag);
     pushNext();
 }
 
 void Session::onRemoved(const QString &href)
 {
+    ++m_uploaded;
     m_store->remove(href);
     pushNext();
 }
@@ -329,6 +410,8 @@ void Session::pushDirty()
     if (m_pendingUploads.isEmpty())
         return;
 
+    m_pushOnly = true;
+    m_uploaded = 0;
     setBusy(true);
     pushNext();
 }

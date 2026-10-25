@@ -235,6 +235,45 @@
         <source>Signing out</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>Every %n minute(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Synchronisation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sync when the app starts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatic sync</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Only while Askare is running.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sync after saving a task</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fetches server changes once the task has been uploaded.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connection</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StartPage</name>
