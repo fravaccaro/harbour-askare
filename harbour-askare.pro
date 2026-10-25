@@ -59,8 +59,10 @@ TRANSLATIONS += \
 
 DISTFILES += \
     harbour-askare.desktop \
+    icons/harbour-askare.svg \
     qml/harbour-askare.qml \
     qml/cover/CoverPage.qml \
+    qml/cover/cover-check.png \
     qml/pages/AboutPage.qml \
     qml/pages/FilterItem.qml \
     qml/pages/ListsPage.qml \

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The leaf outline is the launcher shape from the Jolla Sailfish Apps icon
+     template (icon-launcher-template.svg), CC BY 3.0. -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="512" height="512" viewBox="0 0 86 86">
+  <defs>
+    <path id="leaf" d="M84.277,0.3H43C19.417,0.3,0.3,19.418,0.3,43v41.277c0,0.786,0.637,1.423,1.423,1.423H43c23.583,0,42.7-19.118,42.7-42.7V1.723C85.7,0.937,85.063,0.3,84.277,0.3z"/>
+
+    <!-- Nextcloud blue, hue 201, dark at the blunt corner and lighter towards
+         the point, along the diagonal the template gradients use. -->
+    <linearGradient id="body" gradientUnits="userSpaceOnUse"
+                    x1="0.7169" y1="85.2831" x2="85.2831" y2="0.7169">
+      <stop offset="0" stop-color="#005a8c"/>
+      <stop offset="1" stop-color="#19a0e5"/>
+    </linearGradient>
+
+    <!-- A tick drawn as one mitred stroke, so both arms end on a clean bevel
+         and the turn at the bottom comes to a point. Stroked rather than
+         outlined, so the two arms keep the same weight at every size. -->
+    <path id="tick" d="M6,34L34,62L100,4" fill="none" stroke="#ffffff"
+          stroke-width="19" stroke-linecap="butt" stroke-linejoin="miter"/>
+  </defs>
+
+  <use xlink:href="#leaf" fill="url(#body)"/>
+
+  <!-- The stroked tick measures 107 x 78 about its centre at 52.78,35.94, so
+       this lands that centre on 43,43 of the icon at half the leaf's width.
+       Named, so that the cover glyph can be exported from this one tick
+       instead of a second copy of the same geometry. -->
+  <g id="glyph" transform="translate(18.35 26.22) scale(0.467)">
+    <use xlink:href="#tick"/>
+  </g>
+</svg>
