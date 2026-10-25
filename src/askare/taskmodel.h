@@ -26,6 +26,8 @@ public:
         StatusRole,
         DueRole,
         DueDateRole,
+        DueTimeRole,
+        ReminderRole,
         PriorityRole,
         PercentRole,
         CompletedRole,

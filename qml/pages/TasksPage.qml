@@ -74,8 +74,10 @@ Page {
                                           "summary": summary,
                                           "description": description,
                                           "dueDate": dueDate,
+                                          "dueTime": dueTime,
                                           "priority": priority,
-                                          "percent": percent
+                                          "percent": percent,
+                                          "reminder": reminder
                                       })
             menu: ContextMenu {
                 MenuItem {
@@ -126,7 +128,7 @@ Page {
                     truncationMode: TruncationMode.Fade
                     color: Theme.secondaryColor
                     font.pixelSize: Theme.fontSizeExtraSmall
-                    text: dueDate
+                    text: dueTime === "" ? dueDate : dueDate + " " + dueTime
                 }
             }
         }

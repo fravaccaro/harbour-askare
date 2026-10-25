@@ -24,6 +24,7 @@ SOURCES += \
     src/askare/ics.cpp \
     src/askare/loginflow.cpp \
     src/askare/markdown.cpp \
+    src/askare/reminders.cpp \
     src/askare/secretsstore.cpp \
     src/askare/session.cpp \
     src/askare/store.cpp \
@@ -39,6 +40,7 @@ HEADERS += \
     src/askare/ics.h \
     src/askare/loginflow.h \
     src/askare/markdown.h \
+    src/askare/reminders.h \
     src/askare/secretsstore.h \
     src/askare/session.h \
     src/askare/store.h \
@@ -64,6 +66,7 @@ DISTFILES += \
     qml/pages/ListsPage.qml \
     qml/pages/LoginPage.qml \
     qml/pages/PriorityTag.qml \
+    qml/pages/ReminderOptions.qml \
     qml/pages/SettingsPage.qml \
     qml/pages/StartPage.qml \
     qml/pages/TaskDetailPage.qml \

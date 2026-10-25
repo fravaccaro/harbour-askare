@@ -9,17 +9,27 @@ Page {
     property string summary
     property string description
     property string dueDate
+    property string dueTime
     property int priority: 0
     property int percent: 0
+    property int reminder: -1
 
     readonly property bool isDone: page.percent >= 100
+
+    function dueText() {
+        if (page.dueDate === "")
+            return ""
+        return page.dueTime === "" ? page.dueDate : page.dueDate + " " + page.dueTime
+    }
 
     function applyEdit(dialog) {
         page.summary = dialog.summary
         page.description = dialog.description
         page.dueDate = dialog.dueDate
+        page.dueTime = dialog.dueTime
         page.priority = dialog.priority
         page.percent = dialog.percent
+        page.reminder = dialog.reminder
     }
 
     function edit() {
@@ -29,8 +39,10 @@ Page {
                                         "summary": page.summary,
                                         "description": page.description,
                                         "dueDate": page.dueDate,
+                                        "dueTime": page.dueTime,
                                         "priority": page.priority,
-                                        "percent": page.percent
+                                        "percent": page.percent,
+                                        "reminder": page.reminder
                                     })
         dialog.accepted.connect(function() { page.applyEdit(dialog) })
     }
@@ -48,6 +60,10 @@ Page {
     }
 
     allowedOrientations: Orientation.All
+
+    ReminderOptions {
+        id: reminderOptions
+    }
 
     SilicaFlickable {
         anchors.fill: parent
@@ -89,7 +105,16 @@ Page {
                 visible: page.dueDate !== ""
                 color: Theme.secondaryColor
                 font.pixelSize: Theme.fontSizeSmall
-                text: qsTr("Due %1").arg(page.dueDate)
+                text: qsTr("Due %1").arg(page.dueText())
+            }
+
+            Label {
+                x: Theme.horizontalPageMargin
+                width: parent.width - 2 * Theme.horizontalPageMargin
+                visible: page.reminder >= 0
+                color: Theme.secondaryColor
+                font.pixelSize: Theme.fontSizeSmall
+                text: reminderOptions.labelFor(page.reminder)
             }
 
             ProgressBar {

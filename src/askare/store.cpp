@@ -45,6 +45,14 @@ QVector<CalendarInfo> calendarsFromTasks(const QSqlDatabase &db)
     return out;
 }
 
+// Single source for the task column order read back by Store::readTask().
+QString taskColumns()
+{
+    return QStringLiteral("SELECT href, calendar_href, uid, etag, ics, summary,"
+                          " description, status, completed, due, priority,"
+                          " reminder, reminded_for, dirty, deleted FROM tasks");
+}
+
 void bindTask(QSqlQuery *query, const LocalTask &task)
 {
     query->bindValue(QStringLiteral(":href"), task.href);
@@ -58,6 +66,8 @@ void bindTask(QSqlQuery *query, const LocalTask &task)
     query->bindValue(QStringLiteral(":completed"), task.completed);
     query->bindValue(QStringLiteral(":due"), task.due);
     query->bindValue(QStringLiteral(":priority"), task.priority);
+    query->bindValue(QStringLiteral(":reminder"), task.reminder);
+    query->bindValue(QStringLiteral(":reminded"), task.remindedFor);
     query->bindValue(QStringLiteral(":dirty"), task.dirty ? 1 : 0);
     query->bindValue(QStringLiteral(":deleted"), task.deleted ? 1 : 0);
 }
@@ -120,10 +130,14 @@ bool Store::migrate()
                        "completed TEXT,"
                        "due TEXT,"
                        "priority INTEGER,"
+                       "reminder INTEGER DEFAULT -1,"
+                       "reminded_for TEXT,"
                        "dirty INTEGER DEFAULT 0,"
                        "deleted INTEGER DEFAULT 0)"));
-    // Older databases predate the color column; adding it fails harmlessly when present.
+    // Older databases predate these columns; adding one fails harmlessly when present.
     query.exec(QStringLiteral("ALTER TABLE calendars ADD COLUMN color TEXT"));
+    query.exec(QStringLiteral("ALTER TABLE tasks ADD COLUMN reminder INTEGER DEFAULT -1"));
+    query.exec(QStringLiteral("ALTER TABLE tasks ADD COLUMN reminded_for TEXT"));
     return calendars && tasks;
 }
 
@@ -187,8 +201,10 @@ LocalTask Store::readTask(const QSqlQuery &query) const
     task.completed = query.value(8).toString();
     task.due = query.value(9).toString();
     task.priority = query.value(10).toInt();
-    task.dirty = query.value(11).toInt() != 0;
-    task.deleted = query.value(12).toInt() != 0;
+    task.reminder = query.value(11).isNull() ? -1 : query.value(11).toInt();
+    task.remindedFor = query.value(12).toString();
+    task.dirty = query.value(13).toInt() != 0;
+    task.deleted = query.value(14).toInt() != 0;
     return task;
 }
 
@@ -200,16 +216,12 @@ QVector<LocalTask> Store::tasks(const QString &calendarHref) const
 
     QSqlQuery query(m_db);
     if (calendarHref.isEmpty()) {
-        query.exec(QStringLiteral("SELECT href, calendar_href, uid, etag, ics, summary,"
-                                  " description, status, completed, due, priority, dirty,"
-                                  " deleted FROM tasks WHERE deleted = 0"
-                                  " ORDER BY due, summary COLLATE NOCASE"));
+        query.exec(taskColumns() + QStringLiteral(" WHERE deleted = 0"
+                                                  " ORDER BY due, summary COLLATE NOCASE"));
     } else {
-        query.prepare(QStringLiteral("SELECT href, calendar_href, uid, etag, ics, summary,"
-                                     " description, status, completed, due, priority, dirty,"
-                                     " deleted FROM tasks WHERE deleted = 0"
-                                     " AND calendar_href = :calendar"
-                                     " ORDER BY due, summary COLLATE NOCASE"));
+        query.prepare(taskColumns() + QStringLiteral(" WHERE deleted = 0"
+                                                     " AND calendar_href = :calendar"
+                                                     " ORDER BY due, summary COLLATE NOCASE"));
         query.bindValue(QStringLiteral(":calendar"), calendarHref);
         query.exec();
     }
@@ -225,9 +237,7 @@ QVector<LocalTask> Store::dirtyTasks() const
         return out;
 
     QSqlQuery query(m_db);
-    query.exec(QStringLiteral("SELECT href, calendar_href, uid, etag, ics, summary,"
-                              " description, status, completed, due, priority, dirty,"
-                              " deleted FROM tasks WHERE dirty = 1"));
+    query.exec(taskColumns() + QStringLiteral(" WHERE dirty = 1"));
     while (query.next())
         out.append(readTask(query));
     return out;
@@ -239,9 +249,7 @@ LocalTask Store::task(const QString &href) const
         return LocalTask();
 
     QSqlQuery query(m_db);
-    query.prepare(QStringLiteral("SELECT href, calendar_href, uid, etag, ics, summary,"
-                                 " description, status, completed, due, priority, dirty,"
-                                 " deleted FROM tasks WHERE href = :href"));
+    query.prepare(taskColumns() + QStringLiteral(" WHERE href = :href"));
     query.bindValue(QStringLiteral(":href"), href);
     if (!query.exec() || !query.next())
         return LocalTask();
@@ -291,11 +299,9 @@ LocalTask Store::nextOpen() const
         return LocalTask();
 
     QSqlQuery query(m_db);
-    query.exec(QStringLiteral("SELECT href, calendar_href, uid, etag, ics, summary,"
-                              " description, status, completed, due, priority, dirty,"
-                              " deleted FROM tasks WHERE deleted = 0"
-                              " AND status != 'COMPLETED' AND due != ''"
-                              " ORDER BY due LIMIT 1"));
+    query.exec(taskColumns() + QStringLiteral(" WHERE deleted = 0"
+                                              " AND status != 'COMPLETED' AND due != ''"
+                                              " ORDER BY due LIMIT 1"));
     return query.next() ? readTask(query) : LocalTask();
 }
 
@@ -318,6 +324,9 @@ void Store::upsertRemoteTask(const QString &calendarHref, const RemoteTask &remo
     next.completed = fields.completed;
     next.due = fields.due;
     next.priority = fields.priority;
+    next.reminder = fields.reminder;
+    // Keep the notified stamp so a sync does not replay a reminder.
+    next.remindedFor = existing.remindedFor;
     next.dirty = false;
     next.deleted = false;
     upsertLocal(next);
@@ -365,11 +374,25 @@ void Store::upsertLocal(const LocalTask &task)
     query.prepare(QStringLiteral("INSERT OR REPLACE INTO tasks"
                                  "(href, calendar_href, uid, etag, ics, summary,"
                                  " description, status, completed, due, priority,"
-                                 " dirty, deleted)"
+                                 " reminder, reminded_for, dirty, deleted)"
                                  " VALUES (:href, :calendar, :uid, :etag, :ics,"
                                  " :summary, :description, :status, :completed,"
-                                 " :due, :priority, :dirty, :deleted)"));
+                                 " :due, :priority, :reminder, :reminded,"
+                                 " :dirty, :deleted)"));
     bindTask(&query, task);
+    query.exec();
+}
+
+void Store::markReminded(const QString &href, const QString &stamp)
+{
+    if (!isOpen())
+        return;
+
+    QSqlQuery query(m_db);
+    query.prepare(QStringLiteral("UPDATE tasks SET reminded_for = :stamp"
+                                 " WHERE href = :href"));
+    query.bindValue(QStringLiteral(":stamp"), stamp);
+    query.bindValue(QStringLiteral(":href"), href);
     query.exec();
 }
 

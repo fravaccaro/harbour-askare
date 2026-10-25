@@ -2,7 +2,9 @@
 
 #include <QDate>
 #include <QDateTime>
+#include <QRegularExpression>
 #include <QStringList>
+#include <QTime>
 #include <QUuid>
 
 namespace {
@@ -53,6 +55,77 @@ void appendLine(QStringList *lines, const QString &line)
 {
     if (!line.isEmpty())
         lines->append(line);
+}
+
+// Minutes before the due time, or -1 when the trigger is absolute, points
+// after the due time, or cannot be read. Such alarms are left untouched.
+int durationToMinutes(const QString &value)
+{
+    const QRegularExpression pattern(
+        QStringLiteral("^(-)?P(?:(\\d+)W)?(?:(\\d+)D)?"
+                       "(?:T(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+)S)?)?$"));
+    const QRegularExpressionMatch match = pattern.match(value.trimmed());
+    if (!match.hasMatch())
+        return -1;
+
+    const int minutes = match.captured(2).toInt() * 7 * 24 * 60
+            + match.captured(3).toInt() * 24 * 60
+            + match.captured(4).toInt() * 60
+            + match.captured(5).toInt()
+            + match.captured(6).toInt() / 60;
+    if (minutes == 0)
+        return 0;
+    return match.captured(1).isEmpty() ? -1 : minutes;
+}
+
+QString minutesToDuration(int minutes)
+{
+    if (minutes <= 0)
+        return QStringLiteral("PT0S");
+    if (minutes % (24 * 60) == 0)
+        return QStringLiteral("-P%1D").arg(minutes / (24 * 60));
+    if (minutes % 60 == 0)
+        return QStringLiteral("-PT%1H").arg(minutes / 60);
+    return QStringLiteral("-PT%1M").arg(minutes);
+}
+
+bool isSubComponentStart(const QString &line)
+{
+    return line.startsWith(QLatin1String("BEGIN:"));
+}
+
+bool isSubComponentEnd(const QString &line)
+{
+    return line.startsWith(QLatin1String("END:"));
+}
+
+// An alarm Askare can represent: a display alarm with a relative trigger.
+bool isManagedAlarm(const QStringList &block)
+{
+    if (block.isEmpty() || !block.first().startsWith(QLatin1String("BEGIN:VALARM")))
+        return false;
+
+    for (const QString &line : block) {
+        if (Ics::propertyName(line) == QLatin1String("TRIGGER"))
+            return durationToMinutes(Ics::propertyValue(line)) >= 0;
+    }
+    return false;
+}
+
+QStringList alarmBlock(const TodoFields &fields)
+{
+    QStringList block;
+    if (fields.reminder < 0)
+        return block;
+
+    const QString text = fields.summary.isEmpty() ? QStringLiteral("Askare")
+                                                  : Ics::escape(fields.summary);
+    block << QStringLiteral("BEGIN:VALARM")
+          << QStringLiteral("ACTION:DISPLAY")
+          << QStringLiteral("DESCRIPTION:") + text
+          << QStringLiteral("TRIGGER;RELATED=END:") + minutesToDuration(fields.reminder)
+          << QStringLiteral("END:VALARM");
+    return block;
 }
 
 QStringList todoBlock(const QStringList &lines)
@@ -179,9 +252,26 @@ TodoFields parse(const QString &ics)
     TodoFields fields;
     fields.priority = 0;
     fields.percent = 0;
+    fields.reminder = -1;
     const QStringList lines = unfold(ics).split(QLatin1Char('\n'), QString::SkipEmptyParts);
-    for (const QString &line : todoBlock(lines))
+    int depth = 0;
+    for (const QString &line : todoBlock(lines)) {
+        if (isSubComponentStart(line)) {
+            ++depth;
+            continue;
+        }
+        if (isSubComponentEnd(line)) {
+            depth = depth > 0 ? depth - 1 : 0;
+            continue;
+        }
+        // Properties of a nested VALARM must not be read as the task's own.
+        if (depth > 1) {
+            if (fields.reminder < 0 && propertyName(line) == QLatin1String("TRIGGER"))
+                fields.reminder = durationToMinutes(propertyValue(line));
+            continue;
+        }
         applyLine(&fields, propertyName(line), propertyValue(line));
+    }
     return fields;
 }
 
@@ -202,15 +292,45 @@ QString rewrite(const QString &ics, const TodoFields &fields)
     const QStringList lines = unfold(ics).split(QLatin1Char('\n'), QString::SkipEmptyParts);
     QStringList out;
     QStringList seen;
+    QStringList nested;
+    QStringList kept;
     bool inTodo = false;
+    bool replacedAlarm = false;
+    int depth = 0;
     for (const QString &line : lines) {
+        if (inTodo && depth == 0 && isSubComponentStart(line)) {
+            depth = 1;
+            nested.clear();
+            nested.append(line);
+            continue;
+        }
+        if (depth > 0) {
+            nested.append(line);
+            if (isSubComponentStart(line))
+                ++depth;
+            else if (isSubComponentEnd(line))
+                --depth;
+            if (depth == 0) {
+                // The alarm Askare manages is rebuilt below; keep any other.
+                if (!replacedAlarm && isManagedAlarm(nested))
+                    replacedAlarm = true;
+                else
+                    kept.append(nested);
+                nested.clear();
+            }
+            continue;
+        }
         if (line.startsWith(QLatin1String("BEGIN:VTODO"))) {
             inTodo = true;
             out.append(line);
             continue;
         }
         if (line.startsWith(QLatin1String("END:VTODO"))) {
+            // A VTODO body is properties first, then its alarms.
             appendMissing(&out, &seen, fields);
+            out.append(kept);
+            out.append(alarmBlock(fields));
+            kept.clear();
             inTodo = false;
             out.append(line);
             continue;
@@ -273,7 +393,8 @@ QString create(const TodoFields &fields)
     appendLine(&lines, fieldLine(QStringLiteral("PERCENT-COMPLETE"),
                                  copy.percent > 0 ? QString::number(copy.percent)
                                                   : QString()));
-    lines << QStringLiteral("END:VTODO")
+    lines << alarmBlock(copy)
+          << QStringLiteral("END:VTODO")
           << QStringLiteral("END:VCALENDAR");
     return fold(lines.join(QLatin1Char('\n')));
 }
@@ -295,12 +416,59 @@ QString dueFromDate(const QString &isoDate)
     return QString(isoDate).remove(QLatin1Char('-'));
 }
 
+QString dueFromDateTime(const QString &isoDate, const QString &time)
+{
+    const QString date = dueFromDate(isoDate);
+    if (date.isEmpty() || time.isEmpty())
+        return date;
+
+    return date + QLatin1Char('T') + QString(time).remove(QLatin1Char(':'))
+            + QStringLiteral("00");
+}
+
 QString dateFromDue(const QString &due)
 {
     if (due.size() < 8)
         return QString();
 
     return due.left(4) + QLatin1Char('-') + due.mid(4, 2) + QLatin1Char('-') + due.mid(6, 2);
+}
+
+QString timeFromDue(const QString &due)
+{
+    const int mark = due.indexOf(QLatin1Char('T'));
+    if (mark < 0 || due.size() < mark + 5)
+        return QString();
+
+    return due.mid(mark + 1, 2) + QLatin1Char(':') + due.mid(mark + 3, 2);
+}
+
+QDateTime dueDateTime(const QString &due)
+{
+    const QDate date = QDate::fromString(due.left(8), QStringLiteral("yyyyMMdd"));
+    if (!date.isValid())
+        return QDateTime();
+
+    const int mark = due.indexOf(QLatin1Char('T'));
+    if (mark < 0)
+        return QDateTime(date, QTime(0, 0));
+
+    const QTime time = QTime::fromString(due.mid(mark + 1, 6), QStringLiteral("HHmmss"));
+    QDateTime stamp(date, time.isValid() ? time : QTime(0, 0));
+    if (due.endsWith(QLatin1Char('Z'))) {
+        stamp.setTimeSpec(Qt::UTC);
+        return stamp.toLocalTime();
+    }
+    return stamp;
+}
+
+QDateTime reminderAt(const QString &due, int minutesBefore)
+{
+    if (minutesBefore < 0)
+        return QDateTime();
+
+    const QDateTime stamp = dueDateTime(due);
+    return stamp.isValid() ? stamp.addSecs(-minutesBefore * 60) : QDateTime();
 }
 
 bool isCompleted(const QString &status)

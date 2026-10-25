@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import Nemo.Notifications 1.0
 import "pages"
 
 ApplicationWindow {
@@ -54,6 +55,27 @@ ApplicationWindow {
         onConfiguredChanged: {
             if (!Askare.configured)
                 app.showMain()
+        }
+    }
+
+    Notification {
+        id: reminderNotification
+
+        appName: "Askare"
+        icon: "image://theme/icon-lock-information"
+        category: "x-nemo.generic"
+    }
+
+    Connections {
+        target: Reminders
+        onDue: {
+            reminderNotification.summary = summary
+            reminderNotification.body = dueText === ""
+                    ? qsTr("Task reminder") : qsTr("Due %1").arg(dueText)
+            reminderNotification.previewSummary = reminderNotification.summary
+            reminderNotification.previewBody = reminderNotification.body
+            reminderNotification.replacesId = 0
+            reminderNotification.publish()
         }
     }
 }

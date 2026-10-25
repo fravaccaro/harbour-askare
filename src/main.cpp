@@ -13,6 +13,7 @@
 
 #include "askare/calendarmodel.h"
 #include "askare/config.h"
+#include "askare/reminders.h"
 #include "askare/session.h"
 #include "askare/store.h"
 #include "askare/taskmodel.h"
@@ -36,12 +37,14 @@ int main(int argc, char *argv[])
     CalendarModel calendars(&store);
     TaskModel tasks(&store);
     Session session(&config, &store, &calendars, &tasks);
+    Reminders reminders(&store);
 
     QScopedPointer<QQuickView> view(SailfishApp::createView());
     QQmlContext *context = view->rootContext();
     context->setContextProperty(QStringLiteral("Askare"), &session);
     context->setContextProperty(QStringLiteral("Calendars"), &calendars);
     context->setContextProperty(QStringLiteral("Tasks"), &tasks);
+    context->setContextProperty(QStringLiteral("Reminders"), &reminders);
 
     view->setSource(SailfishApp::pathTo(QStringLiteral("qml/harbour-askare.qml")));
     view->show();

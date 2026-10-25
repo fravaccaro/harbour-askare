@@ -41,12 +41,17 @@ struct LocalTask
     QString due;
     int priority;
     int percent;
+    // Minutes before the due time, or -1 when the task has no reminder.
+    int reminder;
+    // Reminder stamp already notified, so a reminder fires only once.
+    QString remindedFor;
     bool dirty;
     bool deleted;
 
     LocalTask()
         : priority(0)
         , percent(0)
+        , reminder(-1)
         , dirty(false)
         , deleted(false)
     {
@@ -63,10 +68,12 @@ struct TodoFields
     QString due;
     int priority;
     int percent;
+    int reminder;
 
     TodoFields()
         : priority(0)
         , percent(0)
+        , reminder(-1)
     {
     }
 };

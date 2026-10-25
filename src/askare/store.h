@@ -33,6 +33,7 @@ public:
     LocalTask nextOpen() const;
 
     void upsertLocal(const LocalTask &task);
+    void markReminded(const QString &href, const QString &stamp);
     void markClean(const QString &href, const QString &etag);
     void markDeleted(const QString &href);
     void remove(const QString &href);

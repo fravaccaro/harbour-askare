@@ -1,6 +1,7 @@
 #ifndef ASKARE_ICS_H
 #define ASKARE_ICS_H
 
+#include <QDateTime>
 #include <QString>
 
 #include "types.h"
@@ -20,7 +21,11 @@ QString normalize(const QString &ics);
 QString nowStamp();
 QString newUid();
 QString dueFromDate(const QString &isoDate);
+QString dueFromDateTime(const QString &isoDate, const QString &time);
 QString dateFromDue(const QString &due);
+QString timeFromDue(const QString &due);
+QDateTime dueDateTime(const QString &due);
+QDateTime reminderAt(const QString &due, int minutesBefore);
 bool isCompleted(const QString &status);
 bool isCurrent(const QString &status, const QString &due);
 QString statusFromPercent(int percent);

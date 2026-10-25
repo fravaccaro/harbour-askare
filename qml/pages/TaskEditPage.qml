@@ -9,8 +9,10 @@ Dialog {
     property string summary
     property string description
     property string dueDate
+    property string dueTime
     property int priority: 0
     property int percent: 0
+    property int reminder: -1
     property bool listIndexReady: false
 
     function dueAsDate() {
@@ -33,6 +35,27 @@ Dialog {
         dialog.accepted.connect(function() { page.applyDue(dialog) })
     }
 
+    function applyDueTime(dialog) {
+        var hour = dialog.hour < 10 ? "0" + dialog.hour : dialog.hour
+        var minute = dialog.minute < 10 ? "0" + dialog.minute : dialog.minute
+        page.dueTime = hour + ":" + minute
+    }
+
+    function pickDueTime() {
+        var parts = page.dueTime === "" ? ["9", "0"] : page.dueTime.split(":")
+        var dialog = pageStack.push("Sailfish.Silica.TimePickerDialog", {
+                                        "hour": Number(parts[0]),
+                                        "minute": Number(parts[1])
+                                    })
+        dialog.accepted.connect(function() { page.applyDueTime(dialog) })
+    }
+
+    function clearDue() {
+        page.dueDate = ""
+        page.dueTime = ""
+        page.reminder = -1
+    }
+
     function chosenCalendar() {
         if (page.href !== "" && page.calendarHref !== "")
             return page.calendarHref
@@ -51,12 +74,17 @@ Dialog {
         page.summary = summaryField.text
         page.description = notesField.text
         Askare.saveTask(page.href, page.chosenCalendar(), page.summary, page.description,
-                        page.dueDate, page.priority, page.percent)
+                        page.dueDate, page.dueTime, page.priority, page.percent,
+                        page.reminder)
     }
 
     allowedOrientations: Orientation.All
     canAccept: page.chosenCalendar() !== "" && summaryField.text.length > 0
     onAccepted: page.save()
+
+    ReminderOptions {
+        id: reminderOptions
+    }
 
     SilicaFlickable {
         anchors.fill: parent
@@ -141,11 +169,47 @@ Dialog {
                 onClicked: page.pickDue()
             }
 
+            ValueButton {
+                width: parent.width
+                enabled: page.dueDate !== ""
+                label: qsTr("Time")
+                value: page.dueTime === "" ? qsTr("All day") : page.dueTime
+                onClicked: page.pickDueTime()
+            }
+
+            ComboBox {
+                // Guards the task's reminder while the menu is still building.
+                property bool ready: false
+
+                width: parent.width
+                enabled: page.dueDate !== ""
+                label: qsTr("Reminder")
+                description: enabled ? qsTr("Alerts while Askare is running.")
+                                     : qsTr("Set a due date first.")
+                Component.onCompleted: {
+                    currentIndex = reminderOptions.indexOf(page.reminder)
+                    ready = true
+                }
+                onCurrentIndexChanged: {
+                    if (ready && currentIndex >= 0)
+                        page.reminder = reminderOptions.values[currentIndex]
+                }
+
+                menu: ContextMenu {
+                    Repeater {
+                        model: reminderOptions.values
+                        MenuItem {
+                            text: reminderOptions.labelFor(modelData)
+                        }
+                    }
+                }
+            }
+
             Button {
                 anchors.horizontalCenter: parent.horizontalCenter
                 visible: page.dueDate !== ""
                 text: qsTr("Clear due date")
-                onClicked: page.dueDate = ""
+                onClicked: page.clearDue()
             }
 
             TextArea {
