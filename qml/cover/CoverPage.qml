@@ -11,8 +11,8 @@ CoverBackground {
         // much of the cover it takes.
         sourceSize.width: parent.width * 0.85
 
-        // Only the tail of the short arm and the bottom of the turn are cut
-        // off, so the tick still reads as a tick while sitting in the corner.
+        // The tip of the long arm and the point of the turn cross the edges, so
+        // the tick sits into the corner rather than floating inside it.
         anchors {
             right: parent.right
             rightMargin: -width * 0.08
