@@ -7,6 +7,7 @@ struct CalendarInfo
 {
     QString href;
     QString displayName;
+    QString color;
     QString ctag;
     QString syncToken;
     bool allowsTodos;

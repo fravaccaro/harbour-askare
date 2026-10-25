@@ -122,6 +122,8 @@ bool Store::migrate()
                        "priority INTEGER,"
                        "dirty INTEGER DEFAULT 0,"
                        "deleted INTEGER DEFAULT 0)"));
+    // Older databases predate the color column; adding it fails harmlessly when present.
+    query.exec(QStringLiteral("ALTER TABLE calendars ADD COLUMN color TEXT"));
     return calendars && tasks;
 }
 
@@ -134,12 +136,13 @@ void Store::replaceCalendars(const QVector<CalendarInfo> &calendars)
     clear.exec(QStringLiteral("DELETE FROM calendars"));
     QSqlQuery query(m_db);
     query.prepare(QStringLiteral("INSERT INTO calendars"
-                                 "(href, display_name, ctag, sync_token)"
-                                 " VALUES (:href, :name, :ctag, :token)"));
+                                 "(href, display_name, color, ctag, sync_token)"
+                                 " VALUES (:href, :name, :color, :ctag, :token)"));
     for (const CalendarInfo &info : calendars) {
         query.bindValue(QStringLiteral(":href"), Url::pathWithSlash(info.href));
         query.bindValue(QStringLiteral(":name"),
                         info.displayName.isEmpty() ? tr("Tasks") : info.displayName);
+        query.bindValue(QStringLiteral(":color"), info.color);
         query.bindValue(QStringLiteral(":ctag"), info.ctag);
         query.bindValue(QStringLiteral(":token"), info.syncToken);
         query.exec();
@@ -153,14 +156,15 @@ QVector<CalendarInfo> Store::calendars() const
         return out;
 
     QSqlQuery query(m_db);
-    query.exec(QStringLiteral("SELECT href, display_name, ctag, sync_token FROM calendars"
-                              " ORDER BY display_name COLLATE NOCASE"));
+    query.exec(QStringLiteral("SELECT href, display_name, color, ctag, sync_token"
+                              " FROM calendars ORDER BY display_name COLLATE NOCASE"));
     while (query.next()) {
         CalendarInfo info;
         info.href = query.value(0).toString();
         info.displayName = query.value(1).toString();
-        info.ctag = query.value(2).toString();
-        info.syncToken = query.value(3).toString();
+        info.color = query.value(2).toString();
+        info.ctag = query.value(3).toString();
+        info.syncToken = query.value(4).toString();
         info.allowsTodos = true;
         out.append(info);
     }
@@ -253,6 +257,17 @@ int Store::openCount() const
     QSqlQuery query(m_db);
     query.exec(QStringLiteral("SELECT COUNT(*) FROM tasks WHERE deleted = 0"
                               " AND status != 'COMPLETED'"));
+    return query.next() ? query.value(0).toInt() : 0;
+}
+
+int Store::completedCount() const
+{
+    if (!isOpen())
+        return 0;
+
+    QSqlQuery query(m_db);
+    query.exec(QStringLiteral("SELECT COUNT(*) FROM tasks WHERE deleted = 0"
+                              " AND status = 'COMPLETED'"));
     return query.next() ? query.value(0).toInt() : 0;
 }
 

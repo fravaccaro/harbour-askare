@@ -23,6 +23,7 @@ SOURCES += \
     src/askare/httpclient.cpp \
     src/askare/ics.cpp \
     src/askare/loginflow.cpp \
+    src/askare/markdown.cpp \
     src/askare/secretsstore.cpp \
     src/askare/session.cpp \
     src/askare/store.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
     src/askare/httpclient.h \
     src/askare/ics.h \
     src/askare/loginflow.h \
+    src/askare/markdown.h \
     src/askare/secretsstore.h \
     src/askare/session.h \
     src/askare/store.h \
@@ -58,10 +60,13 @@ DISTFILES += \
     qml/harbour-askare.qml \
     qml/cover/CoverPage.qml \
     qml/pages/AboutPage.qml \
+    qml/pages/FilterItem.qml \
     qml/pages/ListsPage.qml \
     qml/pages/LoginPage.qml \
+    qml/pages/PriorityTag.qml \
     qml/pages/SettingsPage.qml \
     qml/pages/StartPage.qml \
+    qml/pages/TaskDetailPage.qml \
     qml/pages/TaskEditPage.qml \
     qml/pages/TasksPage.qml \
     qml/pages/WebLoginPage.qml \

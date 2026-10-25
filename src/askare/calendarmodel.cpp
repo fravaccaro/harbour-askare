@@ -25,6 +25,7 @@ QHash<int, QByteArray> CalendarModel::roleNames() const
     QHash<int, QByteArray> roles;
     roles.insert(HrefRole, "href");
     roles.insert(DisplayNameRole, "displayName");
+    roles.insert(ColorRole, "color");
     roles.insert(OpenCountRole, "openCount");
     return roles;
 }
@@ -39,6 +40,8 @@ QVariant CalendarModel::data(const QModelIndex &index, int role) const
         return info.href;
     if (role == DisplayNameRole)
         return info.displayName;
+    if (role == ColorRole)
+        return info.color;
     if (role == OpenCountRole) {
         int count = 0;
         const QVector<LocalTask> tasks = m_store->tasks(info.href);

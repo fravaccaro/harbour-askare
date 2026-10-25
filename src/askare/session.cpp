@@ -2,6 +2,7 @@
 
 #include "calendarmodel.h"
 #include "ics.h"
+#include "markdown.h"
 #include "taskmodel.h"
 #include "url.h"
 
@@ -86,6 +87,11 @@ int Session::openCount() const
 int Session::currentCount() const
 {
     return m_store->isOpen() ? m_store->currentCount() : 0;
+}
+
+int Session::completedCount() const
+{
+    return m_store->isOpen() ? m_store->completedCount() : 0;
 }
 
 QString Session::nextDueSummary() const
@@ -362,4 +368,9 @@ void Session::toggleDone(const QString &href)
     const int percent = Ics::isCompleted(task.status) ? 0 : 100;
     saveTask(task.href, task.calendarHref, task.summary, task.description,
              Ics::dateFromDue(task.due), task.priority, percent);
+}
+
+QString Session::renderNotes(const QString &markdown) const
+{
+    return Markdown::toHtml(markdown);
 }

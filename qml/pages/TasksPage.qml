@@ -68,7 +68,7 @@ Page {
             id: delegate
 
             contentHeight: Theme.itemSizeMedium
-            onClicked: pageStack.push(Qt.resolvedUrl("TaskEditPage.qml"), {
+            onClicked: pageStack.push(Qt.resolvedUrl("TaskDetailPage.qml"), {
                                           "href": href,
                                           "calendarHref": calendarHref,
                                           "summary": summary,

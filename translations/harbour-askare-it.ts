@@ -97,6 +97,14 @@
         <source>Sync</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Completed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Task lists</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LoginFlow</name>
@@ -145,6 +153,25 @@
     </message>
     <message>
         <source>The server opens inside the app. Sign in as you would in a browser. Askare then keeps the password the server creates.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PriorityTag</name>
+    <message>
+        <source>High</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Medium</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Low</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No priority</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -228,6 +255,37 @@
     </message>
 </context>
 <context>
+    <name>TaskDetailPage</name>
+    <message>
+        <source>Deleting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mark open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mark done</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Due %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Completion</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>TaskEditPage</name>
     <message>
         <source>Save</source>
@@ -243,10 +301,6 @@
     </message>
     <message>
         <source>Title</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Completed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -266,23 +320,19 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>High</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Normal</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Low</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>List</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add task</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Completion</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -294,6 +344,10 @@
     </message>
     <message>
         <source>All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Completed</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

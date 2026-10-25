@@ -19,11 +19,13 @@ const QByteArray HomeBody =
 
 const QByteArray ListBody =
         "<d:propfind xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\""
-        " xmlns:cs=\"http://calendarserver.org/ns/\">"
+        " xmlns:cs=\"http://calendarserver.org/ns/\""
+        " xmlns:a=\"http://apple.com/ns/ical/\">"
         "<d:prop>"
         "<d:displayname/>"
         "<d:resourcetype/>"
         "<c:supported-calendar-component-set/>"
+        "<a:calendar-color/>"
         "<cs:getctag/>"
         "<d:sync-token/>"
         "</d:prop>"

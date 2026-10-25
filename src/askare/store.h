@@ -29,6 +29,7 @@ public:
     LocalTask task(const QString &href) const;
     int openCount() const;
     int currentCount() const;
+    int completedCount() const;
     LocalTask nextOpen() const;
 
     void upsertLocal(const LocalTask &task);

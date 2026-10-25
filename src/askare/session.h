@@ -28,6 +28,7 @@ class Session : public QObject
                NOTIFY ignoreSslErrorsChanged)
     Q_PROPERTY(int openCount READ openCount NOTIFY coverChanged)
     Q_PROPERTY(int currentCount READ currentCount NOTIFY coverChanged)
+    Q_PROPERTY(int completedCount READ completedCount NOTIFY coverChanged)
     Q_PROPERTY(QString nextDueSummary READ nextDueSummary NOTIFY coverChanged)
 
 public:
@@ -44,6 +45,7 @@ public:
     bool ignoreSslErrors() const;
     int openCount() const;
     int currentCount() const;
+    int completedCount() const;
     QString nextDueSummary() const;
 
     Q_INVOKABLE void startLogin(const QString &serverUrl);
@@ -56,6 +58,7 @@ public:
                               const QString &dueDate, int priority, int percent);
     Q_INVOKABLE void deleteTask(const QString &href);
     Q_INVOKABLE void toggleDone(const QString &href);
+    Q_INVOKABLE QString renderNotes(const QString &markdown) const;
 
 signals:
     void readyChanged();

@@ -15,6 +15,16 @@ QVector<LocalTask> currentOf(const QVector<LocalTask> &tasks)
     return out;
 }
 
+QVector<LocalTask> completedOf(const QVector<LocalTask> &tasks)
+{
+    QVector<LocalTask> out;
+    for (const LocalTask &task : tasks) {
+        if (Ics::isCompleted(task.status))
+            out.append(task);
+    }
+    return out;
+}
+
 }
 
 TaskModel::TaskModel(Store *store, QObject *parent)
@@ -28,6 +38,8 @@ QString TaskModel::title() const
 {
     if (m_filter == QLatin1String("current"))
         return tr("Current");
+    if (m_filter == QLatin1String("completed"))
+        return tr("Completed");
     if (m_filter == QLatin1String("calendar"))
         return m_calendarName;
     return tr("All");
@@ -41,6 +53,11 @@ void TaskModel::showAll()
 void TaskModel::showCurrent()
 {
     apply(QStringLiteral("current"), QString(), QString());
+}
+
+void TaskModel::showCompleted()
+{
+    apply(QStringLiteral("completed"), QString(), QString());
 }
 
 void TaskModel::showCalendar(const QString &href, const QString &name)
@@ -126,6 +143,8 @@ void TaskModel::reload()
     beginResetModel();
     if (m_filter == QLatin1String("current"))
         m_items = currentOf(m_store->tasks());
+    else if (m_filter == QLatin1String("completed"))
+        m_items = completedOf(m_store->tasks());
     else if (m_filter == QLatin1String("calendar"))
         m_items = m_store->tasks(m_calendarHref);
     else

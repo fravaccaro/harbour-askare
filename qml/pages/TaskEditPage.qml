@@ -47,11 +47,16 @@ Dialog {
         page.listIndexReady = true
     }
 
+    function save() {
+        page.summary = summaryField.text
+        page.description = notesField.text
+        Askare.saveTask(page.href, page.chosenCalendar(), page.summary, page.description,
+                        page.dueDate, page.priority, page.percent)
+    }
+
     allowedOrientations: Orientation.All
     canAccept: page.chosenCalendar() !== "" && summaryField.text.length > 0
-    onAccepted: Askare.saveTask(page.href, page.chosenCalendar(), summaryField.text,
-                                notesField.text, page.dueDate, page.priority,
-                                page.percent)
+    onAccepted: page.save()
 
     SilicaFlickable {
         anchors.fill: parent
@@ -112,13 +117,19 @@ Dialog {
                 onValueChanged: page.percent = value
             }
 
+            PriorityTag {
+                id: priorityBands
+
+                visible: false
+            }
+
             Slider {
                 width: parent.width
                 label: qsTr("Priority")
                 minimumValue: 0
                 maximumValue: 9
                 stepSize: 1
-                valueText: value === 0 ? qsTr("None") : value
+                valueText: priorityBands.labelFor(value)
                 Component.onCompleted: value = page.priority
                 onValueChanged: page.priority = value
             }

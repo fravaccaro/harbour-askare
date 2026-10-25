@@ -14,6 +14,11 @@ Page {
         pageStack.navigateBack()
     }
 
+    function selectCompleted() {
+        Tasks.showCompleted()
+        pageStack.navigateBack()
+    }
+
     function selectCalendar(href, name) {
         Tasks.showCalendar(href, name)
         pageStack.navigateBack()
@@ -34,62 +39,32 @@ Page {
                 title: qsTr("Lists")
             }
 
-            ListItem {
-                id: allItem
-
+            FilterItem {
                 width: parent.width
-                contentHeight: Theme.itemSizeMedium
+                name: qsTr("All")
+                count: Askare.openCount
+                selected: Tasks.filter === "all"
                 onClicked: page.selectAll()
-
-                Label {
-                    x: Theme.horizontalPageMargin
-                    width: parent.width - 2 * Theme.horizontalPageMargin
-                    anchors.verticalCenter: parent.verticalCenter
-                    truncationMode: TruncationMode.Fade
-                    color: Tasks.filter === "all" || allItem.highlighted
-                           ? Theme.highlightColor : Theme.primaryColor
-                    text: qsTr("All")
-                }
-
-                Label {
-                    anchors {
-                        right: parent.right
-                        rightMargin: Theme.horizontalPageMargin
-                        verticalCenter: parent.verticalCenter
-                    }
-                    color: Theme.secondaryColor
-                    font.pixelSize: Theme.fontSizeSmall
-                    text: Askare.openCount
-                }
             }
 
-            ListItem {
-                id: currentItem
-
+            FilterItem {
                 width: parent.width
-                contentHeight: Theme.itemSizeMedium
+                name: qsTr("Current")
+                count: Askare.currentCount
+                selected: Tasks.filter === "current"
                 onClicked: page.selectCurrent()
+            }
 
-                Label {
-                    x: Theme.horizontalPageMargin
-                    width: parent.width - 2 * Theme.horizontalPageMargin
-                    anchors.verticalCenter: parent.verticalCenter
-                    truncationMode: TruncationMode.Fade
-                    color: Tasks.filter === "current" || currentItem.highlighted
-                           ? Theme.highlightColor : Theme.primaryColor
-                    text: qsTr("Current")
-                }
+            FilterItem {
+                width: parent.width
+                name: qsTr("Completed")
+                count: Askare.completedCount
+                selected: Tasks.filter === "completed"
+                onClicked: page.selectCompleted()
+            }
 
-                Label {
-                    anchors {
-                        right: parent.right
-                        rightMargin: Theme.horizontalPageMargin
-                        verticalCenter: parent.verticalCenter
-                    }
-                    color: Theme.secondaryColor
-                    font.pixelSize: Theme.fontSizeSmall
-                    text: Askare.currentCount
-                }
+            SectionHeader {
+                text: qsTr("Task lists")
             }
         }
 
@@ -118,21 +93,43 @@ Page {
         delegate: ListItem {
             id: delegate
 
-            contentHeight: Theme.itemSizeMedium
+            readonly property bool selected: Tasks.filter === "calendar"
+                                             && Tasks.calendarHref === href
+
+            contentHeight: Theme.itemSizeSmall
             onClicked: page.selectCalendar(href, displayName)
 
+            Rectangle {
+                id: colorDot
+
+                width: Theme.fontSizeMedium
+                height: width
+                radius: width / 2
+                anchors {
+                    left: parent.left
+                    leftMargin: Theme.horizontalPageMargin
+                    verticalCenter: parent.verticalCenter
+                }
+                color: model.color !== "" ? model.color : Theme.secondaryColor
+            }
+
             Label {
-                x: Theme.horizontalPageMargin
-                width: parent.width - 2 * Theme.horizontalPageMargin
-                anchors.verticalCenter: parent.verticalCenter
+                anchors {
+                    left: colorDot.right
+                    leftMargin: Theme.paddingMedium
+                    right: countLabel.left
+                    rightMargin: Theme.paddingMedium
+                    verticalCenter: parent.verticalCenter
+                }
                 truncationMode: TruncationMode.Fade
-                    color: (Tasks.filter === "calendar" && Tasks.calendarHref === href)
-                           || delegate.highlighted
-                           ? Theme.highlightColor : Theme.primaryColor
+                color: delegate.selected || delegate.highlighted
+                       ? Theme.highlightColor : Theme.primaryColor
                 text: displayName
             }
 
             Label {
+                id: countLabel
+
                 anchors {
                     right: parent.right
                     rightMargin: Theme.horizontalPageMargin

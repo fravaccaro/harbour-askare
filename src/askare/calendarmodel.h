@@ -18,6 +18,7 @@ public:
     enum Roles {
         HrefRole = Qt::UserRole + 1,
         DisplayNameRole,
+        ColorRole,
         OpenCountRole
     };
 

@@ -15,6 +15,16 @@ QString readText(QXmlStreamReader *reader)
     return reader->readElementText(QXmlStreamReader::IncludeChildElements).trimmed();
 }
 
+QString normalizedColor(const QString &value)
+{
+    QString color = value.trimmed();
+    if (!color.startsWith(QLatin1Char('#')))
+        return QString();
+    if (color.size() >= 9)
+        color = color.left(7);
+    return color.size() == 7 ? color : QString();
+}
+
 QString readHref(QXmlStreamReader *reader)
 {
     while (!reader->atEnd()) {
@@ -42,6 +52,8 @@ void readResponse(QXmlStreamReader *reader, QVector<CalendarInfo> *out)
             info.href = QUrl::fromPercentEncoding(readText(reader).toUtf8());
         else if (localIs(*reader, "displayname"))
             info.displayName = readText(reader);
+        else if (localIs(*reader, "calendar-color"))
+            info.color = normalizedColor(readText(reader));
         else if (localIs(*reader, "getctag"))
             info.ctag = readText(reader);
         else if (localIs(*reader, "sync-token"))
