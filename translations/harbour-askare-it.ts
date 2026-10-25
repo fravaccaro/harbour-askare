@@ -207,6 +207,38 @@
     </message>
 </context>
 <context>
+    <name>ReminderOptions</name>
+    <message>
+        <source>No reminder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>At the due time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>%n day(s) before</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>%n hour(s) before</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>%n minute(s) before</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>Session</name>
     <message>
         <source>Choose a list for the task.</source>
@@ -374,6 +406,26 @@
         <source>Completion</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All day</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reminder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alerts while Askare is running.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set a due date first.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TaskModel</name>
@@ -437,6 +489,17 @@
     <name>WebLoginPage</name>
     <message>
         <source>Sign in as you would in a browser. Askare waits for the server to grant access.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>harbour-askare</name>
+    <message>
+        <source>Task reminder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Due %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

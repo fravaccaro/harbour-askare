@@ -1,3 +1,11 @@
+---
+layout: default
+title: Home
+nav_order: 1
+description: "A native Nextcloud Tasks client for Sailfish OS"
+permalink: /
+---
+
 # Askare
 
 A Nextcloud task client for Sailfish OS. Sign in with the server address, finish
@@ -5,6 +13,17 @@ the login in the app, then work through CalDAV task lists on the device.
 
 Askare does not use the Nextcloud account already in Settings. The system
 calendar only syncs events, so this app keeps its own copy of the tasks.
+
+[![GitHub license](https://img.shields.io/github/license/fravaccaro/harbour-askare.svg)](https://github.com/fravaccaro/harbour-askare/blob/main/LICENSE) [![GitHub issues](https://img.shields.io/github/issues/fravaccaro/harbour-askare.svg)](https://github.com/fravaccaro/harbour-askare/issues) [![GitHub releases](https://img.shields.io/github/release/fravaccaro/harbour-askare.svg)](https://github.com/fravaccaro/harbour-askare/releases/latest)
+
+## Donate
+
+The SailfishOS Community Team is on Liberapay:
+
+[![Liberapay receiving](https://img.shields.io/liberapay/receives/SailfishOScommunityTeam?logo=liberapay&label=SailfishOSCommunity)](https://liberapay.com/SailfishOScommunityTeam)
+
+[![Liberapay receiving](https://img.shields.io/liberapay/receives/fravaccaro?logo=liberapay&label=fravaccaro)](https://liberapay.com/fravaccaro)
+
 
 ## Sign in
 
