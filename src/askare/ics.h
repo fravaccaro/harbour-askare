@@ -21,6 +21,7 @@ QString newUid();
 QString dueFromDate(const QString &isoDate);
 QString dateFromDue(const QString &due);
 bool isCompleted(const QString &status);
+bool isCurrent(const QString &status, const QString &due);
 
 }
 

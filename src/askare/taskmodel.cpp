@@ -3,19 +3,62 @@
 #include "ics.h"
 #include "store.h"
 
+namespace {
+
+QVector<LocalTask> currentOf(const QVector<LocalTask> &tasks)
+{
+    QVector<LocalTask> out;
+    for (const LocalTask &task : tasks) {
+        if (Ics::isCurrent(task.status, task.due))
+            out.append(task);
+    }
+    return out;
+}
+
+}
+
 TaskModel::TaskModel(Store *store, QObject *parent)
     : QAbstractListModel(parent)
     , m_store(store)
+    , m_filter(QStringLiteral("all"))
 {
 }
 
-void TaskModel::setCalendarHref(const QString &href)
+QString TaskModel::title() const
 {
-    if (href == m_calendarHref)
-        return;
+    if (m_filter == QLatin1String("current"))
+        return tr("Current");
+    if (m_filter == QLatin1String("calendar"))
+        return m_calendarName;
+    return tr("All");
+}
 
+void TaskModel::showAll()
+{
+    apply(QStringLiteral("all"), QString(), QString());
+}
+
+void TaskModel::showCurrent()
+{
+    apply(QStringLiteral("current"), QString(), QString());
+}
+
+void TaskModel::showCalendar(const QString &href, const QString &name)
+{
+    apply(QStringLiteral("calendar"), href, name);
+}
+
+void TaskModel::apply(const QString &filter, const QString &href, const QString &name)
+{
+    const bool same = filter == m_filter && href == m_calendarHref && name == m_calendarName;
+    m_filter = filter;
     m_calendarHref = href;
-    emit calendarHrefChanged();
+    m_calendarName = name;
+    if (!same) {
+        emit filterChanged();
+        emit calendarHrefChanged();
+        emit titleChanged();
+    }
     reload();
 }
 
@@ -78,6 +121,11 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
 void TaskModel::reload()
 {
     beginResetModel();
-    m_items = m_store->tasks(m_calendarHref);
+    if (m_filter == QLatin1String("current"))
+        m_items = currentOf(m_store->tasks());
+    else if (m_filter == QLatin1String("calendar"))
+        m_items = m_store->tasks(m_calendarHref);
+    else
+        m_items = m_store->tasks();
     endResetModel();
 }

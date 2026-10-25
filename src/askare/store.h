@@ -28,6 +28,7 @@ public:
     QVector<LocalTask> dirtyTasks() const;
     LocalTask task(const QString &href) const;
     int openCount() const;
+    int currentCount() const;
     LocalTask nextOpen() const;
 
     void upsertLocal(const LocalTask &task);

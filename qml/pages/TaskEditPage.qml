@@ -32,8 +32,14 @@ Page {
         dialog.accepted.connect(function() { page.applyDue(dialog) })
     }
 
+    function chosenCalendar() {
+        if (page.calendarHref !== "")
+            return page.calendarHref
+        return Calendars.hrefAt(listBox.currentIndex)
+    }
+
     function save() {
-        Askare.saveTask(page.href, page.calendarHref, summaryField.text,
+        Askare.saveTask(page.href, page.chosenCalendar(), summaryField.text,
                         notesField.text, page.dueDate, page.priority, page.done)
         pageStack.pop()
     }
@@ -58,6 +64,23 @@ Page {
 
             PageHeader {
                 title: page.href === "" ? qsTr("New task") : qsTr("Task")
+            }
+
+            ComboBox {
+                id: listBox
+
+                width: parent.width
+                visible: page.href === "" && page.calendarHref === ""
+                label: qsTr("List")
+
+                menu: ContextMenu {
+                    Repeater {
+                        model: Calendars
+                        MenuItem {
+                            text: displayName
+                        }
+                    }
+                }
             }
 
             TextField {

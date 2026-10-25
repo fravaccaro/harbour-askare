@@ -21,33 +21,6 @@
     </message>
 </context>
 <context>
-    <name>CalendarsPage</name>
-    <message>
-        <source>Askare</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No task lists</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pull down to sync with the server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>About</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sync</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>CoverPage</name>
     <message>
         <source>Askare</source>
@@ -87,6 +60,41 @@
     </message>
     <message>
         <source>The task could not be deleted (%1).</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ListsPage</name>
+    <message>
+        <source>Lists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Current</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No task lists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pull down to sync with the server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>About</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sync</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -260,6 +268,21 @@
     </message>
     <message>
         <source>Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>List</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TaskModel</name>
+    <message>
+        <source>Current</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -27,6 +27,7 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     void reload();
+    Q_INVOKABLE QString hrefAt(int row) const;
 
 private:
     Store *m_store;

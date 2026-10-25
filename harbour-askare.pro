@@ -58,7 +58,7 @@ DISTFILES += \
     qml/harbour-askare.qml \
     qml/cover/CoverPage.qml \
     qml/pages/AboutPage.qml \
-    qml/pages/CalendarsPage.qml \
+    qml/pages/ListsPage.qml \
     qml/pages/LoginPage.qml \
     qml/pages/SettingsPage.qml \
     qml/pages/StartPage.qml \

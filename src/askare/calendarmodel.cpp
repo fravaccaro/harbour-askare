@@ -51,3 +51,10 @@ void CalendarModel::reload()
     m_items = m_store->calendars();
     endResetModel();
 }
+
+QString CalendarModel::hrefAt(int row) const
+{
+    if (row < 0 || row >= m_items.size())
+        return QString();
+    return m_items.at(row).href;
+}

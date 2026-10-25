@@ -27,6 +27,7 @@ class Session : public QObject
     Q_PROPERTY(bool ignoreSslErrors READ ignoreSslErrors WRITE setIgnoreSslErrors
                NOTIFY ignoreSslErrorsChanged)
     Q_PROPERTY(int openCount READ openCount NOTIFY coverChanged)
+    Q_PROPERTY(int currentCount READ currentCount NOTIFY coverChanged)
     Q_PROPERTY(QString nextDueSummary READ nextDueSummary NOTIFY coverChanged)
 
 public:
@@ -42,6 +43,7 @@ public:
     QString serverUrl() const;
     bool ignoreSslErrors() const;
     int openCount() const;
+    int currentCount() const;
     QString nextDueSummary() const;
 
     Q_INVOKABLE void startLogin(const QString &serverUrl);

@@ -229,6 +229,20 @@ int Store::openCount() const
     return query.next() ? query.value(0).toInt() : 0;
 }
 
+int Store::currentCount() const
+{
+    if (!isOpen())
+        return 0;
+
+    int count = 0;
+    const QVector<LocalTask> items = tasks();
+    for (const LocalTask &task : items) {
+        if (Ics::isCurrent(task.status, task.due))
+            ++count;
+    }
+    return count;
+}
+
 LocalTask Store::nextOpen() const
 {
     if (!isOpen())

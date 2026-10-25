@@ -10,10 +10,10 @@ ApplicationWindow {
             navigateAgain.restart()
             return
         }
-        pageStack.replaceAbove(null, Askare.configured ? calendarsPage : loginPage)
+        pageStack.replaceAbove(null, Askare.configured ? tasksPage : loginPage)
     }
 
-    initialPage: Askare.ready ? (Askare.configured ? calendarsPage : loginPage) : startPage
+    initialPage: Askare.ready ? (Askare.configured ? tasksPage : loginPage) : startPage
     cover: Qt.resolvedUrl("cover/CoverPage.qml")
     allowedOrientations: defaultAllowedOrientations
 
@@ -39,9 +39,9 @@ ApplicationWindow {
     }
 
     Component {
-        id: calendarsPage
+        id: tasksPage
 
-        CalendarsPage {
+        TasksPage {
         }
     }
 

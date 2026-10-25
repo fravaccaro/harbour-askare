@@ -69,6 +69,11 @@ int Session::openCount() const
     return m_store->isOpen() ? m_store->openCount() : 0;
 }
 
+int Session::currentCount() const
+{
+    return m_store->isOpen() ? m_store->currentCount() : 0;
+}
+
 QString Session::nextDueSummary() const
 {
     return m_store->isOpen() ? m_store->nextOpen().summary : QString();
@@ -138,6 +143,7 @@ void Session::logout()
     cancelLogin();
     m_store->clear();
     m_config->clearCredentials();
+    m_tasks->showAll();
     reloadModels();
 }
 

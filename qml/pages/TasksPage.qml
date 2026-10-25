@@ -4,13 +4,10 @@ import Sailfish.Silica 1.0
 Page {
     id: page
 
-    property string calendarHref
-    property string calendarName
-
     allowedOrientations: Orientation.All
     onStatusChanged: {
-        if (status === PageStatus.Activating)
-            Tasks.calendarHref = page.calendarHref
+        if (status === PageStatus.Active && pageStack.nextPage() === null)
+            pageStack.pushAttached(Qt.resolvedUrl("ListsPage.qml"))
     }
 
     SilicaListView {
@@ -24,7 +21,7 @@ Page {
         }
 
         header: PageHeader {
-            title: page.calendarName
+            title: Tasks.title
         }
 
         ViewPlaceholder {
@@ -40,9 +37,10 @@ Page {
                 onClicked: Askare.sync()
             }
             MenuItem {
+                enabled: Calendars.count > 0
                 text: qsTr("New task")
                 onClicked: pageStack.push(Qt.resolvedUrl("TaskEditPage.qml"), {
-                                              "calendarHref": page.calendarHref
+                                              "calendarHref": Tasks.calendarHref
                                           })
             }
         }

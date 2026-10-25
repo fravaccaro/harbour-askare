@@ -1,5 +1,6 @@
 #include "ics.h"
 
+#include <QDate>
 #include <QDateTime>
 #include <QStringList>
 #include <QUuid>
@@ -266,6 +267,17 @@ QString dateFromDue(const QString &due)
 bool isCompleted(const QString &status)
 {
     return status.compare(QLatin1String("COMPLETED"), Qt::CaseInsensitive) == 0;
+}
+
+bool isCurrent(const QString &status, const QString &due)
+{
+    if (isCompleted(status))
+        return false;
+    if (due.isEmpty())
+        return true;
+
+    const QString today = QDate::currentDate().toString(QStringLiteral("yyyyMMdd"));
+    return due.left(8) <= today;
 }
 
 }

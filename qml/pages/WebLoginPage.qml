@@ -16,7 +16,7 @@ Page {
 
     Connections {
         target: Askare
-        onLoginSucceeded: pageStack.replaceAbove(null, Qt.resolvedUrl("CalendarsPage.qml"))
+        onLoginSucceeded: pageStack.replaceAbove(null, Qt.resolvedUrl("TasksPage.qml"))
         onLoginFailed: page.errorMessage = error
     }
 
