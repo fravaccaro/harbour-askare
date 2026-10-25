@@ -50,7 +50,8 @@ QString taskColumns()
 {
     return QStringLiteral("SELECT href, calendar_href, uid, etag, ics, summary,"
                           " description, status, completed, due, priority,"
-                          " reminder, reminded_for, dirty, deleted FROM tasks");
+                          " reminder, reminded_for, parent_uid, dirty, deleted"
+                          " FROM tasks");
 }
 
 // Open tasks come before completed ones: the task list groups by that flag, and
@@ -58,6 +59,15 @@ QString taskColumns()
 // above, so an order that interleaves the two would scatter the headers. The
 // comparison is case-insensitive to match Ics::isCompleted(). Within a group a
 // missing due date sorts last, so dated tasks lead and undated ones trail.
+// A task sits at the top when it names no parent, or names one that is not
+// here, so an orphan surfaces instead of vanishing with its missing parent.
+QString topLevelClause()
+{
+    return QStringLiteral(" AND (parent_uid IS NULL OR parent_uid = ''"
+                          " OR parent_uid NOT IN"
+                          " (SELECT uid FROM tasks WHERE deleted = 0))");
+}
+
 QString taskOrder()
 {
     return QStringLiteral(" ORDER BY upper(status) = 'COMPLETED',"
@@ -79,6 +89,7 @@ void bindTask(QSqlQuery *query, const LocalTask &task)
     query->bindValue(QStringLiteral(":priority"), task.priority);
     query->bindValue(QStringLiteral(":reminder"), task.reminder);
     query->bindValue(QStringLiteral(":reminded"), task.remindedFor);
+    query->bindValue(QStringLiteral(":parent"), task.parentUid);
     query->bindValue(QStringLiteral(":dirty"), task.dirty ? 1 : 0);
     query->bindValue(QStringLiteral(":deleted"), task.deleted ? 1 : 0);
 }
@@ -143,12 +154,14 @@ bool Store::migrate()
                        "priority INTEGER,"
                        "reminder INTEGER DEFAULT -1,"
                        "reminded_for TEXT,"
+                       "parent_uid TEXT,"
                        "dirty INTEGER DEFAULT 0,"
                        "deleted INTEGER DEFAULT 0)"));
     // Older databases predate these columns; adding one fails harmlessly when present.
     query.exec(QStringLiteral("ALTER TABLE calendars ADD COLUMN color TEXT"));
     query.exec(QStringLiteral("ALTER TABLE tasks ADD COLUMN reminder INTEGER DEFAULT -1"));
     query.exec(QStringLiteral("ALTER TABLE tasks ADD COLUMN reminded_for TEXT"));
+    query.exec(QStringLiteral("ALTER TABLE tasks ADD COLUMN parent_uid TEXT"));
     return calendars && tasks;
 }
 
@@ -214,29 +227,84 @@ LocalTask Store::readTask(const QSqlQuery &query) const
     task.priority = query.value(10).toInt();
     task.reminder = query.value(11).isNull() ? -1 : query.value(11).toInt();
     task.remindedFor = query.value(12).toString();
-    task.dirty = query.value(13).toInt() != 0;
-    task.deleted = query.value(14).toInt() != 0;
+    task.parentUid = query.value(13).toString();
+    task.dirty = query.value(14).toInt() != 0;
+    task.deleted = query.value(15).toInt() != 0;
     return task;
 }
 
-QVector<LocalTask> Store::tasks(const QString &calendarHref) const
+QVector<LocalTask> Store::selectTasks(const QString &extra, const QString &calendarHref) const
 {
     QVector<LocalTask> out;
     if (!isOpen())
         return out;
 
     QSqlQuery query(m_db);
+    const QString head = taskColumns() + QStringLiteral(" WHERE deleted = 0") + extra;
     if (calendarHref.isEmpty()) {
-        query.exec(taskColumns() + QStringLiteral(" WHERE deleted = 0") + taskOrder());
+        query.exec(head + taskOrder());
     } else {
-        query.prepare(taskColumns() + QStringLiteral(" WHERE deleted = 0"
-                                                     " AND calendar_href = :calendar")
-                      + taskOrder());
+        query.prepare(head + QStringLiteral(" AND calendar_href = :calendar") + taskOrder());
         query.bindValue(QStringLiteral(":calendar"), calendarHref);
         query.exec();
     }
     while (query.next())
         out.append(readTask(query));
+    return out;
+}
+
+QVector<LocalTask> Store::tasks(const QString &calendarHref) const
+{
+    return selectTasks(QString(), calendarHref);
+}
+
+QVector<LocalTask> Store::topLevelTasks(const QString &calendarHref) const
+{
+    return selectTasks(topLevelClause(), calendarHref);
+}
+
+QVector<LocalTask> Store::children(const QString &parentUid) const
+{
+    if (parentUid.isEmpty())
+        return QVector<LocalTask>();
+
+    QVector<LocalTask> out;
+    if (!isOpen())
+        return out;
+
+    QSqlQuery query(m_db);
+    query.prepare(taskColumns() + QStringLiteral(" WHERE deleted = 0"
+                                                 " AND parent_uid = :parent")
+                  + taskOrder());
+    query.bindValue(QStringLiteral(":parent"), parentUid);
+    query.exec();
+    while (query.next())
+        out.append(readTask(query));
+    return out;
+}
+
+QVector<LocalTask> Store::descendants(const QString &href) const
+{
+    QVector<LocalTask> out;
+    const LocalTask root = task(href);
+    if (root.uid.isEmpty())
+        return out;
+
+    QStringList seen;
+    QStringList pending;
+    seen.append(root.uid);
+    pending.append(root.uid);
+    while (!pending.isEmpty()) {
+        const QVector<LocalTask> next = children(pending.takeFirst());
+        for (const LocalTask &child : next) {
+            // A malformed cycle must not spin here.
+            if (child.uid.isEmpty() || seen.contains(child.uid))
+                continue;
+            seen.append(child.uid);
+            pending.append(child.uid);
+            out.append(child);
+        }
+    }
     return out;
 }
 
@@ -335,6 +403,7 @@ void Store::upsertRemoteTask(const QString &calendarHref, const RemoteTask &remo
     next.due = fields.due;
     next.priority = fields.priority;
     next.reminder = fields.reminder;
+    next.parentUid = fields.parentUid;
     // Keep the notified stamp so a sync does not replay a reminder.
     next.remindedFor = existing.remindedFor;
     next.dirty = false;
@@ -384,10 +453,11 @@ void Store::upsertLocal(const LocalTask &task)
     query.prepare(QStringLiteral("INSERT OR REPLACE INTO tasks"
                                  "(href, calendar_href, uid, etag, ics, summary,"
                                  " description, status, completed, due, priority,"
-                                 " reminder, reminded_for, dirty, deleted)"
+                                 " reminder, reminded_for, parent_uid,"
+                                 " dirty, deleted)"
                                  " VALUES (:href, :calendar, :uid, :etag, :ics,"
                                  " :summary, :description, :status, :completed,"
-                                 " :due, :priority, :reminder, :reminded,"
+                                 " :due, :priority, :reminder, :reminded, :parent,"
                                  " :dirty, :deleted)"));
     bindTask(&query, task);
     query.exec();

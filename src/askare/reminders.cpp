@@ -1,6 +1,7 @@
 #include "reminders.h"
 
 #include <QDateTime>
+#include <QHash>
 #include <QVector>
 
 #include "ics.h"
@@ -35,6 +36,17 @@ QString dueText(const LocalTask &task)
     return time.isEmpty() ? date : date + QLatin1Char(' ') + time;
 }
 
+// Built from the same list the check walks, so naming a parent costs no query.
+QHash<QString, QString> titlesOf(const QVector<LocalTask> &tasks)
+{
+    QHash<QString, QString> out;
+    for (const LocalTask &task : tasks) {
+        if (!task.uid.isEmpty())
+            out.insert(task.uid, task.summary);
+    }
+    return out;
+}
+
 }
 
 Reminders::Reminders(Store *store, QObject *parent)
@@ -56,12 +68,13 @@ void Reminders::check()
 
     const QDateTime now = QDateTime::currentDateTime();
     const QVector<LocalTask> tasks = m_store->tasks();
+    const QHash<QString, QString> titles = titlesOf(tasks);
     for (const LocalTask &task : tasks) {
         const QDateTime moment = Ics::reminderAt(task.due, task.reminder);
         if (!isPending(task, moment, now))
             continue;
 
         m_store->markReminded(task.href, reminderStamp(moment));
-        emit due(task.href, task.summary, dueText(task));
+        emit due(task.href, task.summary, dueText(task), titles.value(task.parentUid));
     }
 }

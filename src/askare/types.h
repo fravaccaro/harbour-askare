@@ -39,6 +39,8 @@ struct LocalTask
     QString status;
     QString completed;
     QString due;
+    // UID of the parent task, empty when the task stands on its own.
+    QString parentUid;
     int priority;
     int percent;
     // Minutes before the due time, or -1 when the task has no reminder.
@@ -66,6 +68,7 @@ struct TodoFields
     QString status;
     QString completed;
     QString due;
+    QString parentUid;
     int priority;
     int percent;
     int reminder;

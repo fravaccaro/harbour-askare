@@ -187,6 +187,7 @@ void Session::reloadModels()
     m_calendars->reload();
     m_tasks->reload();
     emit coverChanged();
+    emit tasksChanged();
 }
 
 void Session::applyCredentials()
@@ -373,29 +374,35 @@ void Session::onDavFailed(const QString &error)
     reloadModels();
 }
 
-LocalTask Session::editedTask(const QString &href, const QString &calendarHref,
-                              const QString &summary, const QString &description,
-                              const QString &dueDate, const QString &dueTime,
-                              int priority, int percent, int reminder) const
+LocalTask Session::editedTask(const QVariantMap &input) const
 {
-    LocalTask task = m_store->task(href);
-    ensureIdentity(&task, calendarHref);
+    const QString dueDate = input.value(QStringLiteral("dueDate")).toString();
+    const int percent = input.value(QStringLiteral("percent")).toInt();
+    LocalTask task = m_store->task(input.value(QStringLiteral("href")).toString());
+    ensureIdentity(&task, input.value(QStringLiteral("calendarHref")).toString());
+
     TodoFields fields = Ics::parse(task.ics);
     fields.uid = task.uid.isEmpty() ? fields.uid : task.uid;
-    fields.summary = summary;
-    fields.description = description;
-    fields.due = dueDate.isEmpty() ? QString() : Ics::dueFromDateTime(dueDate, dueTime);
+    fields.summary = input.value(QStringLiteral("summary")).toString();
+    fields.description = input.value(QStringLiteral("description")).toString();
+    fields.due = dueDate.isEmpty()
+            ? QString()
+            : Ics::dueFromDateTime(dueDate, input.value(QStringLiteral("dueTime")).toString());
     // A reminder is relative to the due time, so it needs one.
-    fields.reminder = fields.due.isEmpty() ? -1 : reminder;
-    fields.priority = priority;
+    fields.reminder = fields.due.isEmpty()
+            ? -1 : input.value(QStringLiteral("reminder"), -1).toInt();
+    fields.parentUid = input.value(QStringLiteral("parentUid")).toString();
+    fields.priority = input.value(QStringLiteral("priority")).toInt();
     fields.percent = percent;
     fields.status = Ics::statusFromPercent(percent);
     fields.completed = percent >= 100 ? Ics::nowStamp() : QString();
+
     task.ics = task.ics.isEmpty() ? Ics::create(fields) : Ics::rewrite(task.ics, fields);
-    task.summary = summary;
-    task.description = description;
+    task.summary = fields.summary;
+    task.description = fields.description;
     task.due = fields.due;
-    task.priority = priority;
+    task.parentUid = fields.parentUid;
+    task.priority = fields.priority;
     task.percent = percent;
     task.reminder = fields.reminder;
     task.status = fields.status;
@@ -420,43 +427,47 @@ void Session::pushDirty()
     pushNext();
 }
 
-void Session::saveTask(const QString &href, const QString &calendarHref,
-                       const QString &summary, const QString &description,
-                       const QString &dueDate, const QString &dueTime,
-                       int priority, int percent, int reminder)
+void Session::saveTask(const QVariantMap &fields)
 {
-    if (calendarHref.isEmpty()) {
+    if (fields.value(QStringLiteral("calendarHref")).toString().isEmpty()) {
         setError(tr("Choose a list for the task."));
         return;
     }
 
-    m_store->upsertLocal(editedTask(href, calendarHref, summary, description,
-                                    dueDate, dueTime, priority, percent, reminder));
+    m_store->upsertLocal(editedTask(fields));
     reloadModels();
     pushDirty();
 }
 
+void Session::dropTask(const LocalTask &task)
+{
+    // A task the server never saw can go at once; the rest must be deleted
+    // there first, so it is only marked here.
+    if (task.etag.isEmpty())
+        m_store->remove(task.href);
+    else
+        m_store->markDeleted(task.href);
+}
+
 void Session::deleteTask(const QString &href)
 {
-    const LocalTask task = m_store->task(href);
-    if (task.etag.isEmpty())
-        m_store->remove(href);
-    else
-        m_store->markDeleted(href);
+    const QVector<LocalTask> children = m_store->descendants(href);
+    for (const LocalTask &child : children)
+        dropTask(child);
+    dropTask(m_store->task(href));
     reloadModels();
     pushDirty();
 }
 
 void Session::toggleDone(const QString &href)
 {
-    const LocalTask task = m_store->task(href);
-    if (task.href.isEmpty())
+    QVariantMap fields = taskFields(href);
+    if (fields.isEmpty())
         return;
 
-    const int percent = Ics::isCompleted(task.status) ? 0 : 100;
-    saveTask(task.href, task.calendarHref, task.summary, task.description,
-             Ics::dateFromDue(task.due), Ics::timeFromDue(task.due), task.priority,
-             percent, task.reminder);
+    const bool done = fields.value(QStringLiteral("percent")).toInt() >= 100;
+    fields.insert(QStringLiteral("percent"), done ? 0 : 100);
+    saveTask(fields);
 }
 
 QString Session::renderNotes(const QString &markdown) const
@@ -475,6 +486,8 @@ QVariantMap Session::taskFields(const QString &href) const
     QVariantMap fields;
     fields.insert(QStringLiteral("href"), task.href);
     fields.insert(QStringLiteral("calendarHref"), task.calendarHref);
+    fields.insert(QStringLiteral("uid"), task.uid);
+    fields.insert(QStringLiteral("parentUid"), task.parentUid);
     fields.insert(QStringLiteral("summary"), task.summary);
     fields.insert(QStringLiteral("description"), task.description);
     fields.insert(QStringLiteral("dueDate"), Ics::dateFromDue(task.due));
@@ -483,5 +496,21 @@ QVariantMap Session::taskFields(const QString &href) const
     fields.insert(QStringLiteral("percent"),
                   Ics::percentFromStatus(task.status, Ics::parse(task.ics).percent));
     fields.insert(QStringLiteral("reminder"), task.reminder);
+    fields.insert(QStringLiteral("done"), Ics::isCompleted(task.status));
     return fields;
+}
+
+QVariantList Session::subtasks(const QString &parentUid) const
+{
+    QVariantList out;
+    const QVector<LocalTask> children = m_store->children(parentUid);
+    for (const LocalTask &child : children)
+        out.append(taskFields(child.href));
+    return out;
+}
+
+// How many tasks a delete would take with it, the parent included.
+int Session::subtreeSize(const QString &href) const
+{
+    return m_store->descendants(href).size() + 1;
 }

@@ -25,6 +25,21 @@ QVector<LocalTask> completedOf(const QVector<LocalTask> &tasks)
     return out;
 }
 
+// One pass over every task, so a row's subtask counts cost no extra query.
+QHash<QString, QPair<int, int> > talliesOf(const QVector<LocalTask> &tasks)
+{
+    QHash<QString, QPair<int, int> > out;
+    for (const LocalTask &task : tasks) {
+        if (task.parentUid.isEmpty())
+            continue;
+        QPair<int, int> &tally = out[task.parentUid];
+        ++tally.first;
+        if (Ics::isCompleted(task.status))
+            ++tally.second;
+    }
+    return out;
+}
+
 }
 
 TaskModel::TaskModel(Store *store, QObject *parent)
@@ -101,6 +116,8 @@ QHash<int, QByteArray> TaskModel::roleNames() const
     roles.insert(PercentRole, "percent");
     roles.insert(CompletedRole, "completed");
     roles.insert(DoneRole, "done");
+    roles.insert(ChildCountRole, "childCount");
+    roles.insert(ChildDoneCountRole, "childDoneCount");
     return roles;
 }
 
@@ -139,21 +156,33 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         return task.completed;
     case DoneRole:
         return Ics::isCompleted(task.status);
+    case ChildCountRole:
+        return tallyOf(task.uid).first;
+    case ChildDoneCountRole:
+        return tallyOf(task.uid).second;
     default:
         return QVariant();
     }
 }
 
+TaskModel::ChildTally TaskModel::tallyOf(const QString &uid) const
+{
+    return m_tallies.value(uid, ChildTally(0, 0));
+}
+
 void TaskModel::reload()
 {
     beginResetModel();
+    // Current and completed stay flat: a subtask due today must not hide
+    // behind its parent in the views that answer "what now" and "what is done".
     if (m_filter == QLatin1String("current"))
         m_items = currentOf(m_store->tasks());
     else if (m_filter == QLatin1String("completed"))
         m_items = completedOf(m_store->tasks());
     else if (m_filter == QLatin1String("calendar"))
-        m_items = m_store->tasks(m_calendarHref);
+        m_items = m_store->topLevelTasks(m_calendarHref);
     else
-        m_items = m_store->tasks();
+        m_items = m_store->topLevelTasks();
+    m_tallies = talliesOf(m_store->tasks());
     endResetModel();
 }

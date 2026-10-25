@@ -24,7 +24,13 @@ public:
     QVector<CalendarInfo> calendars() const;
 
     void mergeRemote(const QString &calendarHref, const QVector<RemoteTask> &tasks);
+    // Every task, whatever its place in the tree. Reminders and the cover
+    // counts rely on this staying flat.
     QVector<LocalTask> tasks(const QString &calendarHref = QString()) const;
+    // Tasks with no parent, plus any whose parent is no longer here.
+    QVector<LocalTask> topLevelTasks(const QString &calendarHref = QString()) const;
+    QVector<LocalTask> children(const QString &parentUid) const;
+    QVector<LocalTask> descendants(const QString &href) const;
     QVector<LocalTask> dirtyTasks() const;
     LocalTask task(const QString &href) const;
     int openCount() const;
@@ -40,6 +46,7 @@ public:
 
 private:
     bool migrate();
+    QVector<LocalTask> selectTasks(const QString &extra, const QString &calendarHref) const;
     LocalTask readTask(const QSqlQuery &query) const;
     void upsertRemoteTask(const QString &calendarHref, const RemoteTask &task);
     void dropMissing(const QString &calendarHref, const QStringList &keep);

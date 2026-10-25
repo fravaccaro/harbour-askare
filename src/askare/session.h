@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QTimer>
+#include <QVariantList>
 #include <QVariantMap>
 #include <QVector>
 
@@ -63,14 +64,14 @@ public:
     Q_INVOKABLE void logout();
     Q_INVOKABLE void reloadSecrets();
     Q_INVOKABLE void sync();
-    Q_INVOKABLE void saveTask(const QString &href, const QString &calendarHref,
-                              const QString &summary, const QString &description,
-                              const QString &dueDate, const QString &dueTime,
-                              int priority, int percent, int reminder);
+    // Takes the same keys taskFields() hands out, so the two stay symmetric.
+    Q_INVOKABLE void saveTask(const QVariantMap &fields);
     Q_INVOKABLE void deleteTask(const QString &href);
     Q_INVOKABLE void toggleDone(const QString &href);
     Q_INVOKABLE QString renderNotes(const QString &markdown) const;
     Q_INVOKABLE QVariantMap taskFields(const QString &href) const;
+    Q_INVOKABLE QVariantList subtasks(const QString &parentUid) const;
+    Q_INVOKABLE int subtreeSize(const QString &href) const;
 
 signals:
     void readyChanged();
@@ -85,6 +86,7 @@ signals:
     void syncIntervalChanged();
     void syncAfterPushChanged();
     void coverChanged();
+    void tasksChanged();
     void loginUrlReady(const QString &url);
     void loginSucceeded();
     void loginFailed(const QString &error);
@@ -102,14 +104,12 @@ private:
     void applySyncTimer();
     void syncIfStartupWanted();
     void reloadModels();
+    void dropTask(const LocalTask &task);
     void fetchNextCalendar();
     void pushNext();
     void finishSync();
     void pushDirty();
-    LocalTask editedTask(const QString &href, const QString &calendarHref,
-                         const QString &summary, const QString &description,
-                         const QString &dueDate, const QString &dueTime,
-                         int priority, int percent, int reminder) const;
+    LocalTask editedTask(const QVariantMap &fields) const;
     void onLoginUrl(const QString &url);
     void onLoggedIn(const QString &server, const QString &user,
                     const QString &password);

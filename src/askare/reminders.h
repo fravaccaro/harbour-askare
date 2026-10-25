@@ -19,7 +19,10 @@ public:
     Q_INVOKABLE void check();
 
 signals:
-    void due(const QString &href, const QString &summary, const QString &dueText);
+    // parentSummary is empty unless the task is a subtask, where the title
+    // alone often means little without it.
+    void due(const QString &href, const QString &summary, const QString &dueText,
+             const QString &parentSummary);
 
 private:
     Store *m_store;

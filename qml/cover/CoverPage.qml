@@ -50,7 +50,7 @@ CoverBackground {
 
         clip: true
         interactive: false
-        spacing: Theme.paddingMedium
+        spacing: Theme.paddingSmall
         model: Askare.configured ? Tasks : null
 
         anchors {
@@ -60,7 +60,9 @@ CoverBackground {
             right: parent.right
             leftMargin: Theme.paddingLarge
             rightMargin: Theme.paddingLarge
+            // Leave room for the cover actions so rows do not run behind them.
             bottom: parent.bottom
+            bottomMargin: Theme.itemSizeSmall
         }
 
         delegate: Label {

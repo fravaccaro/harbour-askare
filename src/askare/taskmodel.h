@@ -2,6 +2,8 @@
 #define ASKARE_TASKMODEL_H
 
 #include <QAbstractListModel>
+#include <QHash>
+#include <QPair>
 #include <QString>
 #include <QVector>
 
@@ -31,7 +33,9 @@ public:
         PriorityRole,
         PercentRole,
         CompletedRole,
-        DoneRole
+        DoneRole,
+        ChildCountRole,
+        ChildDoneCountRole
     };
 
     explicit TaskModel(Store *store, QObject *parent = nullptr);
@@ -56,13 +60,18 @@ signals:
     void titleChanged();
 
 private:
+    // Children and completed children of one uid.
+    typedef QPair<int, int> ChildTally;
+
     void apply(const QString &filter, const QString &href, const QString &name);
+    ChildTally tallyOf(const QString &uid) const;
 
     Store *m_store;
     QString m_calendarHref;
     QString m_calendarName;
     QString m_filter;
     QVector<LocalTask> m_items;
+    QHash<QString, ChildTally> m_tallies;
 };
 
 #endif

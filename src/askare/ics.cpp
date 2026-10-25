@@ -89,6 +89,27 @@ QString minutesToDuration(int minutes)
     return QStringLiteral("-PT%1M").arg(minutes);
 }
 
+// RELATED-TO may appear several times with different link types, so only the
+// parent entry belongs to Askare. A missing RELTYPE means PARENT.
+bool isParentLink(const QString &line)
+{
+    if (Ics::propertyName(line) != QLatin1String("RELATED-TO"))
+        return false;
+
+    const int colon = line.indexOf(QLatin1Char(':'));
+    const QString params = colon < 0 ? line : line.left(colon);
+    return !params.contains(QLatin1String("RELTYPE="))
+            || params.contains(QLatin1String("RELTYPE=PARENT"));
+}
+
+QString parentLine(const TodoFields &fields)
+{
+    if (fields.parentUid.isEmpty())
+        return QString();
+
+    return QStringLiteral("RELATED-TO;RELTYPE=PARENT:") + fields.parentUid;
+}
+
 bool isSubComponentStart(const QString &line)
 {
     return line.startsWith(QLatin1String("BEGIN:"));
@@ -270,6 +291,12 @@ TodoFields parse(const QString &ics)
                 fields.reminder = durationToMinutes(propertyValue(line));
             continue;
         }
+        // The link type lives in the parameters, so this needs the whole line.
+        if (isParentLink(line)) {
+            if (fields.parentUid.isEmpty())
+                fields.parentUid = propertyValue(line);
+            continue;
+        }
         applyLine(&fields, propertyName(line), propertyValue(line));
     }
     return fields;
@@ -328,6 +355,7 @@ QString rewrite(const QString &ics, const TodoFields &fields)
         if (line.startsWith(QLatin1String("END:VTODO"))) {
             // A VTODO body is properties first, then its alarms.
             appendMissing(&out, &seen, fields);
+            appendLine(&out, parentLine(fields));
             out.append(kept);
             out.append(alarmBlock(fields));
             kept.clear();
@@ -335,6 +363,9 @@ QString rewrite(const QString &ics, const TodoFields &fields)
             out.append(line);
             continue;
         }
+        // Only the parent link is rebuilt; other link types pass through.
+        if (inTodo && isParentLink(line))
+            continue;
         const QString name = propertyName(line);
         if (inTodo && isKnown(name)) {
             if (seen.contains(name))
@@ -393,6 +424,7 @@ QString create(const TodoFields &fields)
     appendLine(&lines, fieldLine(QStringLiteral("PERCENT-COMPLETE"),
                                  copy.percent > 0 ? QString::number(copy.percent)
                                                   : QString()));
+    appendLine(&lines, parentLine(copy));
     lines << alarmBlock(copy)
           << QStringLiteral("END:VTODO")
           << QStringLiteral("END:VCALENDAR");
