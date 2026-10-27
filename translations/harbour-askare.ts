@@ -12,7 +12,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>A Nextcloud task client for Sailfish OS. Tasks stay on your server as CalDAV to-dos.</source>
+        <source>A Nextcloud task client for Sailfish OS.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -343,7 +343,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Mark open</source>
+        <source>Mark to-do</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -508,7 +508,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Open</source>
+        <source>To do</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -528,7 +528,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Mark open</source>
+        <source>Mark to-do</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

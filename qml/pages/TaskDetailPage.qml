@@ -122,20 +122,20 @@ Page {
 
         PullDownMenu {
             MenuItem {
-                text: qsTr("Edit")
-                onClicked: page.edit()
-            }
-            MenuItem {
-                text: page.isDone ? qsTr("Mark open") : qsTr("Mark done")
-                onClicked: page.toggleDone()
+                text: qsTr("Delete")
+                onClicked: page.remove()
             }
             MenuItem {
                 text: qsTr("Add subtask")
                 onClicked: page.addSubtask()
             }
             MenuItem {
-                text: qsTr("Delete")
-                onClicked: page.remove()
+                text: qsTr("Edit")
+                onClicked: page.edit()
+            }
+            MenuItem {
+                text: page.isDone ? qsTr("Mark to-do") : qsTr("Mark done")
+                onClicked: page.toggleDone()
             }
         }
 

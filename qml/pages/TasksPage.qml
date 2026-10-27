@@ -36,7 +36,7 @@ Page {
         model: Tasks
         section.property: "done"
         section.delegate: SectionHeader {
-            text: section === "true" || section === true ? qsTr("Completed") : qsTr("Open")
+            text: section === "true" || section === true ? qsTr("Completed") : qsTr("To do")
         }
 
         header: PageHeader {
@@ -51,6 +51,14 @@ Page {
 
         PullDownMenu {
             busy: Askare.busy
+            MenuItem {
+                text: qsTr("About")
+                onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"))
+            }
+            MenuItem {
+                text: qsTr("Settings")
+                onClicked: pageStack.push(Qt.resolvedUrl("SettingsPage.qml"))
+            }
             MenuItem {
                 text: qsTr("Sync")
                 onClicked: Askare.sync()
@@ -75,7 +83,7 @@ Page {
                     onClicked: app.editTask(href)
                 }
                 MenuItem {
-                    text: done ? qsTr("Mark open") : qsTr("Mark done")
+                    text: done ? qsTr("Mark to-do") : qsTr("Mark done")
                     onClicked: Askare.toggleDone(href)
                 }
                 MenuItem {
