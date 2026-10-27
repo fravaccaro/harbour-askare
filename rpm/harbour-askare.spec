@@ -10,6 +10,8 @@ Requires:   sailfishsilica-qt5 >= 0.10.9
 Requires:   sailfish-components-webview-qt5
 Requires:   nemo-qml-plugin-notifications-qt5
 Requires:   libkeepalive
+Requires:   qt5-qtdeclarative-import-multimedia
+Requires:   nemo-qml-plugin-dbus-qt5
 BuildRequires:  pkgconfig(sailfishapp) >= 1.0.2
 BuildRequires:  pkgconfig(sailfishsecrets)
 BuildRequires:  pkgconfig(Qt5Core)

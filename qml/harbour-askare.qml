@@ -1,7 +1,9 @@
 import QtQuick 2.0
+import QtMultimedia 5.6
 import Sailfish.Silica 1.0
 import Nemo.Notifications 1.0
 import Nemo.KeepAlive 1.2
+import Nemo.DBus 2.0
 import "pages"
 
 ApplicationWindow {
@@ -103,7 +105,15 @@ ApplicationWindow {
         notice.previewBody = notice.body
         notice.remoteActions = app.reminderActions()
         notice.publish()
+        app.playReminderSound()
         app.reminderNotices.push(notice)
+    }
+
+    function playReminderSound() {
+        profile.call("get_profile", [], function(name) {
+            if (name !== "silent")
+                reminderSound.play()
+        })
     }
 
     function reminderActions() {
@@ -196,6 +206,25 @@ ApplicationWindow {
         previewSummary: qsTr("Askare")
     }
 
+    // Sailfish keeps notification sounds in the category definitions, and has
+    // none for a reminder, so the tone is played here instead.
+    Audio {
+        id: reminderSound
+
+        source: "file:///usr/share/sounds/jolla-ringtones/stereo/jolla-calendar-alarm.ogg"
+        audioRole: Audio.NotificationRole
+    }
+
+    // Asked afresh for each reminder, so a silenced phone stays silent without
+    // the window having to follow every profile change.
+    DBusInterface {
+        id: profile
+
+        service: "com.nokia.profiled"
+        path: "/com/nokia/profiled"
+        iface: "com.nokia.profiled"
+    }
+
     Component {
         id: reminderNoticeComponent
 
@@ -206,9 +235,6 @@ ApplicationWindow {
 
             appName: "Askare"
             appIcon: "harbour-askare"
-            // Sound and vibration come from the category, and a Harbour package
-            // may not install one of its own, so the system reminder is borrowed.
-            category: "x-nemo.calendar.reminder"
             isTransient: false
             urgency: Notification.Normal
             onClicked: app.openTask(notice.href)
