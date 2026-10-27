@@ -145,7 +145,20 @@ ApplicationWindow {
                     "name": "open",
                     "displayName": qsTr("Open"),
                     "icon": "icon-s-task"
+                }, {
+                    "name": "done",
+                    "displayName": qsTr("Mark done"),
+                    "icon": "icon-s-installed"
                 }]
+    }
+
+    function handleReminderAction(name, notice) {
+        if (name === "done") {
+            Askare.markDone(notice.href)
+            notice.close()
+            return
+        }
+        app.openTask(notice.href)
     }
 
     function forgetReminder(notice) {
@@ -262,7 +275,7 @@ ApplicationWindow {
             isTransient: false
             urgency: Notification.Normal
             onClicked: app.openTask(notice.href)
-            onActionInvoked: app.openTask(notice.href)
+            onActionInvoked: app.handleReminderAction(name, notice)
             onClosed: app.forgetReminder(notice)
         }
     }

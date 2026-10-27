@@ -483,15 +483,35 @@ void Session::deleteTask(const QString &href)
     pushDirty();
 }
 
-void Session::toggleDone(const QString &href)
+void Session::applyPercent(const QString &href, int percent)
 {
     QVariantMap fields = taskFields(href);
     if (fields.isEmpty())
         return;
 
-    const bool done = fields.value(QStringLiteral("percent")).toInt() >= 100;
-    fields.insert(QStringLiteral("percent"), done ? 0 : 100);
+    fields.insert(QStringLiteral("percent"), percent);
     saveTask(fields);
+}
+
+void Session::toggleDone(const QString &href)
+{
+    const QVariantMap fields = taskFields(href);
+    if (fields.isEmpty())
+        return;
+
+    const bool done = fields.value(QStringLiteral("percent")).toInt() >= 100;
+    applyPercent(href, done ? 0 : 100);
+}
+
+void Session::markDone(const QString &href)
+{
+    const QVariantMap fields = taskFields(href);
+    if (fields.isEmpty())
+        return;
+    if (fields.value(QStringLiteral("percent")).toInt() >= 100)
+        return;
+
+    applyPercent(href, 100);
 }
 
 QString Session::renderNotes(const QString &markdown) const

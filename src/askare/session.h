@@ -71,6 +71,8 @@ public:
     Q_INVOKABLE void saveTask(const QVariantMap &fields);
     Q_INVOKABLE void deleteTask(const QString &href);
     Q_INVOKABLE void toggleDone(const QString &href);
+    // Completes a task without flipping it open again.
+    Q_INVOKABLE void markDone(const QString &href);
     Q_INVOKABLE QString renderNotes(const QString &markdown) const;
     Q_INVOKABLE QVariantMap taskFields(const QString &href) const;
     Q_INVOKABLE QVariantList subtasks(const QString &parentUid) const;
@@ -115,6 +117,7 @@ private:
     void pushNext();
     void finishSync();
     void pushDirty();
+    void applyPercent(const QString &href, int percent);
     LocalTask editedTask(const QVariantMap &fields) const;
     void onLoginUrl(const QString &url);
     void onLoggedIn(const QString &server, const QString &user,

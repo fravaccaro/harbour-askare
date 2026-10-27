@@ -15,6 +15,6 @@ Clearing the due date clears the reminder, since there is nothing left for it to
 
 Askare has no background service. A reminder is announced while the app is running, whether in front or in the background; while one is still ahead, the app asks Sailfish OS to wake it every five minutes so a locked phone does not hold the notice back. An app that has been closed announces nothing, and a reminder whose moment passed while it was closed arrives when the app is opened again.
 
-The notice carries the title of the task, when it is due, and the title of its parent when the task is a subtask. Tapping it, or its **Open** action, opens the task. Each reminder is announced once: changing the due date or the offset makes a new moment, which is announced in its turn.
+The notice carries the title of the task, when it is due, and the title of its parent when the task is a subtask. Tapping it, or its **Open** action, opens the task. **Mark done** completes the task without opening it, and the change is uploaded when the app can reach the server. Each reminder is announced once: changing the due date or the offset makes a new moment, which is announced in its turn.
 
 A reminder sounds with the calendar alarm tone of Sailfish OS, unless the phone is in the silent profile.
