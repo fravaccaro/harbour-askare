@@ -45,5 +45,7 @@ Page {
             text: qsTr("Try again")
             onClicked: Askare.reloadSecrets()
         }
+
     }
+
 }

@@ -371,6 +371,20 @@ int Store::currentCount() const
     return count;
 }
 
+int Store::importantCount() const
+{
+    if (!isOpen())
+        return 0;
+
+    int count = 0;
+    const QVector<LocalTask> items = tasks();
+    for (const LocalTask &task : items) {
+        if (Ics::isImportant(task.status, task.priority))
+            ++count;
+    }
+    return count;
+}
+
 LocalTask Store::nextOpen() const
 {
     if (!isOpen())

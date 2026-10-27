@@ -10,6 +10,8 @@ CoverBackground {
         // The tick is wider than it is tall, so its width is what decides how
         // much of the cover it takes.
         sourceSize.width: parent.width * 0.85
+        // The same alpha reads much heavier as a dark glyph on a light ambience.
+        opacity: Theme.colorScheme === Theme.LightOnDark ? 0.13 : 0.08
 
         // The tip of the long arm and the point of the turn cross the edges, so
         // the tick sits into the corner rather than floating inside it.
@@ -20,8 +22,6 @@ CoverBackground {
             bottomMargin: -height * 0.04
         }
 
-        // The same alpha reads much heavier as a dark glyph on a light ambience.
-        opacity: Theme.colorScheme === Theme.LightOnDark ? 0.13 : 0.08
     }
 
     Column {
@@ -43,6 +43,7 @@ CoverBackground {
             font.pixelSize: Theme.fontSizeMedium
             text: Askare.configured ? Tasks.title : qsTr("Askare")
         }
+
     }
 
     ListView {
@@ -73,6 +74,7 @@ CoverBackground {
             color: model.done ? Theme.secondaryColor : Theme.primaryColor
             text: model.summary
         }
+
     }
 
     OpacityRampEffect {
@@ -82,36 +84,42 @@ CoverBackground {
         sourceItem: taskList
         direction: 2
         offset: 0.65
-        slope: 2.0
+        slope: 2
         enabled: taskList.contentHeight > taskList.height
     }
 
     Label {
-        anchors {
-            left: parent.left
-            right: parent.right
-            verticalCenter: parent.verticalCenter
-            margins: Theme.paddingMedium
-        }
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
         visible: !Askare.configured || taskList.count === 0
         color: Theme.secondaryColor
         font.pixelSize: Theme.fontSizeExtraSmall
         text: !Askare.configured ? qsTr("Not signed in") : qsTr("No tasks")
+
+        anchors {
+            left: parent.left
+            right: parent.right
+            verticalCenter: parent.verticalCenter
+            margins: Theme.paddingMedium
+        }
+
     }
 
     CoverActionList {
         enabled: Askare.configured
+
         CoverAction {
             iconSource: "image://theme/icon-cover-new"
             // The cover is loaded outside the window's own file, so the window
             // is reached by the name Silica gives it.
             onTriggered: __silica_applicationwindow_instance.openNewTask()
         }
+
         CoverAction {
             iconSource: "image://theme/icon-cover-sync"
             onTriggered: Askare.sync()
         }
+
     }
+
 }

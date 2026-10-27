@@ -35,6 +35,7 @@ public:
     LocalTask task(const QString &href) const;
     int openCount() const;
     int currentCount() const;
+    int importantCount() const;
     int completedCount() const;
     LocalTask nextOpen() const;
 

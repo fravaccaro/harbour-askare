@@ -38,7 +38,7 @@ Page {
             Button {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Transifex"
-                onClicked: L.LinkHandler.openOrCopyUrl("https://app.transifex.com/fravaccaro/askare", text)
+                onClicked: L.LinkHandler.openOrCopyUrl("https://explore.transifex.com/fravaccaro/askare", text)
             }
 
         }

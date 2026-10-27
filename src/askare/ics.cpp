@@ -548,4 +548,11 @@ bool isCurrent(const QString &status, const QString &due)
     return due.left(8) <= today;
 }
 
+// Nextcloud's Important list: an incomplete task in the high band (1-4).
+// Priority 5 is medium and 6-9 low, so neither counts.
+bool isImportant(const QString &status, int priority)
+{
+    return !isCompleted(status) && priority >= 1 && priority <= 4;
+}
+
 }

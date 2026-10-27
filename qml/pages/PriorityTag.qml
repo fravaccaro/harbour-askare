@@ -22,22 +22,28 @@ Row {
 
     function colorFor(value) {
         if (value >= 1 && value <= 4)
-            return "#d9534f"
+            return "#d9534f";
+
         if (value === 5)
-            return "#f0ad4e"
+            return "#f0ad4e";
+
         if (value >= 6 && value <= 9)
-            return "#5cb85c"
-        return "transparent"
+            return "#5cb85c";
+
+        return "transparent";
     }
 
     function labelFor(value) {
         if (value >= 1 && value <= 4)
-            return qsTr("High")
+            return qsTr("High");
+
         if (value === 5)
-            return qsTr("Medium")
+            return qsTr("Medium");
+
         if (value >= 6 && value <= 9)
-            return qsTr("Low")
-        return qsTr("No priority")
+            return qsTr("Low");
+
+        return qsTr("No priority");
     }
 
     spacing: Theme.paddingSmall
@@ -57,4 +63,5 @@ Row {
         font.pixelSize: Theme.fontSizeSmall
         text: root.labelFor(root.priority)
     }
+
 }

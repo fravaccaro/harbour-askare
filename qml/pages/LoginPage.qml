@@ -7,8 +7,8 @@ Page {
     property string errorMessage
 
     function beginLogin() {
-        page.errorMessage = ""
-        Askare.startLogin(serverField.text)
+        page.errorMessage = "";
+        Askare.startLogin(serverField.text);
     }
 
     allowedOrientations: Orientation.All
@@ -16,8 +16,8 @@ Page {
     Connections {
         target: Askare
         onLoginUrlReady: pageStack.push(Qt.resolvedUrl("WebLoginPage.qml"), {
-                                            "loginUrl": url
-                                        })
+            "loginUrl": url
+        })
         onLoginFailed: page.errorMessage = error
     }
 
@@ -67,7 +67,7 @@ Page {
             TextSwitch {
                 width: parent.width
                 text: qsTr("Ignore certificate errors")
-                description: qsTr("Use this only for a server whose certificate the device does not trust.")
+                description: qsTr("Only for a server with a self-signed certificate on your own network.")
                 checked: Askare.ignoreSslErrors
                 onCheckedChanged: Askare.ignoreSslErrors = checked
             }
@@ -95,12 +95,14 @@ Page {
                 wrapMode: Text.WordWrap
                 color: Theme.secondaryColor
                 font.pixelSize: Theme.fontSizeExtraSmall
-                text: qsTr("The server opens inside the app. Sign in as you would in a browser. Askare then keeps the password the server creates.")
+                text: qsTr("The server opens inside the app. Sign in as you would in a browser. Askare will save the password the server creates.")
             }
+
         }
 
         VerticalScrollDecorator {
         }
+
     }
 
     BusyIndicator {
@@ -108,4 +110,5 @@ Page {
         size: BusyIndicatorSize.Large
         running: Askare.busy
     }
+
 }

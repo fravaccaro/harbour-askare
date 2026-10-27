@@ -28,6 +28,7 @@ QDateTime dueDateTime(const QString &due);
 QDateTime reminderAt(const QString &due, int minutesBefore);
 bool isCompleted(const QString &status);
 bool isCurrent(const QString &status, const QString &due);
+bool isImportant(const QString &status, int priority);
 QString statusFromPercent(int percent);
 int percentFromStatus(const QString &status, int percent);
 

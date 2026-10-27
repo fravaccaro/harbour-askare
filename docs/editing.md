@@ -18,9 +18,9 @@ The pulley menu holds **Edit**, **Mark done**, **Add subtask** and **Delete**.
 The editor takes:
 
 * **List** - only while a task is being created, and only when it stands on its own
-* **Title**
+* **Name**
 * **Completion** - from 0 to 100 percent in steps of 5; 100 marks the task done
-* **Priority** - the bands of Nextcloud and RFC 5545: 1 to 4 high, 5 medium, 6 to 9 low, 0 none
+* **Priority** - 1 to 4 high, 5 medium, 6 to 9 low, 0 none
 * **Start** and **Due** - a date each, with a time or left as all day
 * **Reminder** - see [Reminders](reminders); a due date is needed first
 * **Notes**

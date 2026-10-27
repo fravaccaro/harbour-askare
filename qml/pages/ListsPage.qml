@@ -5,23 +5,28 @@ Page {
     id: page
 
     function selectAll() {
-        Tasks.showAll()
-        pageStack.navigateBack()
+        Tasks.showAll();
+        pageStack.navigateBack();
     }
 
     function selectCurrent() {
-        Tasks.showCurrent()
-        pageStack.navigateBack()
+        Tasks.showCurrent();
+        pageStack.navigateBack();
+    }
+
+    function selectImportant() {
+        Tasks.showImportant();
+        pageStack.navigateBack();
     }
 
     function selectCompleted() {
-        Tasks.showCompleted()
-        pageStack.navigateBack()
+        Tasks.showCompleted();
+        pageStack.navigateBack();
     }
 
     function selectCalendar(href, name) {
-        Tasks.showCalendar(href, name)
-        pageStack.navigateBack()
+        Tasks.showCalendar(href, name);
+        pageStack.navigateBack();
     }
 
     allowedOrientations: Orientation.All
@@ -32,11 +37,48 @@ Page {
         anchors.fill: parent
         model: Calendars
 
+        ViewPlaceholder {
+            enabled: listView.count === 0 && !Askare.busy
+            text: qsTr("No task lists")
+            hintText: qsTr("Pull down to sync")
+        }
+
+        PullDownMenu {
+            busy: Askare.busy
+
+            MenuItem {
+                text: qsTr("About")
+                onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"))
+            }
+
+            MenuItem {
+                text: qsTr("Settings")
+                onClicked: pageStack.push(Qt.resolvedUrl("SettingsPage.qml"))
+            }
+
+            MenuItem {
+                text: qsTr("Sync")
+                onClicked: Askare.sync()
+            }
+
+        }
+
+        VerticalScrollDecorator {
+        }
+
         header: Column {
             width: listView.width
 
             PageHeader {
                 title: qsTr("Lists")
+            }
+
+            FilterItem {
+                width: parent.width
+                name: qsTr("Important")
+                count: Askare.importantCount
+                selected: Tasks.filter === "important"
+                onClicked: page.selectImportant()
             }
 
             FilterItem {
@@ -66,35 +108,13 @@ Page {
             SectionHeader {
                 text: qsTr("Task lists")
             }
-        }
 
-        ViewPlaceholder {
-            enabled: listView.count === 0 && !Askare.busy
-            text: qsTr("No task lists")
-            hintText: qsTr("Pull down to sync with the server")
-        }
-
-        PullDownMenu {
-            busy: Askare.busy
-            MenuItem {
-                text: qsTr("About")
-                onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"))
-            }
-            MenuItem {
-                text: qsTr("Settings")
-                onClicked: pageStack.push(Qt.resolvedUrl("SettingsPage.qml"))
-            }
-            MenuItem {
-                text: qsTr("Sync")
-                onClicked: Askare.sync()
-            }
         }
 
         delegate: ListItem {
             id: delegate
 
-            readonly property bool selected: Tasks.filter === "calendar"
-                                             && Tasks.calendarHref === href
+            readonly property bool selected: Tasks.filter === "calendar" && Tasks.calendarHref === href
 
             contentHeight: Theme.itemSizeSmall
             onClicked: page.selectCalendar(href, displayName)
@@ -105,15 +125,21 @@ Page {
                 width: Theme.fontSizeMedium
                 height: width
                 radius: width / 2
+                color: model.color !== "" ? model.color : Theme.secondaryColor
+
                 anchors {
                     left: parent.left
                     leftMargin: Theme.horizontalPageMargin
                     verticalCenter: parent.verticalCenter
                 }
-                color: model.color !== "" ? model.color : Theme.secondaryColor
+
             }
 
             Label {
+                truncationMode: TruncationMode.Fade
+                color: delegate.selected || delegate.highlighted ? Theme.highlightColor : Theme.primaryColor
+                text: displayName
+
                 anchors {
                     left: colorDot.right
                     leftMargin: Theme.paddingMedium
@@ -121,28 +147,26 @@ Page {
                     rightMargin: Theme.paddingMedium
                     verticalCenter: parent.verticalCenter
                 }
-                truncationMode: TruncationMode.Fade
-                color: delegate.selected || delegate.highlighted
-                       ? Theme.highlightColor : Theme.primaryColor
-                text: displayName
+
             }
 
             Label {
                 id: countLabel
+
+                color: Theme.secondaryColor
+                font.pixelSize: Theme.fontSizeSmall
+                text: openCount
 
                 anchors {
                     right: parent.right
                     rightMargin: Theme.horizontalPageMargin
                     verticalCenter: parent.verticalCenter
                 }
-                color: Theme.secondaryColor
-                font.pixelSize: Theme.fontSizeSmall
-                text: openCount
+
             }
+
         }
 
-        VerticalScrollDecorator {
-        }
     }
 
     BusyIndicator {
@@ -150,4 +174,5 @@ Page {
         size: BusyIndicatorSize.Large
         running: Askare.busy && listView.count === 0
     }
+
 }

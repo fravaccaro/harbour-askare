@@ -11,7 +11,8 @@ Page {
     allowedOrientations: Orientation.All
     Component.onDestruction: {
         if (!Askare.configured)
-            Askare.cancelLogin()
+            Askare.cancelLogin();
+
     }
 
     Connections {
@@ -32,6 +33,7 @@ Page {
             right: parent.right
             bottom: footer.top
         }
+
     }
 
     Rectangle {
@@ -57,15 +59,14 @@ Page {
             wrapMode: Text.WordWrap
             font.pixelSize: Theme.fontSizeExtraSmall
             color: page.errorMessage !== "" ? Theme.errorColor : Theme.secondaryColor
-            text: page.errorMessage !== ""
-                  ? page.errorMessage
-                  : qsTr("Sign in as you would in a browser. Askare waits for the server to grant access.")
+            text: page.errorMessage !== "" ? page.errorMessage : qsTr("Sign in as you would in a browser. Askare will save the password the server creates.")
         }
 
         Item {
             width: parent.width
             height: Theme.paddingMedium
         }
+
     }
 
     BusyIndicator {
@@ -73,4 +74,5 @@ Page {
         size: BusyIndicatorSize.Large
         running: Askare.configured
     }
+
 }

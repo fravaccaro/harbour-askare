@@ -26,7 +26,7 @@ ListItem {
     property string dueText
     property bool done: false
 
-    signal toggled
+    signal toggled()
 
     contentHeight: Theme.itemSizeSmall
 
@@ -42,6 +42,7 @@ ListItem {
             left: parent.left
             verticalCenter: parent.verticalCenter
         }
+
     }
 
     Column {
@@ -69,5 +70,7 @@ ListItem {
             font.pixelSize: Theme.fontSizeExtraSmall
             text: root.dueText
         }
+
     }
+
 }

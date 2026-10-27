@@ -15,6 +15,7 @@ Above the task lists of the server sit three views that read across all of them:
 
 * **All** - every task, completed ones last
 * **Current** - what is open and either due today or earlier, or carries no due date at all
+* **Important** - tasks with high priority
 * **Completed** - everything that is done
 
 Below them stand the task lists the server keeps, each with the colour you gave it in Nextcloud and the number of tasks still open in it. Choosing one narrows the task list to it.
@@ -25,7 +26,7 @@ All and the view of one list count a subtask behind its parent; Current and Comp
 
 ## The task list
 
-Tasks are grouped under **Open** and **Completed**. Within a group, dated tasks come first in order of their date and undated ones trail. A row shows the title, the due date and time if the task has one, and how many of its subtasks are done. In the views that mix lists, a coloured bar on the left says which list a task belongs to.
+Tasks are grouped under **To do** and **Completed**. Within a group, dated tasks come first in order of their date and undated ones trail. A row shows the title, the due date and time if the task has one, and how many of its subtasks are done. In the views that mix lists, a coloured bar on the left says which list a task belongs to.
 
 Tap the switch on a row to mark a task done or open again. Tap the rest of the row to open the task. Press and hold for **Mark done** and **Delete**; deleting a task with subtasks says how many tasks will go.
 

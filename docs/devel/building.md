@@ -25,7 +25,7 @@ sfdk config device "My Phone"
 sfdk deploy --sdk
 ```
 
-Sailfish OS 4.5 is the oldest release the app runs on, for Sailfish Secrets and the WebView.
+The app has been built for Sailfish OS 5.0.
 
 ## Continuous integration
 
@@ -43,7 +43,7 @@ The runtime dependencies are the Silica components, the WebView, the notificatio
 
 ## Translations
 
-Italian ships with the app. Translators work on the [Transifex project](https://app.transifex.com/fravaccaro/askare). A new language is a further `.ts` file beside it:
+Italian ships with the app. Translators work on the [Transifex project](https://explore.transifex.com/fravaccaro/askare). A new language is a further `.ts` file beside it:
 
 1. Copy `translations/harbour-askare.ts` to `translations/harbour-askare-<code>.ts`.
 2. Add it to `TRANSLATIONS` in `harbour-askare.pro`.

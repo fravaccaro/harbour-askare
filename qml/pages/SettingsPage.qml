@@ -7,12 +7,12 @@ Page {
     readonly property var intervals: [0, 5, 15, 30, 60]
 
     function intervalIndex(minutes) {
-        var index = page.intervals.indexOf(minutes)
-        return index < 0 ? 0 : index
+        var index = page.intervals.indexOf(minutes);
+        return index < 0 ? 0 : index;
     }
 
     function intervalLabel(minutes) {
-        return minutes === 0 ? qsTr("Off") : qsTr("Every %n minute(s)", "", minutes)
+        return minutes === 0 ? qsTr("Off") : qsTr("Every %n minute(s)", "", minutes);
     }
 
     allowedOrientations: Orientation.All
@@ -30,14 +30,6 @@ Page {
                 title: qsTr("Settings")
             }
 
-            Label {
-                x: Theme.horizontalPageMargin
-                width: parent.width - 2 * Theme.horizontalPageMargin
-                wrapMode: Text.WordWrap
-                color: Theme.secondaryColor
-                text: Askare.serverUrl
-            }
-
             SectionHeader {
                 text: qsTr("Lists")
             }
@@ -45,7 +37,7 @@ Page {
             TextSwitch {
                 width: parent.width
                 text: qsTr("Show completed tasks")
-                description: qsTr("Completed tasks still appear under the Completed filter.")
+                description: qsTr("Completed tasks will appear under the Completed section.")
                 checked: Askare.showCompletedTasks
                 onCheckedChanged: Askare.showCompletedTasks = checked
             }
@@ -61,6 +53,14 @@ Page {
                 onCheckedChanged: Askare.syncOnStart = checked
             }
 
+            TextSwitch {
+                width: parent.width
+                text: qsTr("Sync after saving a task")
+                description: qsTr("Fetches server changes once the task has been uploaded.")
+                checked: Askare.syncAfterPush
+                onCheckedChanged: Askare.syncAfterPush = checked
+            }
+
             ComboBox {
                 // Guards the stored value against the index changes that happen
                 // while the menu is still being built.
@@ -70,40 +70,45 @@ Page {
                 label: qsTr("Automatic sync")
                 description: qsTr("Only while Askare is running.")
                 Component.onCompleted: {
-                    currentIndex = page.intervalIndex(Askare.syncInterval)
-                    ready = true
+                    currentIndex = page.intervalIndex(Askare.syncInterval);
+                    ready = true;
                 }
                 onCurrentIndexChanged: {
                     if (ready && currentIndex >= 0)
-                        Askare.syncInterval = page.intervals[currentIndex]
+                        Askare.syncInterval = page.intervals[currentIndex];
+
                 }
 
                 menu: ContextMenu {
                     Repeater {
                         model: page.intervals
+
                         MenuItem {
                             text: page.intervalLabel(modelData)
                         }
-                    }
-                }
-            }
 
-            TextSwitch {
-                width: parent.width
-                text: qsTr("Sync after saving a task")
-                description: qsTr("Fetches server changes once the task has been uploaded.")
-                checked: Askare.syncAfterPush
-                onCheckedChanged: Askare.syncAfterPush = checked
+                    }
+
+                }
+
             }
 
             SectionHeader {
                 text: qsTr("Connection")
             }
 
+            Label {
+                x: Theme.horizontalPageMargin
+                width: parent.width - 2 * Theme.horizontalPageMargin
+                wrapMode: Text.WordWrap
+                color: Theme.secondaryColor
+                text: Askare.serverUrl
+            }
+
             TextSwitch {
                 width: parent.width
                 text: qsTr("Ignore certificate errors")
-                description: qsTr("Use this only for a server whose certificate the device does not trust.")
+                description: qsTr("Only for a server with a self-signed certificate on your own network.")
                 checked: Askare.ignoreSslErrors
                 onCheckedChanged: Askare.ignoreSslErrors = checked
             }
@@ -123,13 +128,16 @@ Page {
                 text: qsTr("Sign out")
                 onClicked: remorse.execute(qsTr("Signing out"), Askare.logout)
             }
+
         }
 
         VerticalScrollDecorator {
         }
+
     }
 
     RemorsePopup {
         id: remorse
     }
+
 }

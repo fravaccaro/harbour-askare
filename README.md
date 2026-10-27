@@ -24,17 +24,17 @@ The SailfishOS Community Team is on Liberapay:
 
 ## Features
 
-- Sign in through the server's own page, inside the app, so single sign-on and two-factor authentication work as they do in a browser.
-- Every task list of the server, plus the All, Current and Completed views across lists.
-- Add, edit and delete tasks with a title, completion, priority, start and due dates, and notes written in Markdown.
-- Subtasks under a task, counted on the row of their parent.
-- A reminder before a task is due, announced while Askare is running.
-- A local copy of the lists, synced by hand, when the app starts, or on a timer.
+<a href="docs/screenshots/screenshot1.png"><img width="33%" style="float: left;" src="docs/screenshots/screenshot1.png" alt="Tasks" /></a> <a href="docs/screenshots/screenshot2.png"><img width="33%" style="float: left;" src="docs/screenshots/screenshot2.png" alt="Lists" /></a> <a href="docs/screenshots/screenshot3.png"><img width="33%" style="float: left;" src="docs/screenshots/screenshot3.png" alt="Notifications" /></a>
+<br style="clear: both; height:5px;" />
+
+- Add, edit and delete tasks with a name, completion, priority, start and due dates, and notes written in Markdown.
+- Subtasks support.
+- A reminder before a task is due.
 
 ## Requirements
 
-- Sailfish OS 4.5 or newer, for Sailfish Secrets and the WebView
-- A reachable Nextcloud server with the Tasks app, reached over CalDAV
+- Sailfish OS 5.0 or newer
+- A reachable Nextcloud server with the Tasks app
 
 ## Using Askare
 
@@ -50,7 +50,7 @@ RPMs are attached to the [GitHub releases](https://github.com/fravaccaro/harbour
 
 ## Translate
 
-Request a new language or contribute on the [Transifex project page](https://app.transifex.com/fravaccaro/askare).
+Request a new language or contribute on the [Transifex project page](https://explore.transifex.com/fravaccaro/askare).
 
 ## Credits
 

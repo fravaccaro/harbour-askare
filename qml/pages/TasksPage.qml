@@ -7,7 +7,8 @@ Page {
     allowedOrientations: Orientation.All
     onStatusChanged: {
         if (status === PageStatus.Active && pageStack.nextPage() === null)
-            pageStack.pushAttached(Qt.resolvedUrl("ListsPage.qml"))
+            pageStack.pushAttached(Qt.resolvedUrl("ListsPage.qml"));
+
     }
 
     Label {
@@ -27,20 +28,14 @@ Page {
     SilicaListView {
         id: listView
 
+        model: Tasks
+        section.property: "done"
+
         anchors {
             top: errorLabel.visible ? errorLabel.bottom : parent.top
             left: parent.left
             right: parent.right
             bottom: parent.bottom
-        }
-        model: Tasks
-        section.property: "done"
-        section.delegate: SectionHeader {
-            text: section === "true" || section === true ? qsTr("Completed") : qsTr("To do")
-        }
-
-        header: PageHeader {
-            title: Tasks.title
         }
 
         ViewPlaceholder {
@@ -51,25 +46,41 @@ Page {
 
         PullDownMenu {
             busy: Askare.busy
+
             MenuItem {
                 text: qsTr("About")
                 onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"))
             }
+
             MenuItem {
                 text: qsTr("Settings")
                 onClicked: pageStack.push(Qt.resolvedUrl("SettingsPage.qml"))
             }
+
             MenuItem {
                 text: qsTr("Sync")
                 onClicked: Askare.sync()
             }
+
             MenuItem {
                 enabled: Askare.configured && Calendars.count > 0
                 text: qsTr("New task")
                 onClicked: pageStack.push(Qt.resolvedUrl("TaskEditPage.qml"), {
-                                              "calendarHref": Tasks.calendarHref
-                                          })
+                    "calendarHref": Tasks.calendarHref
+                })
             }
+
+        }
+
+        VerticalScrollDecorator {
+        }
+
+        section.delegate: SectionHeader {
+            text: section === "true" || section === true ? qsTr("Completed") : qsTr("To do")
+        }
+
+        header: PageHeader {
+            title: Tasks.title
         }
 
         delegate: ListItem {
@@ -77,25 +88,6 @@ Page {
 
             contentHeight: Theme.itemSizeMedium
             onClicked: app.pushTask(href)
-            menu: ContextMenu {
-                MenuItem {
-                    text: qsTr("Edit")
-                    onClicked: app.editTask(href)
-                }
-                MenuItem {
-                    text: done ? qsTr("Mark to-do") : qsTr("Mark done")
-                    onClicked: Askare.toggleDone(href)
-                }
-                MenuItem {
-                    text: qsTr("Delete")
-                    onClicked: {
-                        var total = Askare.subtreeSize(href)
-                        var label = total > 1 ? qsTr("Deleting %n tasks", "", total)
-                                              : qsTr("Deleting")
-                        remorseAction(label, function() { Askare.deleteTask(href) })
-                    }
-                }
-            }
 
             Rectangle {
                 id: listColor
@@ -103,16 +95,16 @@ Page {
                 width: Math.round(6 * Theme.pixelRatio)
                 height: parent.height - 2 * Theme.paddingMedium
                 radius: width / 2
+                // Every row in a mixed view keeps the bar so the rows stay
+                // aligned, even where the list was left without a colour.
+                visible: Tasks.filter !== "calendar"
+                color: calendarColor !== "" ? calendarColor : Theme.secondaryColor
 
                 anchors {
                     left: parent.left
                     verticalCenter: parent.verticalCenter
                 }
 
-                // Every row in a mixed view keeps the bar so the rows stay
-                // aligned, even where the list was left without a colour.
-                visible: Tasks.filter !== "calendar"
-                color: calendarColor !== "" ? calendarColor : Theme.secondaryColor
             }
 
             TextSwitch {
@@ -128,6 +120,7 @@ Page {
                     leftMargin: listColor.visible ? listColor.width + Theme.paddingSmall : 0
                     verticalCenter: parent.verticalCenter
                 }
+
             }
 
             Column {
@@ -163,10 +156,35 @@ Page {
                     font.pixelSize: Theme.fontSizeExtraSmall
                     text: qsTr("Subtasks %1/%2").arg(childDoneCount).arg(childCount)
                 }
+
             }
+
+            menu: ContextMenu {
+                MenuItem {
+                    text: qsTr("Edit")
+                    onClicked: app.editTask(href)
+                }
+
+                MenuItem {
+                    text: done ? qsTr("Mark to-do") : qsTr("Mark done")
+                    onClicked: Askare.toggleDone(href)
+                }
+
+                MenuItem {
+                    text: qsTr("Delete")
+                    onClicked: {
+                        var total = Askare.subtreeSize(href);
+                        var label = total > 1 ? qsTr("Deleting %n tasks", "", total) : qsTr("Deleting");
+                        remorseAction(label, function() {
+                            Askare.deleteTask(href);
+                        });
+                    }
+                }
+
+            }
+
         }
 
-        VerticalScrollDecorator {
-        }
     }
+
 }

@@ -6,6 +6,7 @@ Dialog {
 
     property string href
     property string calendarHref
+    property string uid
     property string parentUid
     property string summary
     property string description
@@ -17,7 +18,6 @@ Dialog {
     property int percent: 0
     property int reminder: -1
     property bool listIndexReady: false
-
     // A subtask is pinned to its parent's list, since RELATED-TO resolves by
     // UID only within one calendar.
     readonly property bool isSubtask: page.parentUid !== ""
@@ -26,116 +26,129 @@ Dialog {
     readonly property bool newSubtask: page.isSubtask && page.href === ""
 
     function pad(value) {
-        return value < 10 ? "0" + value : "" + value
+        return value < 10 ? "0" + value : "" + value;
     }
 
     function asDate(iso) {
         if (iso === "")
-            return new Date()
-        var parts = iso.split("-")
-        return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]))
+            return new Date();
+
+        var parts = iso.split("-");
+        return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
     }
 
     // The pickers are the same for a start and a due moment, so both kinds of
     // field hand in what they hold and a function that takes the answer.
     function pickDate(iso, apply) {
         var dialog = pageStack.push("Sailfish.Silica.DatePickerDialog", {
-                                        "date": page.asDate(iso)
-                                    })
+            "date": page.asDate(iso)
+        });
         dialog.accepted.connect(function() {
-            apply(dialog.year + "-" + page.pad(dialog.month) + "-" + page.pad(dialog.day))
-        })
+            apply(dialog.year + "-" + page.pad(dialog.month) + "-" + page.pad(dialog.day));
+        });
     }
 
     function pickTime(clock, apply) {
-        var parts = clock === "" ? ["9", "0"] : clock.split(":")
+        var parts = clock === "" ? ["9", "0"] : clock.split(":");
         var dialog = pageStack.push("Sailfish.Silica.TimePickerDialog", {
-                                        "hour": Number(parts[0]),
-                                        "minute": Number(parts[1])
-                                    })
+            "hour": Number(parts[0]),
+            "minute": Number(parts[1])
+        });
         dialog.accepted.connect(function() {
-            apply(page.pad(dialog.hour) + ":" + page.pad(dialog.minute))
-        })
+            apply(page.pad(dialog.hour) + ":" + page.pad(dialog.minute));
+        });
     }
 
     function pickDue() {
-        page.pickDate(page.dueDate, function(iso) { page.dueDate = iso })
+        page.pickDate(page.dueDate, function(iso) {
+            page.dueDate = iso;
+        });
     }
 
     function pickDueTime() {
-        page.pickTime(page.dueTime, function(clock) { page.dueTime = clock })
+        page.pickTime(page.dueTime, function(clock) {
+            page.dueTime = clock;
+        });
     }
 
     function pickStart() {
-        page.pickDate(page.startDate, function(iso) { page.startDate = iso })
+        page.pickDate(page.startDate, function(iso) {
+            page.startDate = iso;
+        });
     }
 
     function pickStartTime() {
-        page.pickTime(page.startTime, function(clock) { page.startTime = clock })
+        page.pickTime(page.startTime, function(clock) {
+            page.startTime = clock;
+        });
     }
 
     function clearDue() {
-        page.dueDate = ""
-        page.dueTime = ""
-        page.reminder = -1
+        page.dueDate = "";
+        page.dueTime = "";
+        page.reminder = -1;
     }
 
     function clearStart() {
-        page.startDate = ""
-        page.startTime = ""
+        page.startDate = "";
+        page.startTime = "";
     }
 
     // Work cannot be due before it may begin. Both parts compare as text in
     // yyyy-MM-dd and HH:mm, and an all-day due accepts any time that day.
     function startAfterDue() {
         if (page.startDate === "" || page.dueDate === "")
-            return false
+            return false;
+
         if (page.startDate !== page.dueDate)
-            return page.startDate > page.dueDate
+            return page.startDate > page.dueDate;
+
         if (page.dueTime === "")
-            return false
-        return (page.startTime === "" ? "00:00" : page.startTime) > page.dueTime
+            return false;
+
+        return (page.startTime === "" ? "00:00" : page.startTime) > page.dueTime;
     }
 
     function chosenCalendar() {
         if (page.calendarHref !== "" && (page.href !== "" || page.isSubtask))
-            return page.calendarHref
-        var index = listBox.currentIndex < 0 ? 0 : listBox.currentIndex
-        return Calendars.hrefAt(index)
+            return page.calendarHref;
+
+        var index = listBox.currentIndex < 0 ? 0 : listBox.currentIndex;
+        return Calendars.hrefAt(index);
     }
 
     function applyListIndex() {
         if (page.listIndexReady || Calendars.count === 0)
-            return
-        listBox.currentIndex = Calendars.indexOfHref(page.calendarHref)
-        page.listIndexReady = true
+            return ;
+
+        listBox.currentIndex = Calendars.indexOfHref(page.calendarHref);
+        page.listIndexReady = true;
     }
 
     function save() {
-        page.summary = summaryField.text
-        page.description = notesField.text
+        page.summary = summaryField.text;
+        page.description = notesField.text;
         Askare.saveTask({
-                            "href": page.href,
-                            "calendarHref": page.chosenCalendar(),
-                            "parentUid": page.parentUid,
-                            "summary": page.summary,
-                            "description": page.description,
-                            "startDate": page.startDate,
-                            "startTime": page.startTime,
-                            "dueDate": page.dueDate,
-                            "dueTime": page.dueTime,
-                            "priority": page.priority,
-                            "percent": page.percent,
-                            "reminder": page.reminder
-                        })
+            "href": page.href,
+            "calendarHref": page.chosenCalendar(),
+            "parentUid": page.parentUid,
+            "summary": page.summary,
+            "description": page.description,
+            "startDate": page.startDate,
+            "startTime": page.startTime,
+            "dueDate": page.dueDate,
+            "dueTime": page.dueTime,
+            "priority": page.priority,
+            "percent": page.percent,
+            "reminder": page.reminder
+        });
     }
 
     // The window looks for this page by name, so a request to add a task from
     // the cover raises it instead of opening a second copy of it.
     objectName: "taskEditPage"
     allowedOrientations: Orientation.All
-    canAccept: page.chosenCalendar() !== "" && summaryField.text.length > 0
-               && !page.startAfterDue()
+    canAccept: page.chosenCalendar() !== "" && summaryField.text.length > 0 && !page.startAfterDue()
     onAccepted: page.save()
 
     ReminderOptions {
@@ -153,8 +166,7 @@ Dialog {
 
             DialogHeader {
                 acceptText: page.href === "" ? qsTr("Add task") : qsTr("Save")
-                title: page.newSubtask ? qsTr("New subtask")
-                                       : (page.href === "" ? qsTr("New task") : qsTr("Task"))
+                title: page.newSubtask ? qsTr("New subtask") : (page.href === "" ? qsTr("New task") : qsTr("Task"))
             }
 
             ComboBox {
@@ -165,19 +177,23 @@ Dialog {
                 label: qsTr("List")
                 Component.onCompleted: page.applyListIndex()
 
-                menu: ContextMenu {
-                    Repeater {
-                        model: Calendars
-                        MenuItem {
-                            text: displayName
-                        }
-                    }
-                }
-
                 Connections {
                     target: Calendars
                     onCountChanged: page.applyListIndex()
                 }
+
+                menu: ContextMenu {
+                    Repeater {
+                        model: Calendars
+
+                        MenuItem {
+                            text: displayName
+                        }
+
+                    }
+
+                }
+
             }
 
             DetailItem {
@@ -191,8 +207,8 @@ Dialog {
 
                 width: parent.width
                 text: page.summary
-                label: qsTr("Title")
-                placeholderText: qsTr("Title")
+                label: qsTr("Name")
+                placeholderText: qsTr("Name")
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
                 EnterKey.onClicked: notesField.focus = true
             }
@@ -279,25 +295,29 @@ Dialog {
                 width: parent.width
                 enabled: page.dueDate !== ""
                 label: qsTr("Reminder")
-                description: enabled ? qsTr("Alerts while Askare is running.")
-                                     : qsTr("Set a due date first.")
+                description: enabled ? qsTr("Send a notification while Askare is running.") : qsTr("Set a due date first.")
                 Component.onCompleted: {
-                    currentIndex = reminderOptions.indexOf(page.reminder)
-                    ready = true
+                    currentIndex = reminderOptions.indexOf(page.reminder);
+                    ready = true;
                 }
                 onCurrentIndexChanged: {
                     if (ready && currentIndex >= 0)
-                        page.reminder = reminderOptions.values[currentIndex]
+                        page.reminder = reminderOptions.values[currentIndex];
+
                 }
 
                 menu: ContextMenu {
                     Repeater {
                         model: reminderOptions.values
+
                         MenuItem {
                             text: reminderOptions.labelFor(modelData)
                         }
+
                     }
+
                 }
+
             }
 
             Button {
@@ -315,9 +335,12 @@ Dialog {
                 label: qsTr("Notes")
                 placeholderText: qsTr("Notes")
             }
+
         }
 
         VerticalScrollDecorator {
         }
+
     }
+
 }

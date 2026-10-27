@@ -17,7 +17,7 @@ SupportDialog {
         icon: SupportIcon.Weblate
         title: qsTr("Help with translations")
         description: qsTr("Bring Askare to your language on Transifex.")
-        link: "https://app.transifex.com/fravaccaro/askare"
+        link: "https://explore.transifex.com/fravaccaro/askare"
     }
 
     SupportAction {

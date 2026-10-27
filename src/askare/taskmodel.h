@@ -51,6 +51,7 @@ public:
 
     Q_INVOKABLE void showAll();
     Q_INVOKABLE void showCurrent();
+    Q_INVOKABLE void showImportant();
     Q_INVOKABLE void showCompleted();
     Q_INVOKABLE void showCalendar(const QString &href, const QString &name);
     // Whether the mixed views keep completed tasks; the dedicated completed

@@ -15,7 +15,7 @@ Askare does not use the Nextcloud account in the Sailfish OS settings. That acco
 
 ## Requirements
 
-* Sailfish OS 4.5 or newer (the app password is kept in Sailfish Secrets, and signing in uses the WebView)
+* Sailfish OS 5.0 or newer (the app password is kept in Sailfish Secrets, and signing in uses the WebView)
 * A reachable Nextcloud server with the Tasks app
 
 ## The pages

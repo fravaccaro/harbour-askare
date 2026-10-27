@@ -38,6 +38,18 @@ QVector<LocalTask> completedOf(const QVector<LocalTask> &tasks)
     return out;
 }
 
+// The high-priority band, flat like the other smart lists so a key subtask
+// surfaces on its own.
+QVector<LocalTask> importantOf(const QVector<LocalTask> &tasks)
+{
+    QVector<LocalTask> out;
+    for (const LocalTask &task : tasks) {
+        if (Ics::isImportant(task.status, task.priority))
+            out.append(task);
+    }
+    return out;
+}
+
 // A row shows which list owns it by colour, so the colours are read once per
 // reload instead of once per row.
 QHash<QString, QString> colorsOf(const QVector<CalendarInfo> &calendars)
@@ -92,6 +104,8 @@ QString TaskModel::title() const
 {
     if (m_filter == QLatin1String("current"))
         return tr("Current");
+    if (m_filter == QLatin1String("important"))
+        return tr("Important");
     if (m_filter == QLatin1String("completed"))
         return tr("Completed");
     if (m_filter == QLatin1String("calendar"))
@@ -107,6 +121,11 @@ void TaskModel::showAll()
 void TaskModel::showCurrent()
 {
     apply(QStringLiteral("current"), QString(), QString());
+}
+
+void TaskModel::showImportant()
+{
+    apply(QStringLiteral("important"), QString(), QString());
 }
 
 void TaskModel::showCompleted()
@@ -219,6 +238,8 @@ void TaskModel::reload()
     // behind its parent in the views that answer "what now" and "what is done".
     if (m_filter == QLatin1String("current"))
         m_items = currentOf(m_store->tasks());
+    else if (m_filter == QLatin1String("important"))
+        m_items = importantOf(m_store->tasks());
     else if (m_filter == QLatin1String("completed"))
         m_items = completedOf(m_store->tasks());
     else if (m_filter == QLatin1String("calendar"))

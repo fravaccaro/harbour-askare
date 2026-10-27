@@ -28,6 +28,10 @@ ListItem {
     contentHeight: Theme.itemSizeSmall
 
     Label {
+        truncationMode: TruncationMode.Fade
+        color: root.selected || root.highlighted ? Theme.highlightColor : Theme.primaryColor
+        text: root.name
+
         anchors {
             left: parent.left
             leftMargin: Theme.horizontalPageMargin
@@ -35,21 +39,22 @@ ListItem {
             rightMargin: Theme.paddingMedium
             verticalCenter: parent.verticalCenter
         }
-        truncationMode: TruncationMode.Fade
-        color: root.selected || root.highlighted ? Theme.highlightColor : Theme.primaryColor
-        text: root.name
+
     }
 
     Label {
         id: countLabel
+
+        color: Theme.secondaryColor
+        font.pixelSize: Theme.fontSizeSmall
+        text: root.count
 
         anchors {
             right: parent.right
             rightMargin: Theme.horizontalPageMargin
             verticalCenter: parent.verticalCenter
         }
-        color: Theme.secondaryColor
-        font.pixelSize: Theme.fontSizeSmall
-        text: root.count
+
     }
+
 }

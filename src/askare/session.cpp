@@ -173,6 +173,11 @@ int Session::currentCount() const
     return m_store->isOpen() ? m_store->currentCount() : 0;
 }
 
+int Session::importantCount() const
+{
+    return m_store->isOpen() ? m_store->importantCount() : 0;
+}
+
 int Session::completedCount() const
 {
     return m_store->isOpen() ? m_store->completedCount() : 0;
