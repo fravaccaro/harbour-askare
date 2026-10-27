@@ -19,7 +19,9 @@ Above the task lists of the server sit three views that read across all of them:
 
 Below them stand the task lists the server keeps, each with the colour you gave it in Nextcloud and the number of tasks still open in it. Choosing one narrows the task list to it.
 
-All and Completed count a subtask behind its parent; Current and Completed lay every task out flat, so a subtask due today is not hidden under a parent that is not.
+All and the view of one list count a subtask behind its parent; Current and Completed lay every task out flat, so a subtask due today is not hidden under a parent that is not.
+
+**Show completed tasks**, on the settings page, decides whether All and the view of one list keep finished tasks in sight. It is on to begin with. Turning it off leaves only open tasks there; the Completed view still shows them all.
 
 ## The task list
 

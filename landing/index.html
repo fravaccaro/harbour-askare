@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<!--
+  Source for https://fravaccaro.com/askare/
+  Published copy lives in fravaccaro.github.io under askare/
+  (portfolio site). Keep both in sync when editing.
+-->
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Askare - Nextcloud tasks on Sailfish OS</title>
+  <meta name="description"
+    content="A native Nextcloud Tasks client for Sailfish OS: lists, subtasks, Markdown notes and reminders, over CalDAV to your own server.">
+  <link rel="canonical" href="https://fravaccaro.com/askare/">
+  <link rel="icon"
+    href="https://raw.githubusercontent.com/fravaccaro/harbour-askare/refs/heads/main/icons/harbour-askare.svg"
+    type="image/svg+xml">
+  <style>
+    :root {
+      --bg-deep: #07151f;
+      --bg-card: #0f2a3d;
+      --accent: #19a0e5;
+      --accent-hover: #4fbcf0;
+      --text: #e6f2fa;
+      --text-muted: #9bbdd4;
+      --border: rgba(25, 160, 229, 0.25);
+      --radius: 12px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 1.0625rem;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg-deep);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(25, 160, 229, 0.18), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(25, 160, 229, 0.08), transparent);
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: var(--accent-hover);
+    }
+
+    .wrap {
+      width: min(960px, 92vw);
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    header {
+      padding: 1.5rem 0 0.5rem;
+    }
+
+    .logo {
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    main {
+      padding: 2rem 0 4rem;
+    }
+
+    .hero {
+      display: grid;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    @media (min-width: 720px) {
+      .hero {
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+      }
+    }
+
+    h1 {
+      margin: 0 0 0.75rem;
+      font-size: clamp(2rem, 5vw, 2.75rem);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    .tagline {
+      margin: 0 0 1.75rem;
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      max-width: 38ch;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg-deep);
+      box-shadow: 0 4px 16px rgba(25, 160, 229, 0.35);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      color: var(--bg-deep);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(25, 160, 229, 0.45);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(25, 160, 229, 0.1);
+      color: var(--accent-hover);
+      border-color: var(--accent);
+    }
+
+    .hero-visual {
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Holds the launcher icon until a device screenshot takes its place. */
+    .icon-frame {
+      margin: 0;
+      padding: 2rem;
+      max-width: 220px;
+      border-radius: 24px;
+      box-shadow: var(--shadow), 0 0 0 1px var(--border);
+      background: var(--bg-card);
+    }
+
+    .icon-frame img {
+      display: block;
+      width: 100%;
+      height: auto;
+      vertical-align: middle;
+    }
+
+    .features {
+      margin-top: 3.5rem;
+      padding: 2rem;
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .features h2 {
+      margin: 0 0 1rem;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .feature-grid {
+      display: grid;
+      gap: 0.75rem 1.5rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    @media (min-width: 520px) {
+      .feature-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .feature-grid li {
+      padding-left: 1.5rem;
+      position: relative;
+      color: var(--text);
+    }
+
+    .feature-grid li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .links-row {
+      margin-top: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 1.5rem;
+      font-size: 0.9375rem;
+    }
+
+    .links-row a {
+      color: var(--text-muted);
+    }
+
+    .links-row a:hover {
+      color: var(--accent-hover);
+    }
+
+    footer {
+      padding: 2rem 0 2.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    footer p {
+      margin: 0.25rem 0;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="wrap">
+    <div class="logo">Sailfish&nbsp;OS</div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-copy">
+        <h1>Askare</h1>
+        <p class="tagline">
+          A native Nextcloud Tasks client for Sailfish&nbsp;OS - the lists of the server you
+          already run, on the phone and over CalDAV.
+        </p>
+        <div class="actions">
+          <a class="btn btn-primary" href="/harbour-askare/">Documentation</a>
+          <a class="btn btn-secondary" href="https://github.com/fravaccaro/harbour-askare">GitHub</a>
+        </div>
+        <nav class="links-row" aria-label="More resources">
+          <a href="https://github.com/fravaccaro/harbour-askare/releases/latest">Releases</a>
+          <a href="https://liberapay.com/fravaccaro">Donate</a>
+        </nav>
+      </div>
+      <div class="hero-visual">
+        <figure class="icon-frame">
+          <img src="https://raw.githubusercontent.com/fravaccaro/harbour-askare/refs/heads/main/icons/harbour-askare.svg"
+            alt="Askare on Sailfish OS" width="256" height="256" loading="eager">
+        </figure>
+      </div>
+    </section>
+
+    <section class="features" aria-labelledby="features-heading">
+      <h2 id="features-heading">What you can do</h2>
+      <ul class="feature-grid">
+        <li>Sign in on the server's own page, with single sign-on and two factors</li>
+        <li>Every task list, plus the All, Current and Completed views</li>
+        <li>Dates, priority and completion on each task</li>
+        <li>Subtasks, counted on the row of their parent</li>
+        <li>Notes written in Markdown</li>
+        <li>A reminder before a task is due</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    <p>Askare is free software under the <a
+        href="https://github.com/fravaccaro/harbour-askare/blob/main/LICENSE">GPL-3.0</a>.</p>
+    <p><a href="https://github.com/fravaccaro">fravaccaro on GitHub</a></p>
+  </footer>
+</body>
+
+</html>

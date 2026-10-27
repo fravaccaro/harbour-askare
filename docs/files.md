@@ -27,7 +27,7 @@ Sailjail, the Sailfish OS sandbox, gives the app three private directories named
 
 * `~/.config/org.frapps/harbour-askare` - `settings.conf`, holding the server address, the user name, and the preferences above
 * `~/.local/share/org.frapps/harbour-askare` - `askare.db`, the copy of the lists and tasks
-* `~/.cache/org.frapps/harbour-askare` - the web view profile used while signing in
+* `~/.cache/org.frapps/harbour-askare` - whatever the web view leaves behind while signing in; Askare writes nothing of its own there
 
 The app password is not in any of them; it lives in Sailfish Secrets. Signing out empties the copy of the lists and removes the password.
 

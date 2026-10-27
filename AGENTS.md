@@ -100,8 +100,12 @@ This document is a living contract. Keeping it accurate is part of the implement
 | `src/askare/calendarmodel.*` | Task list model |
 | `src/askare/taskmodel.*` | Tasks of one list |
 | `qml/pages/*` | Silica pages |
+| `README.md`, `docs/*` | Documentation site: Jekyll with `just-the-docs`, configured in `_config.yml` |
+| `landing/index.html` | Marketing page, kept out of the Jekyll build; published copy lives in the portfolio site |
 
 Networking and ICS stay in C++. Pages bind to `Askare`, `Calendars`, and `Tasks`.
+
+User documentation lives under `docs/`, developer documentation under `docs/devel/`. A change to behaviour, settings, permissions or the build updates the matching page in the same commit.
 
 Sailjail private directories follow `OrganizationName` / `ApplicationName`:
 

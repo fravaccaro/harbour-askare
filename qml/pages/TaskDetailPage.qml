@@ -178,6 +178,10 @@ Page {
                 valueText: page.percent + "%"
             }
 
+            SectionHeader {
+                text: qsTr("Notes")
+            }
+
             Label {
                 x: Theme.horizontalPageMargin
                 width: parent.width - 2 * Theme.horizontalPageMargin
@@ -188,6 +192,15 @@ Page {
                 linkColor: Theme.highlightColor
                 text: Askare.renderNotes(page.description)
                 onLinkActivated: Qt.openUrlExternally(link)
+            }
+
+            Label {
+                x: Theme.horizontalPageMargin
+                width: parent.width - 2 * Theme.horizontalPageMargin
+                visible: page.description === ""
+                color: Theme.secondaryColor
+                font.pixelSize: Theme.fontSizeSmall
+                text: qsTr("None")
             }
 
             SectionHeader {
