@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import Nemo.Notifications 1.0
+import Nemo.KeepAlive 1.2
 import "pages"
 
 ApplicationWindow {
@@ -205,6 +206,9 @@ ApplicationWindow {
 
             appName: "Askare"
             appIcon: "harbour-askare"
+            // Sound and vibration come from the category, and a Harbour package
+            // may not install one of its own, so the system reminder is borrowed.
+            category: "x-nemo.calendar.reminder"
             isTransient: false
             urgency: Notification.Normal
             onClicked: app.openTask(notice.href)
@@ -216,5 +220,18 @@ ApplicationWindow {
     Connections {
         target: Reminders
         onDue: app.publishReminder(href, summary, dueText, parentSummary)
+    }
+
+    // The timer inside Reminders only ticks while the device is awake, so a
+    // locked phone would hold a reminder back until something woke it.
+    BackgroundJob {
+        id: wakeUp
+
+        enabled: Reminders.armed
+        frequency: BackgroundJob.FiveMinutes
+        onTriggered: {
+            Reminders.check()
+            wakeUp.finished()
+        }
     }
 }

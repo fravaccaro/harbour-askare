@@ -29,6 +29,16 @@ bool isPending(const LocalTask &task, const QDateTime &moment, const QDateTime &
     return task.remindedFor != reminderStamp(moment);
 }
 
+// What the wake-up is for: once nothing is left to announce, the application
+// stops asking the system to wake it.
+bool isWaiting(const LocalTask &task, const QDateTime &moment, const QDateTime &now)
+{
+    if (task.deleted || Ics::isCompleted(task.status))
+        return false;
+
+    return moment.isValid() && moment > now;
+}
+
 QString dueText(const LocalTask &task)
 {
     const QString time = Ics::timeFromDue(task.due);
@@ -52,6 +62,7 @@ QHash<QString, QString> titlesOf(const QVector<LocalTask> &tasks)
 Reminders::Reminders(Store *store, QObject *parent)
     : QObject(parent)
     , m_store(store)
+    , m_armed(false)
 {
     m_timer.setInterval(kCheckIntervalMs);
     connect(&m_timer, &QTimer::timeout, this, &Reminders::check);
@@ -69,12 +80,25 @@ void Reminders::check()
     const QDateTime now = QDateTime::currentDateTime();
     const QVector<LocalTask> tasks = m_store->tasks();
     const QHash<QString, QString> titles = titlesOf(tasks);
+    bool waiting = false;
     for (const LocalTask &task : tasks) {
         const QDateTime moment = Ics::reminderAt(task.due, task.reminder);
+        if (isWaiting(task, moment, now))
+            waiting = true;
         if (!isPending(task, moment, now))
             continue;
 
         m_store->markReminded(task.href, reminderStamp(moment));
         emit due(task.href, task.summary, dueText(task), titles.value(task.parentUid));
     }
+    setArmed(waiting);
+}
+
+void Reminders::setArmed(bool armed)
+{
+    if (m_armed == armed)
+        return;
+
+    m_armed = armed;
+    emit armedChanged();
 }
