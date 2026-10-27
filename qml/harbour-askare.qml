@@ -90,6 +90,28 @@ ApplicationWindow {
         pageStack.push(Qt.resolvedUrl("pages/TaskDetailPage.qml"), fields)
     }
 
+    // Opens the editor for an existing task from its href alone, so a list
+    // row's context menu can skip the detail page.
+    function editTask(href) {
+        var fields = Askare.taskFields(href)
+        if (!fields.href) {
+            app.notify(qsTr("That task is no longer here."))
+            return
+        }
+        pageStack.push(Qt.resolvedUrl("pages/TaskEditPage.qml"), fields)
+    }
+
+    // Opens the editor for an existing task from its href alone, so a list
+    // row's context menu can skip the detail page.
+    function editTask(href) {
+        var fields = Askare.taskFields(href)
+        if (!fields.href) {
+            app.notify(qsTr("That task is no longer here."))
+            return
+        }
+        pageStack.push(Qt.resolvedUrl("pages/TaskEditPage.qml"), fields)
+    }
+
     function reminderBody(dueText, parentSummary) {
         var due = dueText === "" ? qsTr("Task reminder") : qsTr("Due %1").arg(dueText)
         return parentSummary === "" ? due : parentSummary + " - " + due

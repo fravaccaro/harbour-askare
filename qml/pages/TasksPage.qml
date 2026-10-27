@@ -71,6 +71,10 @@ Page {
             onClicked: app.pushTask(href)
             menu: ContextMenu {
                 MenuItem {
+                    text: qsTr("Edit")
+                    onClicked: app.editTask(href)
+                }
+                MenuItem {
                     text: done ? qsTr("Mark open") : qsTr("Mark done")
                     onClicked: Askare.toggleDone(href)
                 }

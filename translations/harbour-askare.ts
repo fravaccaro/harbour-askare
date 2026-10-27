@@ -301,6 +301,18 @@
         <source>Connection</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Lists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show completed tasks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Completed tasks still appear under the Completed filter.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StartPage</name>
@@ -343,10 +355,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Due %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Completion</source>
         <translation type="unfinished"></translation>
     </message>
@@ -355,15 +363,35 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Starts %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Subtasks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1 of %2 done</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Priority</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Due</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reminder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Notes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
