@@ -31,7 +31,7 @@ Tap the switch on a row to mark a task done or open again. Tap the rest of the r
 
 The pulley menu offers **Sync** and **New task**. A new task started here lands in the list currently shown, or can be moved to another one in the editor.
 
-On the Lists page the pulley menu leads to **About**, **Settings** and **Sync**.
+On the Lists page the pulley menu leads to **About**, **Settings** and **Sync**. About shows the version, donations, translations, and the licence.
 
 ## The cover
 

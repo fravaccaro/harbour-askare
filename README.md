@@ -50,11 +50,12 @@ RPMs are attached to the [GitHub releases](https://github.com/fravaccaro/harbour
 
 ## Translate
 
-Italian ships with the app. A new language is a further `.ts` file under `translations/`; see [Building](docs/devel/building.md).
+Request a new language or contribute on the [Transifex project page](https://app.transifex.com/fravaccaro/askare).
 
 ## Credits
 
 - [Nextcloud Tasks](https://apps.nextcloud.com/apps/tasks), the server app whose to-dos this client reads and writes.
+- [Opal](https://github.com/Pretty-SFOS/opal) QML modules (About, SupportMe, LinkHandler) by [Mirian Margiani](https://github.com/Pretty-SFOS/opal-about).
 - Thanks to all translators and testers.
 
 ## AI disclosure

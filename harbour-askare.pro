@@ -9,6 +9,10 @@ PKGCONFIG += sailfishsecrets
 
 INCLUDEPATH += $$PWD/src
 
+# Autocompletion for the Opal modules bundled under qml/modules. They install
+# with the rest of the qml tree; main.cpp adds the matching runtime import path.
+QML_IMPORT_PATH += qml/modules
+
 isEmpty(APP_VERSION): APP_VERSION = 0.0-devel
 DEFINES += APP_VERSION=\\\"$$APP_VERSION\\\"
 
@@ -61,6 +65,7 @@ DISTFILES += \
     harbour-askare.desktop \
     icons/harbour-askare.svg \
     qml/harbour-askare.qml \
+    qml/components/AskareSupportDialog.qml \
     qml/cover/CoverPage.qml \
     qml/cover/cover-check.png \
     qml/pages/AboutPage.qml \
@@ -75,5 +80,6 @@ DISTFILES += \
     qml/pages/TaskDetailPage.qml \
     qml/pages/TaskEditPage.qml \
     qml/pages/TasksPage.qml \
+    qml/pages/TranslationsPage.qml \
     qml/pages/WebLoginPage.qml \
     translations/harbour-askare.ts

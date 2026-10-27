@@ -1,5 +1,11 @@
 Name:       harbour-askare
 
+# The bundled Opal modules carry qmldir files, from which rpmbuild would
+# generate `Provides: qml(Opal.About)` and friends. Harbour forbids an
+# application package from providing QML modules, and nothing outside this
+# package imports them anyway.
+%define __provides_exclude_from ^%{_datadir}/.*$
+
 Summary:    Nextcloud tasks for Sailfish OS
 Version:    0.1.0
 Release:    1

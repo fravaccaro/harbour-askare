@@ -5,6 +5,7 @@
 #include <QGuiApplication>
 #include <QLocale>
 #include <QQmlContext>
+#include <QQmlEngine>
 #include <QQuickView>
 #include <QScopedPointer>
 #include <QTranslator>
@@ -40,6 +41,11 @@ int main(int argc, char *argv[])
     Reminders reminders(&store);
 
     QScopedPointer<QQuickView> view(SailfishApp::createView());
+
+    // The Opal modules are shipped with the application rather than installed
+    // system-wide, so the engine has to be told where to look for them.
+    view->engine()->addImportPath(SailfishApp::pathTo(QStringLiteral("qml/modules")).toString());
+
     QQmlContext *context = view->rootContext();
     context->setContextProperty(QStringLiteral("Askare"), &session);
     context->setContextProperty(QStringLiteral("Calendars"), &calendars);

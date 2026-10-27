@@ -26,8 +26,10 @@ nav_order: 1
 | `src/askare/taskmodel.*` | The tasks of one view, grouped and ordered for the list |
 | `src/askare/reminders.*` | Watches stored tasks and reports a reminder whose moment has passed |
 | `qml/pages/*` | Silica UI |
+| `qml/components/*` | Shared QML such as the SupportMe dialog |
+| `qml/modules/Opal/*` | Bundled Opal About, SupportMe, and LinkHandler modules |
 
-`src/main.cpp` publishes four context properties - `Askare` (the session), `Calendars`, `Tasks` and `Reminders` - and the pages bind to those. Networking and ICS handling stay in C++; QML holds no request and parses no calendar data.
+`src/main.cpp` publishes four context properties - `Askare` (the session), `Calendars`, `Tasks` and `Reminders` - and the pages bind to those. It also adds `qml/modules` to the QML import path so the bundled Opal modules resolve at runtime. Networking and ICS handling stay in C++; QML holds no request and parses no calendar data.
 
 ## CalDAV rules
 

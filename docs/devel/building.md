@@ -37,11 +37,13 @@ The documentation site is built by `.github/workflows/pages.yml` (Jekyll with th
 
 Harbour refuses an unstripped binary, and the SDK packaging path does not always strip by itself, so `rpm/harbour-askare.spec` strips the binary before the package is sealed. The spec also carries the Chum metadata block.
 
+The spec file excludes automatic `Provides:` for the bundled Opal QML modules - Harbour forbids an application package from providing QML modules.
+
 The runtime dependencies are the Silica components, the WebView, the notification and D-Bus QML plugins, `libkeepalive` for the reminder wake-ups, and the multimedia import for the reminder tone. Sailfish Secrets is linked through `pkgconfig(sailfishsecrets)` in `harbour-askare.pro`.
 
 ## Translations
 
-Italian ships with the app. A new language is a further `.ts` file beside it:
+Italian ships with the app. Translators work on the [Transifex project](https://app.transifex.com/fravaccaro/askare). A new language is a further `.ts` file beside it:
 
 1. Copy `translations/harbour-askare.ts` to `translations/harbour-askare-<code>.ts`.
 2. Add it to `TRANSLATIONS` in `harbour-askare.pro`.

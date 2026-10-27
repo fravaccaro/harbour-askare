@@ -100,6 +100,8 @@ This document is a living contract. Keeping it accurate is part of the implement
 | `src/askare/calendarmodel.*` | Task list model |
 | `src/askare/taskmodel.*` | Tasks of one list |
 | `qml/pages/*` | Silica pages |
+| `qml/components/*` | Shared QML such as the SupportMe dialog |
+| `qml/modules/Opal/*` | Bundled Opal About, SupportMe, and LinkHandler modules |
 | `README.md`, `docs/*` | Documentation site: Jekyll with `just-the-docs`, configured in `_config.yml` |
 | `landing/index.html` | Marketing page, kept out of the Jekyll build; published copy lives in the portfolio site |
 
