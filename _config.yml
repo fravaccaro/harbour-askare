@@ -1,0 +1,11 @@
+remote_theme: pmarsceill/just-the-docs
+title: Askare
+description: A Nextcloud task client for Sailfish OS
+baseurl: "/harbour-askare"
+exclude: ["icons/", "landing/", "qml/", "rpm/", "src/", "translations/", "RPMS/", "LICENSE", "AGENTS.md", "*.desktop", "*.pro", "*.o", "Makefile", "harbour-askare"]
+
+url: "https://fravaccaro.com"
+search_enabled: true
+aux_links:
+  "Askare on GitHub":
+    - "//github.com/fravaccaro/harbour-askare"

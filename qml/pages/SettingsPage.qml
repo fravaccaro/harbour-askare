@@ -39,6 +39,18 @@ Page {
             }
 
             SectionHeader {
+                text: qsTr("Lists")
+            }
+
+            TextSwitch {
+                width: parent.width
+                text: qsTr("Show completed tasks")
+                description: qsTr("Completed tasks still appear under the Completed filter.")
+                checked: Askare.showCompletedTasks
+                onCheckedChanged: Askare.showCompletedTasks = checked
+            }
+
+            SectionHeader {
                 text: qsTr("Synchronisation")
             }
 

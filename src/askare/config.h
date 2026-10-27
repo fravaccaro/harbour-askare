@@ -19,6 +19,8 @@ class Config : public QObject
                NOTIFY syncIntervalChanged)
     Q_PROPERTY(bool syncAfterPush READ syncAfterPush WRITE setSyncAfterPush
                NOTIFY syncAfterPushChanged)
+    Q_PROPERTY(bool showCompleted READ showCompleted WRITE setShowCompleted
+               NOTIFY showCompletedChanged)
     Q_PROPERTY(bool configured READ isConfigured NOTIFY configuredChanged)
     Q_PROPERTY(bool ready READ isReady NOTIFY readyChanged)
     Q_PROPERTY(QString secretsError READ secretsError NOTIFY secretsErrorChanged)
@@ -48,6 +50,10 @@ public:
     bool syncAfterPush() const { return m_syncAfterPush; }
     void setSyncAfterPush(bool enabled);
 
+    // Whether the mixed task views keep completed tasks in sight.
+    bool showCompleted() const { return m_showCompleted; }
+    void setShowCompleted(bool show);
+
     bool isConfigured() const;
     bool isReady() const { return m_ready; }
     QString secretsError() const { return m_secretsError; }
@@ -64,6 +70,7 @@ signals:
     void syncOnStartChanged();
     void syncIntervalChanged();
     void syncAfterPushChanged();
+    void showCompletedChanged();
     void configuredChanged();
     void readyChanged();
     void secretsErrorChanged();
@@ -82,6 +89,7 @@ private:
     bool m_syncOnStart;
     int m_syncInterval;
     bool m_syncAfterPush;
+    bool m_showCompleted;
     bool m_ready;
 };
 

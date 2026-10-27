@@ -53,6 +53,9 @@ public:
     Q_INVOKABLE void showCurrent();
     Q_INVOKABLE void showCompleted();
     Q_INVOKABLE void showCalendar(const QString &href, const QString &name);
+    // Whether the mixed views keep completed tasks; the dedicated completed
+    // view ignores this.
+    void setShowCompleted(bool show);
     void reload();
 
 signals:
@@ -65,12 +68,14 @@ private:
     typedef QPair<int, int> ChildTally;
 
     void apply(const QString &filter, const QString &href, const QString &name);
+    bool isMixedView() const;
     ChildTally tallyOf(const QString &uid) const;
 
     Store *m_store;
     QString m_calendarHref;
     QString m_calendarName;
     QString m_filter;
+    bool m_showCompleted;
     QVector<LocalTask> m_items;
     QHash<QString, ChildTally> m_tallies;
     QHash<QString, QString> m_colors;

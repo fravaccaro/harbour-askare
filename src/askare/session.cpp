@@ -53,8 +53,12 @@ Session::Session(Config *config, Store *store, CalendarModel *calendars,
     connect(m_config, &Config::syncAfterPushChanged, this, &Session::syncAfterPushChanged);
     connect(m_config, &Config::syncIntervalChanged, this, &Session::syncIntervalChanged);
     connect(m_config, &Config::syncIntervalChanged, this, &Session::applySyncTimer);
+    connect(m_config, &Config::showCompletedChanged, this,
+            &Session::showCompletedTasksChanged);
+    connect(m_config, &Config::showCompletedChanged, this, &Session::applyShowCompleted);
     connect(m_config, &Config::readyChanged, this, &Session::syncIfStartupWanted);
     m_store->open();
+    applyShowCompleted();
     if (m_config->isReady() && m_config->isConfigured())
         applyCredentials();
     applySyncTimer();
@@ -119,6 +123,21 @@ bool Session::syncAfterPush() const
 void Session::setSyncAfterPush(bool enabled)
 {
     m_config->setSyncAfterPush(enabled);
+}
+
+bool Session::showCompletedTasks() const
+{
+    return m_config->showCompleted();
+}
+
+void Session::setShowCompletedTasks(bool show)
+{
+    m_config->setShowCompleted(show);
+}
+
+void Session::applyShowCompleted()
+{
+    m_tasks->setShowCompleted(m_config->showCompleted());
 }
 
 void Session::applySyncTimer()
@@ -506,7 +525,6 @@ QVariantMap Session::taskFields(const QString &href) const
     fields.insert(QStringLiteral("percent"),
                   Ics::percentFromStatus(task.status, parsed.percent));
     fields.insert(QStringLiteral("reminder"), task.reminder);
-    fields.insert(QStringLiteral("done"), Ics::isCompleted(task.status));
     return fields;
 }
 
@@ -514,8 +532,13 @@ QVariantList Session::subtasks(const QString &parentUid) const
 {
     QVariantList out;
     const QVector<LocalTask> children = m_store->children(parentUid);
-    for (const LocalTask &child : children)
-        out.append(taskFields(child.href));
+    for (const LocalTask &child : children) {
+        // A subtask row draws a toggle, which the detail page itself has no
+        // property for because it works the state out from the percentage.
+        QVariantMap fields = taskFields(child.href);
+        fields.insert(QStringLiteral("done"), Ics::isCompleted(child.status));
+        out.append(fields);
+    }
     return out;
 }
 

@@ -16,6 +16,18 @@ QVector<LocalTask> currentOf(const QVector<LocalTask> &tasks)
     return out;
 }
 
+// Drops only completed tasks, so an open task due later still shows. This is
+// what currentOf() does not do, since that view also hides what is not due yet.
+QVector<LocalTask> openOf(const QVector<LocalTask> &tasks)
+{
+    QVector<LocalTask> out;
+    for (const LocalTask &task : tasks) {
+        if (!Ics::isCompleted(task.status))
+            out.append(task);
+    }
+    return out;
+}
+
 QVector<LocalTask> completedOf(const QVector<LocalTask> &tasks)
 {
     QVector<LocalTask> out;
@@ -57,7 +69,23 @@ TaskModel::TaskModel(Store *store, QObject *parent)
     : QAbstractListModel(parent)
     , m_store(store)
     , m_filter(QStringLiteral("all"))
+    , m_showCompleted(true)
 {
+}
+
+// The views that mix open and completed rows, and so answer to the setting.
+bool TaskModel::isMixedView() const
+{
+    return m_filter == QLatin1String("all") || m_filter == QLatin1String("calendar");
+}
+
+void TaskModel::setShowCompleted(bool show)
+{
+    if (show == m_showCompleted)
+        return;
+
+    m_showCompleted = show;
+    reload();
 }
 
 QString TaskModel::title() const
@@ -197,6 +225,8 @@ void TaskModel::reload()
         m_items = m_store->topLevelTasks(m_calendarHref);
     else
         m_items = m_store->topLevelTasks();
+    if (!m_showCompleted && isMixedView())
+        m_items = openOf(m_items);
     m_tallies = talliesOf(m_store->tasks());
     m_colors = colorsOf(m_store->calendars());
     endResetModel();

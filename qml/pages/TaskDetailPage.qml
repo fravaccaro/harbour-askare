@@ -30,6 +30,11 @@ Page {
         return time === "" ? date : date + " " + time
     }
 
+    // The same moment for a row that stays put when the task has none.
+    function momentOr(date, time) {
+        return date === "" ? qsTr("None") : page.moment(date, time)
+    }
+
     function countDone(list) {
         var done = 0
         for (var i = 0; i < list.length; ++i) {
@@ -99,6 +104,13 @@ Page {
         id: reminderOptions
     }
 
+    // Instantiated only for its band names, so the mapping stays in one place.
+    PriorityTag {
+        id: priorityBands
+
+        visible: false
+    }
+
     Connections {
         target: Askare
         onTasksChanged: page.reloadSubtasks()
@@ -137,36 +149,24 @@ Page {
                 title: page.summary
             }
 
-            PriorityTag {
-                x: Theme.horizontalPageMargin
-                priority: page.priority
+            DetailItem {
+                label: qsTr("Priority")
+                value: priorityBands.labelFor(page.priority)
             }
 
-            Label {
-                x: Theme.horizontalPageMargin
-                width: parent.width - 2 * Theme.horizontalPageMargin
-                visible: page.startDate !== ""
-                color: Theme.secondaryColor
-                font.pixelSize: Theme.fontSizeSmall
-                text: qsTr("Starts %1").arg(page.moment(page.startDate, page.startTime))
+            DetailItem {
+                label: qsTr("Start")
+                value: page.momentOr(page.startDate, page.startTime)
             }
 
-            Label {
-                x: Theme.horizontalPageMargin
-                width: parent.width - 2 * Theme.horizontalPageMargin
-                visible: page.dueDate !== ""
-                color: Theme.secondaryColor
-                font.pixelSize: Theme.fontSizeSmall
-                text: qsTr("Due %1").arg(page.moment(page.dueDate, page.dueTime))
+            DetailItem {
+                label: qsTr("Due")
+                value: page.momentOr(page.dueDate, page.dueTime)
             }
 
-            Label {
-                x: Theme.horizontalPageMargin
-                width: parent.width - 2 * Theme.horizontalPageMargin
-                visible: page.reminder >= 0
-                color: Theme.secondaryColor
-                font.pixelSize: Theme.fontSizeSmall
-                text: reminderOptions.labelFor(page.reminder)
+            DetailItem {
+                label: qsTr("Reminder")
+                value: reminderOptions.labelFor(page.reminder)
             }
 
             ProgressBar {
