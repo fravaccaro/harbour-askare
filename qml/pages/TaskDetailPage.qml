@@ -66,6 +66,7 @@ Page {
         var dialog = pageStack.push(Qt.resolvedUrl("TaskEditPage.qml"), {
                                         "href": page.href,
                                         "calendarHref": page.calendarHref,
+                                        "parentUid": page.parentUid,
                                         "summary": page.summary,
                                         "description": page.description,
                                         "startDate": page.startDate,

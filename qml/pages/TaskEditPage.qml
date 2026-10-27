@@ -21,6 +21,9 @@ Dialog {
     // A subtask is pinned to its parent's list, since RELATED-TO resolves by
     // UID only within one calendar.
     readonly property bool isSubtask: page.parentUid !== ""
+    // Only a task being created under a parent needs to say so: an edit keeps
+    // whatever place in the tree the task already has.
+    readonly property bool newSubtask: page.isSubtask && page.href === ""
 
     function pad(value) {
         return value < 10 ? "0" + value : "" + value
@@ -150,8 +153,8 @@ Dialog {
 
             DialogHeader {
                 acceptText: page.href === "" ? qsTr("Add task") : qsTr("Save")
-                title: page.isSubtask ? qsTr("New subtask")
-                                      : (page.href === "" ? qsTr("New task") : qsTr("Task"))
+                title: page.newSubtask ? qsTr("New subtask")
+                                       : (page.href === "" ? qsTr("New task") : qsTr("Task"))
             }
 
             ComboBox {
@@ -178,7 +181,7 @@ Dialog {
             }
 
             DetailItem {
-                visible: page.isSubtask
+                visible: page.newSubtask
                 label: qsTr("List")
                 value: Calendars.nameOfHref(page.calendarHref)
             }
