@@ -905,6 +905,10 @@
         <source>Web address</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>This subtask becomes a task of its own, and its own subtasks follow it.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TaskModel</name>

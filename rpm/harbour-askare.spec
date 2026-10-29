@@ -7,8 +7,8 @@ Name:       harbour-askare
 %define __provides_exclude_from ^%{_datadir}/.*$
 
 Summary:    Nextcloud tasks for Sailfish OS
-Version:    0.1.0
-Release:    8
+Version:    0.1.1
+Release:    1
 License:    GPLv3
 URL:        https://github.com/fravaccaro/harbour-askare
 Source0:    %{name}-%{version}.tar.bz2

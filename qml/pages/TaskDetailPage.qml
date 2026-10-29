@@ -112,8 +112,12 @@ Page {
     }
 
     function followMove(newHref) {
+        var fields = Askare.taskFields(newHref);
         page.href = newHref;
-        page.calendarHref = Askare.taskFields(newHref).calendarHref;
+        page.calendarHref = fields.calendarHref;
+        // A moved subtask is detached, so the page must forget its old parent
+        // or a later edit would re-attach a link into the list it left.
+        page.parentUid = fields.parentUid;
     }
 
     allowedOrientations: Orientation.All
@@ -142,6 +146,7 @@ Page {
         onTaskMoved: {
             if (oldHref === page.href)
                 page.followMove(newHref);
+
         }
     }
 
@@ -180,16 +185,17 @@ Page {
 
             PageHeader {
                 title: page.summary
-            }
-
-            DetailItem {
-                label: qsTr("Priority")
-                value: priorityBands.labelFor(page.priority)
+                description: Calendars.nameOfHref(page.calendarHref)
             }
 
             DetailItem {
                 label: qsTr("Status")
                 value: statusOptions.labelFor(page.status)
+            }
+
+            DetailItem {
+                label: qsTr("Priority")
+                value: priorityBands.labelFor(page.priority)
             }
 
             DetailItem {
@@ -243,10 +249,23 @@ Page {
 
             }
 
+            ProgressBar {
+                width: parent.width
+                minimumValue: 0
+                maximumValue: 100
+                value: page.percent
+                valueText: page.percent + "%"
+            }
+
             Label {
-                x: Theme.horizontalPageMargin
-                color: Theme.secondaryColor
+                width: parent.width
+                horizontalAlignment: Text.AlignHCenter
                 font.pixelSize: Theme.fontSizeSmall
+                color: Theme.secondaryColor
+                text: qsTr("Completion")
+            }
+
+            SectionHeader {
                 text: qsTr("Tags")
             }
 
@@ -255,22 +274,6 @@ Page {
                 width: parent.width - 2 * Theme.horizontalPageMargin
                 tags: page.tags
             }
-
-
-ProgressBar {
-    width: parent.width
-    minimumValue: 0
-    maximumValue: 100
-    value: page.percent
-    valueText: page.percent + "%"
-}
-Label {
-    width: parent.width
-    horizontalAlignment: Text.AlignHCenter
-    font.pixelSize: Theme.fontSizeSmall
-    color: Theme.secondaryColor
-    text: qsTr("Completion")
-}
 
             SectionHeader {
                 text: qsTr("Notes")

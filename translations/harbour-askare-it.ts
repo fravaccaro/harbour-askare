@@ -33,7 +33,7 @@
     </message>
     <message>
         <source>About Nextcloud Tasks</source>
-        <translation>Info su Nextcloud Attività</translation>
+        <translation>Informazioni su Nextcloud Attività</translation>
     </message>
 </context>
 <context>
@@ -197,7 +197,7 @@
     </message>
     <message>
         <source>About</source>
-        <translation>Info su</translation>
+        <translation>Informazioni</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -274,7 +274,7 @@
     <name>Opal.About</name>
     <message>
         <source>About</source>
-        <translation>Info su</translation>
+        <translation>Informazioni</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -905,6 +905,10 @@
         <source>Web address</source>
         <translation>Indirizzo web</translation>
     </message>
+    <message>
+        <source>This subtask becomes a task of its own, and its own subtasks follow it.</source>
+        <translation>Questa sottoattività diventa un&apos;attività a sé, e le sue sottoattività la seguono.</translation>
+    </message>
 </context>
 <context>
     <name>TaskModel</name>
@@ -984,7 +988,7 @@
     </message>
     <message>
         <source>About</source>
-        <translation>Info su</translation>
+        <translation>Informazioni</translation>
     </message>
     <message>
         <source>Settings</source>

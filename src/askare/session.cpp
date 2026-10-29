@@ -39,6 +39,19 @@ LocalTask relocated(const LocalTask &task, const QString &calendarHref)
     return next;
 }
 
+// A task carried out of its collection cannot keep a parent it leaves behind:
+// RELATED-TO resolves by uid only within one collection. So it becomes a task
+// in its own right, in the row and in the ICS alike.
+LocalTask detached(const LocalTask &task)
+{
+    LocalTask next = task;
+    next.parentUid = QString();
+    TodoFields fields = Ics::parse(next.ics);
+    fields.parentUid = QString();
+    next.ics = Ics::rewrite(next.ics, fields);
+    return next;
+}
+
 }
 
 Session::Session(Config *config, Store *store, CalendarModel *calendars,
@@ -531,11 +544,14 @@ void Session::moveSubtree(const QString &href, const QString &calendarHref)
     if (root.href.isEmpty())
         return;
 
-    QVector<LocalTask> moving = m_store->descendants(href);
-    moving.prepend(root);
-    for (const LocalTask &task : moving)
+    const QVector<LocalTask> following = m_store->descendants(href);
+    // Only the root leaves a parent behind; the subtree keeps its own links.
+    m_store->upsertLocal(detached(relocated(root, calendarHref)));
+    for (const LocalTask &task : following)
         m_store->upsertLocal(relocated(task, calendarHref));
-    for (const LocalTask &task : moving)
+
+    dropTask(root);
+    for (const LocalTask &task : following)
         dropTask(task);
 
     emit taskMoved(root.href, hrefIn(calendarHref, root.uid));

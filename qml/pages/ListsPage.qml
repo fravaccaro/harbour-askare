@@ -111,24 +111,6 @@ Page {
             }
 
             SectionHeader {
-                visible: Askare.tags.length > 0
-                text: qsTr("Tags")
-            }
-
-            Repeater {
-                model: Askare.tags
-
-                FilterItem {
-                    width: listView.width
-                    name: modelData.name
-                    count: modelData.count
-                    selected: Tasks.filter === "tag" && Tasks.tag === modelData.name
-                    onClicked: page.selectTag(modelData.name)
-                }
-
-            }
-
-            SectionHeader {
                 text: qsTr("Task lists")
             }
 
@@ -184,6 +166,29 @@ Page {
                     right: parent.right
                     rightMargin: Theme.horizontalPageMargin
                     verticalCenter: parent.verticalCenter
+                }
+
+            }
+
+        }
+
+        footer: Column {
+            width: listView.width
+
+            SectionHeader {
+                visible: Askare.tags.length > 0
+                text: qsTr("Tags")
+            }
+
+            Repeater {
+                model: Askare.tags
+
+                FilterItem {
+                    width: parent.width
+                    name: modelData.name
+                    count: modelData.count
+                    selected: Tasks.filter === "tag" && Tasks.tag === modelData.name
+                    onClicked: page.selectTag(modelData.name)
                 }
 
             }

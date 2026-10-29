@@ -1,2 +1,9 @@
-* Sat Oct 24 2026 fravaccaro <fravaccaro@users.noreply.github.com> 0.1.0-1
+
+* Sat Oct 24 2026 fravaccaro 0.1.1-1
+- Added tags
+- Added status and cancelled tasks
+- Added Location field
+- Added URL field
+
+* Sat Oct 24 2026 fravaccaro 0.1.0-8
 - First release: Nextcloud login flow and CalDAV task lists

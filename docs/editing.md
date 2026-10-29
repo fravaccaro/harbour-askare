@@ -43,8 +43,8 @@ Notes are written as plain text and shown with their Markdown applied: headings,
 
 ## Subtasks
 
-**Add subtask** creates a task under the one being read. A subtask stays in the list of its parent, because a server resolves the relation between the two by an identifier that is unique only within one list. The task list counts the subtasks of a task on its row, and the Current and Completed views show subtasks in their own right rather than behind their parent.
+**Add subtask** creates a task under the one being read, in the list of its parent, because a server resolves the relation between the two by an identifier that is unique only within one list. The task list counts the subtasks of a task on its row, and the Current and Completed views show subtasks in their own right rather than behind their parent.
 
 Deleting a task deletes its subtasks with it; the confirmation says how many tasks that is.
 
-Moving a task to another list takes its subtasks along, for the same reason: they have to stay where their parent is. A move is sent to the server on the next sync, so a task moved while offline shows in its new list on the device until then.
+Moving a task to another list takes its subtasks along. Moving a subtask to another list, on the other hand, turns it into a task of its own: it can no longer point at the parent it leaves behind, for the same reason a subtask stays in its parent's list to begin with. Its own subtasks, if it has any, follow it across and stay under it. The editor says so before the move is saved. A move is sent to the server on the next sync, so a task moved while offline shows in its new list on the device until then.

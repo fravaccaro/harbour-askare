@@ -1,3 +1,4 @@
+import Nemo.Notifications 1.0
 /*!
     \qmltype AskareNotification
     \brief The one transient notice the app speaks through.
@@ -18,7 +19,6 @@
     \endqml
 */
 import QtQuick 2.0
-import Nemo.Notifications 1.0
 
 Notification {
     function toast(message) {

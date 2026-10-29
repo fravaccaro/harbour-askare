@@ -22,11 +22,11 @@ Dialog {
     property string url
     property var tags: []
     property bool listIndexReady: false
-    // A subtask is pinned to its parent's list, since RELATED-TO resolves by
-    // UID only within one calendar.
+    // A task that names a parent. Moving an existing one to another list
+    // detaches it, since RELATED-TO resolves by UID only within one calendar.
     readonly property bool isSubtask: page.parentUid !== ""
-    // Only a task being created under a parent needs to say so: an edit keeps
-    // whatever place in the tree the task already has.
+    // A subtask still being created stays under its parent; only an existing
+    // one can be carried off and turned into a task of its own.
     readonly property bool newSubtask: page.isSubtask && page.href === ""
 
     function pad(value) {
@@ -113,13 +113,14 @@ Dialog {
         return (page.startTime === "" ? "00:00" : page.startTime) > page.dueTime;
     }
 
-    // A subtask stays where its parent is; anything else follows the picker,
-    // which only has lists to offer once they have been read. A task in a list
-    // the device does not know stays there too, since the picker cannot show
-    // that list and would otherwise read as the first one.
+    // A subtask being created stays where its parent is; anything else follows
+    // the picker, which only has lists to offer once they have been read. A
+    // task in a list the device does not know stays there too, since the picker
+    // cannot show that list and would otherwise read as the first one.
     function chosenCalendar() {
-        if (page.isSubtask || Calendars.count === 0)
+        if (page.newSubtask || Calendars.count === 0)
             return page.calendarHref;
+
         if (page.href !== "" && Calendars.nameOfHref(page.calendarHref) === "")
             return page.calendarHref;
 
@@ -140,9 +141,7 @@ Dialog {
     function tagNames() {
         var out = [];
         var all = Askare.tags;
-        for (var i = 0; i < all.length; ++i)
-            out.push(all[i].name);
-
+        for (var i = 0; i < all.length; ++i) out.push(all[i].name)
         return out;
     }
 
@@ -213,12 +212,26 @@ Dialog {
                 title: page.newSubtask ? qsTr("New subtask") : (page.href === "" ? qsTr("New task") : qsTr("Task"))
             }
 
+            TextField {
+                id: summaryField
+
+                width: parent.width
+                text: page.summary
+                label: qsTr("Name")
+                placeholderText: qsTr("Name")
+                EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                EnterKey.onClicked: notesField.focus = true
+            }
+
             ComboBox {
                 id: listBox
 
                 width: parent.width
-                visible: !page.isSubtask
+                visible: !page.newSubtask
                 label: qsTr("List")
+                // Shown only once another list is picked, so an untouched
+                // subtask does not warn about a move that is not happening.
+                description: page.isSubtask && page.chosenCalendar() !== page.calendarHref ? qsTr("This subtask becomes a task of its own, and its own subtasks follow it.") : ""
                 Component.onCompleted: page.applyListIndex()
 
                 Connections {
@@ -240,39 +253,6 @@ Dialog {
 
             }
 
-            DetailItem {
-                visible: page.isSubtask
-                label: qsTr("List")
-                value: Calendars.nameOfHref(page.calendarHref)
-            }
-
-            TextField {
-                id: summaryField
-
-                width: parent.width
-                text: page.summary
-                label: qsTr("Name")
-                placeholderText: qsTr("Name")
-                EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                EnterKey.onClicked: notesField.focus = true
-            }
-
-            Slider {
-                id: completionSlider
-
-                width: parent.width
-                label: qsTr("Completion")
-                minimumValue: 0
-                maximumValue: 100
-                stepSize: 5
-                valueText: value + "%"
-                Component.onCompleted: value = page.percent
-                onValueChanged: {
-                    page.percent = value;
-                    page.syncStatusToPercent();
-                }
-            }
-
             ComboBox {
                 id: statusBox
 
@@ -291,6 +271,7 @@ Dialog {
                     page.status = statusOptions.values[currentIndex];
                     if (page.status === "COMPLETED")
                         completionSlider.value = 100;
+
                 }
 
                 menu: ContextMenu {
@@ -322,6 +303,22 @@ Dialog {
                 valueText: priorityBands.labelFor(value)
                 Component.onCompleted: value = page.priority
                 onValueChanged: page.priority = value
+            }
+
+            Slider {
+                id: completionSlider
+
+                width: parent.width
+                label: qsTr("Completion")
+                minimumValue: 0
+                maximumValue: 100
+                stepSize: 5
+                valueText: value + "%"
+                Component.onCompleted: value = page.percent
+                onValueChanged: {
+                    page.percent = value;
+                    page.syncStatusToPercent();
+                }
             }
 
             ValueButton {
