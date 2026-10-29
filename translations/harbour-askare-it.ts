@@ -615,19 +615,23 @@
     <name>StatusOptions</name>
     <message>
         <source>In process</source>
-        <translation type="unfinished"></translation>
+        <translation>In corso</translation>
     </message>
     <message>
         <source>Completed</source>
-        <translation type="unfinished">Completate</translation>
+        <translation>Completata</translation>
     </message>
     <message>
         <source>Cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Annullata</translation>
     </message>
     <message>
         <source>Needs action</source>
-        <translation type="unfinished"></translation>
+        <translation>Richiede azione</translation>
+    </message>
+    <message>
+        <source>No status</source>
+        <translation>Nessuno stato</translation>
     </message>
 </context>
 <context>
@@ -754,15 +758,15 @@
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Stato</translation>
     </message>
     <message>
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Posizione</translation>
     </message>
     <message>
         <source>Web address</source>
-        <translation type="unfinished"></translation>
+        <translation>Indirizzo web</translation>
     </message>
 </context>
 <context>
@@ -857,15 +861,15 @@
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Stato</translation>
     </message>
     <message>
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Posizione</translation>
     </message>
     <message>
         <source>Web address</source>
-        <translation type="unfinished"></translation>
+        <translation>Indirizzo web</translation>
     </message>
 </context>
 <context>

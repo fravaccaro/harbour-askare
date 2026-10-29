@@ -8,14 +8,35 @@
 
 namespace {
 
+// Where a task of this uid lives inside a collection.
+QString hrefIn(const QString &calendarHref, const QString &uid)
+{
+    return Url::pathWithSlash(calendarHref) + uid + QStringLiteral(".ics");
+}
+
 void ensureIdentity(LocalTask *task, const QString &calendarHref)
 {
     if (!task->href.isEmpty())
         return;
 
     task->uid = Ics::newUid();
-    task->href = Url::pathWithSlash(calendarHref) + task->uid + QStringLiteral(".ics");
+    task->href = hrefIn(calendarHref, task->uid);
     task->calendarHref = Url::pathWithSlash(calendarHref);
+}
+
+// The same task under another collection: a resource the server has not seen,
+// so it is uploaded rather than updated. The uid stays, which keeps the
+// RELATED-TO links inside a moved subtree pointing at the right parent, and so
+// does the reminded stamp, so carrying a task over does not replay a reminder.
+LocalTask relocated(const LocalTask &task, const QString &calendarHref)
+{
+    LocalTask next = task;
+    next.calendarHref = Url::pathWithSlash(calendarHref);
+    next.href = hrefIn(calendarHref, task.uid);
+    next.etag = QString();
+    next.dirty = true;
+    next.deleted = false;
+    return next;
 }
 
 }
@@ -486,14 +507,43 @@ void Session::pushDirty()
     pushNext();
 }
 
+// A task carried to another list is written under its new collection and
+// deleted from the old one; the subtree follows, since RELATED-TO resolves by
+// uid only within one collection.
+void Session::moveSubtree(const QString &href, const QString &calendarHref)
+{
+    const LocalTask root = m_store->task(href);
+    if (root.href.isEmpty())
+        return;
+
+    QVector<LocalTask> moving = m_store->descendants(href);
+    moving.prepend(root);
+    for (const LocalTask &task : moving)
+        m_store->upsertLocal(relocated(task, calendarHref));
+    for (const LocalTask &task : moving)
+        dropTask(task);
+
+    emit taskMoved(root.href, hrefIn(calendarHref, root.uid));
+}
+
 void Session::saveTask(const QVariantMap &fields)
 {
-    if (fields.value(QStringLiteral("calendarHref")).toString().isEmpty()) {
+    const QString target = fields.value(QStringLiteral("calendarHref")).toString();
+    if (target.isEmpty()) {
         setError(tr("Choose a list for the task."));
         return;
     }
 
+    // editedTask() leaves an existing task in the collection it already sits
+    // in, so the edit lands there first and the move carries it over after.
+    const LocalTask existing = m_store->task(fields.value(QStringLiteral("href")).toString());
+    const bool moving = !existing.href.isEmpty()
+            && Url::pathWithSlash(existing.calendarHref) != Url::pathWithSlash(target);
+
     m_store->upsertLocal(editedTask(fields));
+    if (moving)
+        moveSubtree(existing.href, target);
+
     reloadModels();
     pushDirty();
 }

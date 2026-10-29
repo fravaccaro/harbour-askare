@@ -15,7 +15,9 @@ import QtQuick 2.0
 QtObject {
     id: root
 
-    readonly property var values: ["NEEDS-ACTION", "IN-PROCESS", "COMPLETED", "CANCELLED"]
+    // "" is a task with no STATUS at all, the state a new task starts in on
+    // Nextcloud; it leads the list so clearing the state reads as the default.
+    readonly property var values: ["", "NEEDS-ACTION", "IN-PROCESS", "COMPLETED", "CANCELLED"]
 
     function indexOf(status) {
         var index = root.values.indexOf(status);
@@ -23,6 +25,9 @@ QtObject {
     }
 
     function labelFor(status) {
+        if (status === "NEEDS-ACTION")
+            return qsTr("Needs action");
+
         if (status === "IN-PROCESS")
             return qsTr("In process");
 
@@ -32,7 +37,7 @@ QtObject {
         if (status === "CANCELLED")
             return qsTr("Cancelled");
 
-        return qsTr("Needs action");
+        return qsTr("No status");
     }
 
 }

@@ -421,8 +421,6 @@ QString create(const TodoFields &fields)
     TodoFields copy = fields;
     if (copy.uid.isEmpty())
         copy.uid = newUid();
-    if (copy.status.isEmpty())
-        copy.status = QStringLiteral("NEEDS-ACTION");
 
     QStringList lines;
     const QString stamp = nowStamp();

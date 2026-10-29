@@ -108,6 +108,11 @@ Page {
         });
     }
 
+    function followMove(newHref) {
+        page.href = newHref;
+        page.calendarHref = Askare.taskFields(newHref).calendarHref;
+    }
+
     allowedOrientations: Orientation.All
     Component.onCompleted: page.reloadSubtasks()
 
@@ -129,6 +134,12 @@ Page {
     Connections {
         target: Askare
         onTasksChanged: page.reloadSubtasks()
+        // A task carried to another list lives at a new href; without this the
+        // page would keep acting on the one left behind.
+        onTaskMoved: {
+            if (oldHref === page.href)
+                page.followMove(newHref);
+        }
     }
 
     SilicaFlickable {

@@ -102,6 +102,9 @@ signals:
     void loginUrlReady(const QString &url);
     void loginSucceeded();
     void loginFailed(const QString &error);
+    // A task carried to another list keeps its uid but not its href, so a page
+    // holding the old one can follow it.
+    void taskMoved(const QString &oldHref, const QString &newHref);
 
 public slots:
     void setIgnoreSslErrors(bool ignore);
@@ -121,6 +124,7 @@ private:
     void syncIfStartupWanted();
     void reloadModels();
     void dropTask(const LocalTask &task);
+    void moveSubtree(const QString &href, const QString &calendarHref);
     void fetchNextCalendar();
     void pushNext();
     void finishSync();

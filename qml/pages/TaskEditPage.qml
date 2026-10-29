@@ -112,8 +112,14 @@ Dialog {
         return (page.startTime === "" ? "00:00" : page.startTime) > page.dueTime;
     }
 
+    // A subtask stays where its parent is; anything else follows the picker,
+    // which only has lists to offer once they have been read. A task in a list
+    // the device does not know stays there too, since the picker cannot show
+    // that list and would otherwise read as the first one.
     function chosenCalendar() {
-        if (page.calendarHref !== "" && (page.href !== "" || page.isSubtask))
+        if (page.isSubtask || Calendars.count === 0)
+            return page.calendarHref;
+        if (page.href !== "" && Calendars.nameOfHref(page.calendarHref) === "")
             return page.calendarHref;
 
         var index = listBox.currentIndex < 0 ? 0 : listBox.currentIndex;
@@ -197,7 +203,7 @@ Dialog {
                 id: listBox
 
                 width: parent.width
-                visible: page.href === "" && !page.isSubtask
+                visible: !page.isSubtask
                 label: qsTr("List")
                 Component.onCompleted: page.applyListIndex()
 
@@ -221,7 +227,7 @@ Dialog {
             }
 
             DetailItem {
-                visible: page.newSubtask
+                visible: page.isSubtask
                 label: qsTr("List")
                 value: Calendars.nameOfHref(page.calendarHref)
             }

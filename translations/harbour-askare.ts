@@ -629,6 +629,10 @@
         <source>Needs action</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>No status</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Store</name>

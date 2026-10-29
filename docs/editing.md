@@ -17,10 +17,10 @@ The pulley menu holds **Edit**, **Mark done**, **Add subtask** and **Delete**.
 
 The editor takes:
 
-* **List** - only while a task is being created, and only when it stands on its own
+* **List** - for a task that stands on its own, whether it is being created or edited; choosing another list moves the task there
 * **Name**
 * **Completion** - from 0 to 100 percent in steps of 5; 100 marks the task done
-* **Status** - Needs action, In process, Completed or Cancelled; it moves with Completion, so marking a task done sets it Completed and dropping the bar below full sends a completed task back to in process
+* **Status** - No status, Needs action, In process, Completed or Cancelled; it moves with Completion, so marking a task done sets it Completed and dropping the bar below full sends a completed task back to in process. **No status** clears it, leaving the task without a state at all, the way a task created on the Nextcloud side starts out
 * **Priority** - 1 to 4 high, 5 medium, 6 to 9 low, 0 none
 * **Start** and **Due** - a date each, with a time or left as all day
 * **Reminder** - see [Reminders](reminders); a due date is needed first
@@ -39,3 +39,5 @@ Notes are written as plain text and shown with their Markdown applied: headings,
 **Add subtask** creates a task under the one being read. A subtask stays in the list of its parent, because a server resolves the relation between the two by an identifier that is unique only within one list. The task list counts the subtasks of a task on its row, and the Current and Completed views show subtasks in their own right rather than behind their parent.
 
 Deleting a task deletes its subtasks with it; the confirmation says how many tasks that is.
+
+Moving a task to another list takes its subtasks along, for the same reason: they have to stay where their parent is. A move is sent to the server on the next sync, so a task moved while offline shows in its new list on the device until then.

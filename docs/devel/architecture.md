@@ -49,6 +49,12 @@ A change is uploaded with `If-Match` carrying the ETag the task was last read at
 
 Reminders are a `VALARM` inside the VTODO, with a trigger relative to the end of the task, which is how Nextcloud Tasks writes them. Subtasks are a `RELATED-TO` naming the UID of the parent, which resolves only within one calendar - hence a subtask is pinned to the list of its parent.
 
+A task has no address of its own beyond its collection: `hrefIn()` builds `href` from the calendar href and the UID, and `href` is the primary key of the `tasks` table. Carrying a task to another list is therefore a create followed by a delete, which `Session::moveSubtree()` writes with the pieces that already exist: the task and every `Store::descendants()` entry are upserted at their new hrefs with no ETag, so the push uploads them with `If-None-Match: *`, and `dropTask()` then retires each original - removed outright when the server never saw it, otherwise marked deleted so the push issues the `DELETE`. Nothing in the DAV layer knows about moving.
+
+The whole subtree travels together, since `RELATED-TO` would otherwise point at a UID outside the collection. The UID is kept, which is what holds those links together, and so is the reminded stamp, so a move does not replay a reminder. Creating before deleting means a `DELETE` that fails leaves a copy in the old list for the next push to retry, rather than losing the task. The old and new rows share a UID until the push completes; every query that reads relations filters on `deleted = 0`, so only the new subtree is seen.
+
+A move changes the href a page may be holding, so `Session` emits `taskMoved(oldHref, newHref)` and `TaskDetailPage` follows it. Without that the page would keep acting on the row left behind, and `editedTask()` clears the deleted flag, so the next pulley action there would put the task back in both lists.
+
 ## Sandbox layout
 
 Sailjail gives the app three private directories, named after the `OrganizationName` and `ApplicationName` of the desktop file:
