@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QDir>
+#include <QMap>
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QStandardPaths>
@@ -51,7 +52,7 @@ QString taskColumns()
     return QStringLiteral("SELECT href, calendar_href, uid, etag, ics, summary,"
                           " description, status, completed, due, priority,"
                           " reminder, reminded_for, parent_uid, dirty, deleted,"
-                          " location, url"
+                          " location, url, tags"
                           " FROM tasks");
 }
 
@@ -88,6 +89,8 @@ void bindTask(QSqlQuery *query, const LocalTask &task)
     query->bindValue(QStringLiteral(":description"), task.description);
     query->bindValue(QStringLiteral(":location"), task.location);
     query->bindValue(QStringLiteral(":url"), task.url);
+    // Stored the way the server writes them, so a comma inside a tag survives.
+    query->bindValue(QStringLiteral(":tags"), Ics::joinCategories(task.tags));
     query->bindValue(QStringLiteral(":status"), task.status);
     query->bindValue(QStringLiteral(":completed"), task.completed);
     query->bindValue(QStringLiteral(":due"), task.due);
@@ -169,6 +172,7 @@ bool Store::migrate()
     query.exec(QStringLiteral("ALTER TABLE tasks ADD COLUMN parent_uid TEXT"));
     query.exec(QStringLiteral("ALTER TABLE tasks ADD COLUMN location TEXT"));
     query.exec(QStringLiteral("ALTER TABLE tasks ADD COLUMN url TEXT"));
+    query.exec(QStringLiteral("ALTER TABLE tasks ADD COLUMN tags TEXT"));
     return calendars && tasks;
 }
 
@@ -239,6 +243,7 @@ LocalTask Store::readTask(const QSqlQuery &query) const
     task.deleted = query.value(15).toInt() != 0;
     task.location = query.value(16).toString();
     task.url = query.value(17).toString();
+    task.tags = Ics::splitCategories(query.value(18).toString());
     return task;
 }
 
@@ -368,6 +373,28 @@ int Store::completedCount() const
     return query.next() ? query.value(0).toInt() : 0;
 }
 
+// Every tag in use, with the number of open tasks carrying it. Spellings that
+// differ only by case name one tag, and the first one seen gives it its name.
+QVector<TagInfo> Store::tagInfos() const
+{
+    QMap<QString, TagInfo> seen;
+    if (!isOpen())
+        return QVector<TagInfo>();
+
+    const QVector<LocalTask> items = tasks();
+    for (const LocalTask &task : items) {
+        const bool open = !Ics::isCompleted(task.status) && !Ics::isCancelled(task.status);
+        for (const QString &tag : task.tags) {
+            TagInfo &info = seen[tag.toCaseFolded()];
+            if (info.name.isEmpty())
+                info.name = tag;
+            if (open)
+                ++info.openCount;
+        }
+    }
+    return QVector<TagInfo>::fromList(seen.values());
+}
+
 int Store::currentCount() const
 {
     if (!isOpen())
@@ -427,6 +454,7 @@ void Store::upsertRemoteTask(const QString &calendarHref, const RemoteTask &remo
     next.description = fields.description;
     next.location = fields.location;
     next.url = fields.url;
+    next.tags = fields.tags;
     next.status = fields.status;
     next.completed = fields.completed;
     next.due = fields.due;
@@ -483,11 +511,11 @@ void Store::upsertLocal(const LocalTask &task)
                                  "(href, calendar_href, uid, etag, ics, summary,"
                                  " description, status, completed, due, priority,"
                                  " reminder, reminded_for, parent_uid,"
-                                 " dirty, deleted, location, url)"
+                                 " dirty, deleted, location, url, tags)"
                                  " VALUES (:href, :calendar, :uid, :etag, :ics,"
                                  " :summary, :description, :status, :completed,"
                                  " :due, :priority, :reminder, :reminded, :parent,"
-                                 " :dirty, :deleted, :location, :url)"));
+                                 " :dirty, :deleted, :location, :url, :tags)"));
     bindTask(&query, task);
     query.exec();
 }

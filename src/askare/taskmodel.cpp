@@ -73,6 +73,18 @@ QVector<LocalTask> importantOf(const QVector<LocalTask> &tasks)
     return out;
 }
 
+// Every task carrying one tag, whatever its place in the tree, so a tagged
+// subtask surfaces beside the others.
+QVector<LocalTask> taggedOf(const QVector<LocalTask> &tasks, const QString &tag)
+{
+    QVector<LocalTask> out;
+    for (const LocalTask &task : tasks) {
+        if (task.tags.contains(tag, Qt::CaseInsensitive))
+            out.append(task);
+    }
+    return out;
+}
+
 // A row shows which list owns it by colour, so the colours are read once per
 // reload instead of once per row.
 QHash<QString, QString> colorsOf(const QVector<CalendarInfo> &calendars)
@@ -112,7 +124,8 @@ TaskModel::TaskModel(Store *store, QObject *parent)
 // The views that mix open and completed rows, and so answer to the setting.
 bool TaskModel::isMixedView() const
 {
-    return m_filter == QLatin1String("all") || m_filter == QLatin1String("calendar");
+    return m_filter == QLatin1String("all") || m_filter == QLatin1String("calendar")
+            || m_filter == QLatin1String("tag");
 }
 
 void TaskModel::setShowCompleted(bool show)
@@ -143,6 +156,8 @@ QString TaskModel::title() const
         return tr("Completed");
     if (m_filter == QLatin1String("calendar"))
         return m_calendarName;
+    if (m_filter == QLatin1String("tag"))
+        return m_tag;
     return tr("All");
 }
 
@@ -169,6 +184,17 @@ void TaskModel::showCompleted()
 void TaskModel::showCalendar(const QString &href, const QString &name)
 {
     apply(QStringLiteral("calendar"), href, name);
+}
+
+void TaskModel::showTag(const QString &tag)
+{
+    if (tag != m_tag) {
+        m_tag = tag;
+        emit tagChanged();
+    }
+    // The tag also travels as the view's name, so apply() notices a move from
+    // one tag to another and the title follows.
+    apply(QStringLiteral("tag"), QString(), tag);
 }
 
 void TaskModel::apply(const QString &filter, const QString &href, const QString &name)
@@ -278,6 +304,8 @@ void TaskModel::reload()
         m_items = importantOf(m_store->tasks());
     else if (m_filter == QLatin1String("completed"))
         m_items = completedOf(m_store->tasks());
+    else if (m_filter == QLatin1String("tag"))
+        m_items = taggedOf(m_store->tasks(), m_tag);
     else if (m_filter == QLatin1String("calendar"))
         m_items = m_store->topLevelTasks(m_calendarHref);
     else

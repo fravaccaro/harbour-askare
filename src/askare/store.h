@@ -33,6 +33,7 @@ public:
     QVector<LocalTask> descendants(const QString &href) const;
     QVector<LocalTask> dirtyTasks() const;
     LocalTask task(const QString &href) const;
+    QVector<TagInfo> tagInfos() const;
     int openCount() const;
     int currentCount() const;
     int importantCount() const;

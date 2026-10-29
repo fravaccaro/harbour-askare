@@ -16,6 +16,7 @@ class TaskModel : public QAbstractListModel
     Q_OBJECT
     Q_PROPERTY(QString calendarHref READ calendarHref NOTIFY calendarHrefChanged)
     Q_PROPERTY(QString filter READ filter NOTIFY filterChanged)
+    Q_PROPERTY(QString tag READ tag NOTIFY tagChanged)
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
 
 public:
@@ -44,6 +45,7 @@ public:
 
     QString calendarHref() const { return m_calendarHref; }
     QString filter() const { return m_filter; }
+    QString tag() const { return m_tag; }
     QString title() const;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -55,6 +57,7 @@ public:
     Q_INVOKABLE void showImportant();
     Q_INVOKABLE void showCompleted();
     Q_INVOKABLE void showCalendar(const QString &href, const QString &name);
+    Q_INVOKABLE void showTag(const QString &tag);
     // Whether the mixed views keep completed tasks; the dedicated completed
     // view ignores this.
     void setShowCompleted(bool show);
@@ -65,6 +68,7 @@ public:
 signals:
     void calendarHrefChanged();
     void filterChanged();
+    void tagChanged();
     void titleChanged();
 
 private:
@@ -79,6 +83,7 @@ private:
     QString m_calendarHref;
     QString m_calendarName;
     QString m_filter;
+    QString m_tag;
     bool m_showCompleted;
     bool m_showCancelled;
     QVector<LocalTask> m_items;

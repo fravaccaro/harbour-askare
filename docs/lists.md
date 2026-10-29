@@ -18,6 +18,12 @@ Above the task lists of the server sit three views that read across all of them:
 * **Important** - tasks with high priority
 * **Completed** - everything no longer open: finished tasks, and cancelled ones in a section of their own
 
+## Tags
+
+Under the views stands a **Tags** section, one row per tag in use, with the number of tasks still open under it. The section only appears once something carries a tag. Choosing a tag shows every task wearing it, from any list and at any depth, so a tagged subtask stands beside the rest rather than behind its parent. The view holds open and finished tasks alike, and answers the two settings below just as All does.
+
+Tags are kept on the task itself, as its categories on the server, so they match what the Nextcloud web interface shows. See [Viewing and editing](editing) for putting them on a task.
+
 Below them stand the task lists the server keeps, each with the colour you gave it in Nextcloud and the number of tasks still open in it. Choosing one narrows the task list to it.
 
 All and the view of one list count a subtask behind its parent; Current and Completed lay every task out flat, so a subtask due today is not hidden under a parent that is not.

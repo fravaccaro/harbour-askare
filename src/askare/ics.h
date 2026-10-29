@@ -3,6 +3,7 @@
 
 #include <QDateTime>
 #include <QString>
+#include <QStringList>
 
 #include "types.h"
 
@@ -14,6 +15,8 @@ QString unescape(const QString &value);
 QString escape(const QString &value);
 QString propertyName(const QString &line);
 QString propertyValue(const QString &line);
+QStringList splitCategories(const QString &value);
+QString joinCategories(const QStringList &tags);
 TodoFields parse(const QString &ics);
 QString rewrite(const QString &ics, const TodoFields &fields);
 QString create(const TodoFields &fields);

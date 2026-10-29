@@ -9,7 +9,7 @@ nav_order: 3
 
 ## The task
 
-Opening a task shows its priority, its status, when it starts and when it is due, the reminder it carries, where it is and the web address it links to, how far along it is, the notes, and its subtasks with a count of the ones already done. An empty field still shows, reading **None**, so the task reads the same whether or not it carries one. The web address is a link that opens in the browser. Tapping a subtask opens it like any other task, with the same fields again however deep it sits; press and hold offers **Edit**, **Mark done** and **Delete**, as a row of the task list does.
+Opening a task shows its priority, its status, when it starts and when it is due, the reminder it carries, where it is and the web address it links to, the tags it wears, how far along it is, the notes, and its subtasks with a count of the ones already done. An empty field still shows, reading **None**, so the task reads the same whether or not it carries one. The web address is a link that opens in the browser. Tapping a subtask opens it like any other task, with the same fields again however deep it sits; press and hold offers **Edit**, **Mark done** and **Delete**, as a row of the task list does.
 
 The pulley menu holds **Edit**, **Mark done**, **Add subtask** and **Delete**.
 
@@ -26,9 +26,16 @@ The editor takes:
 * **Reminder** - see [Reminders](reminders); a due date is needed first
 * **Location** - a place in plain words
 * **Web address** - a link, opened in the browser from the task view
+* **Tags** - see below
 * **Notes**
 
 A task may not start after it is due; the editor says so and refuses to save until one of the two dates moves. **Clear start date** and **Clear due date** remove a date again, and clearing the due date clears the reminder with it.
+
+## Tags
+
+A task carries as many tags as you like. The editor shows them as chips: tap one to take it off, or write a name in **New tag** and confirm to add it. Under the field stand the tags already used on other tasks that this one does not wear yet, and a tap adds one, so the same spelling comes back instead of a near miss. A name is kept once however it is capitalised, and a blank one is ignored.
+
+Tags are the **categories** of the task on the server, so they are the same tags the Nextcloud web interface shows, and a tag written there arrives on the next sync. The Lists page gathers them; see [Lists and tasks](lists).
 
 ## Notes in Markdown
 

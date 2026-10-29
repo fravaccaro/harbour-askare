@@ -29,6 +29,11 @@ Page {
         pageStack.navigateBack();
     }
 
+    function selectTag(name) {
+        Tasks.showTag(name);
+        pageStack.navigateBack();
+    }
+
     allowedOrientations: Orientation.All
 
     SilicaListView {
@@ -103,6 +108,24 @@ Page {
                 count: Askare.completedCount
                 selected: Tasks.filter === "completed"
                 onClicked: page.selectCompleted()
+            }
+
+            SectionHeader {
+                visible: Askare.tags.length > 0
+                text: qsTr("Tags")
+            }
+
+            Repeater {
+                model: Askare.tags
+
+                FilterItem {
+                    width: listView.width
+                    name: modelData.name
+                    count: modelData.count
+                    selected: Tasks.filter === "tag" && Tasks.tag === modelData.name
+                    onClicked: page.selectTag(modelData.name)
+                }
+
             }
 
             SectionHeader {

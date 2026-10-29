@@ -76,8 +76,11 @@ DISTFILES += \
     qml/pages/PriorityTag.qml \
     qml/pages/ReminderOptions.qml \
     qml/pages/SettingsPage.qml \
+    qml/pages/StatusOptions.qml \
     qml/pages/SubtaskRow.qml \
     qml/pages/StartPage.qml \
+    qml/pages/TagChips.qml \
+    qml/pages/TagEditor.qml \
     qml/pages/TaskDetailPage.qml \
     qml/pages/TaskEditPage.qml \
     qml/pages/TasksPage.qml \

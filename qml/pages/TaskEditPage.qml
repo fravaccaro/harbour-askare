@@ -20,6 +20,7 @@ Dialog {
     property string status: "NEEDS-ACTION"
     property string location
     property string url
+    property var tags: []
     property bool listIndexReady: false
     // A subtask is pinned to its parent's list, since RELATED-TO resolves by
     // UID only within one calendar.
@@ -134,6 +135,17 @@ Dialog {
         page.listIndexReady = true;
     }
 
+    // The tags in use name themselves; the counts beside them belong to the
+    // lists page, so only the names are offered here.
+    function tagNames() {
+        var out = [];
+        var all = Askare.tags;
+        for (var i = 0; i < all.length; ++i)
+            out.push(all[i].name);
+
+        return out;
+    }
+
     // Status and completion stay in step: reaching 100% marks the task done,
     // and dropping below it leaves a task that was done back in progress.
     function syncStatusToPercent() {
@@ -151,6 +163,7 @@ Dialog {
         page.description = notesField.text;
         page.location = locationField.text;
         page.url = urlField.text;
+        page.tags = tagEditor.tags;
         Askare.saveTask({
             "href": page.href,
             "calendarHref": page.chosenCalendar(),
@@ -159,6 +172,7 @@ Dialog {
             "description": page.description,
             "location": page.location,
             "url": page.url,
+            "tags": page.tags,
             "startDate": page.startDate,
             "startTime": page.startTime,
             "dueDate": page.dueDate,
@@ -417,6 +431,14 @@ Dialog {
                 inputMethodHints: Qt.ImhUrlCharactersOnly | Qt.ImhNoAutoUppercase
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
                 EnterKey.onClicked: notesField.focus = true
+            }
+
+            TagEditor {
+                id: tagEditor
+
+                width: parent.width
+                tags: page.tags
+                suggestions: page.tagNames()
             }
 
             TextArea {

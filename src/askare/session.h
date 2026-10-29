@@ -43,6 +43,8 @@ class Session : public QObject
     Q_PROPERTY(int importantCount READ importantCount NOTIFY coverChanged)
     Q_PROPERTY(int completedCount READ completedCount NOTIFY coverChanged)
     Q_PROPERTY(QString nextDueSummary READ nextDueSummary NOTIFY coverChanged)
+    // One entry per tag in use, as { name, count }, for the lists page.
+    Q_PROPERTY(QVariantList tags READ tags NOTIFY coverChanged)
 
 public:
     explicit Session(Config *config, Store *store, CalendarModel *calendars,
@@ -66,6 +68,7 @@ public:
     int importantCount() const;
     int completedCount() const;
     QString nextDueSummary() const;
+    QVariantList tags() const;
 
     Q_INVOKABLE void startLogin(const QString &serverUrl);
     Q_INVOKABLE void cancelLogin();

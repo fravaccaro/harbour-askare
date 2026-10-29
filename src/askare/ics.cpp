@@ -10,8 +10,8 @@
 namespace {
 
 const char *kKnown[] = {
-    "UID", "SUMMARY", "DESCRIPTION", "LOCATION", "URL", "STATUS", "COMPLETED",
-    "DTSTART", "DUE", "PRIORITY", "PERCENT-COMPLETE", "DTSTAMP"
+    "UID", "SUMMARY", "DESCRIPTION", "LOCATION", "URL", "CATEGORIES", "STATUS",
+    "COMPLETED", "DTSTART", "DUE", "PRIORITY", "PERCENT-COMPLETE", "DTSTAMP"
 };
 
 const int kKnownCount = sizeof(kKnown) / sizeof(kKnown[0]);
@@ -185,6 +185,10 @@ QString valueOrEmpty(const TodoFields &fields, const QString &name)
         return Ics::escape(fields.location);
     if (name == QLatin1String("URL"))
         return fields.url;
+    // The tags are escaped one by one and joined, so the commas that separate
+    // them stay apart from any comma inside a tag.
+    if (name == QLatin1String("CATEGORIES"))
+        return Ics::joinCategories(fields.tags);
     if (name == QLatin1String("STATUS"))
         return fields.status;
     if (name == QLatin1String("COMPLETED"))
@@ -202,6 +206,15 @@ QString valueOrEmpty(const TodoFields &fields, const QString &name)
     return QString();
 }
 
+// Keeps the tags a task names only once, whichever line they arrived on.
+void appendTags(TodoFields *fields, const QStringList &tags)
+{
+    for (const QString &tag : tags) {
+        if (!fields->tags.contains(tag, Qt::CaseInsensitive))
+            fields->tags.append(tag);
+    }
+}
+
 void applyLine(TodoFields *fields, const QString &name, const QString &value)
 {
     if (name == QLatin1String("UID"))
@@ -214,6 +227,10 @@ void applyLine(TodoFields *fields, const QString &name, const QString &value)
         fields->location = Ics::unescape(value);
     else if (name == QLatin1String("URL"))
         fields->url = value;
+    // A VTODO may carry more than one CATEGORIES line; together they name the
+    // whole set of tags.
+    else if (name == QLatin1String("CATEGORIES"))
+        appendTags(fields, Ics::splitCategories(value));
     else if (name == QLatin1String("STATUS"))
         fields->status = value;
     else if (name == QLatin1String("COMPLETED"))
@@ -289,12 +306,48 @@ QString propertyValue(const QString &line)
     return line.mid(colon + 1);
 }
 
+// CATEGORIES holds several text values on one line, so only a comma that is
+// not escaped separates two tags. An escaped one belongs to the tag itself.
+QStringList splitCategories(const QString &value)
+{
+    QStringList out;
+    QString current;
+    for (int i = 0; i < value.size(); ++i) {
+        const QChar letter = value.at(i);
+        if (letter == QLatin1Char('\\') && i + 1 < value.size()) {
+            current += letter;
+            current += value.at(++i);
+            continue;
+        }
+        if (letter == QLatin1Char(',')) {
+            out.append(unescape(current).trimmed());
+            current.clear();
+            continue;
+        }
+        current += letter;
+    }
+    out.append(unescape(current).trimmed());
+    out.removeAll(QString());
+    return out;
+}
+
+QString joinCategories(const QStringList &tags)
+{
+    QStringList escaped;
+    for (const QString &tag : tags) {
+        if (!tag.trimmed().isEmpty())
+            escaped.append(escape(tag.trimmed()));
+    }
+    return escaped.join(QLatin1Char(','));
+}
+
 TodoFields parse(const QString &ics)
 {
     TodoFields fields;
     fields.priority = 0;
     fields.percent = 0;
     fields.reminder = -1;
+    fields.tags.clear();
     const QStringList lines = unfold(ics).split(QLatin1Char('\n'), QString::SkipEmptyParts);
     int depth = 0;
     for (const QString &line : todoBlock(lines)) {
@@ -437,6 +490,7 @@ QString create(const TodoFields &fields)
     appendLine(&lines, fieldLine(QStringLiteral("DESCRIPTION"), copy.description));
     appendLine(&lines, fieldLine(QStringLiteral("LOCATION"), escape(copy.location)));
     appendLine(&lines, fieldLine(QStringLiteral("URL"), copy.url));
+    appendLine(&lines, fieldLine(QStringLiteral("CATEGORIES"), joinCategories(copy.tags)));
     appendLine(&lines, fieldLine(QStringLiteral("STATUS"), copy.status));
     appendLine(&lines, fieldLine(QStringLiteral("COMPLETED"), copy.completed));
     appendLine(&lines, fieldLine(QStringLiteral("DTSTART"), copy.start));

@@ -218,6 +218,19 @@ int Session::importantCount() const
     return m_store->isOpen() ? m_store->importantCount() : 0;
 }
 
+QVariantList Session::tags() const
+{
+    QVariantList out;
+    const QVector<TagInfo> infos = m_store->tagInfos();
+    for (const TagInfo &info : infos) {
+        QVariantMap entry;
+        entry.insert(QStringLiteral("name"), info.name);
+        entry.insert(QStringLiteral("count"), info.openCount);
+        out.append(entry);
+    }
+    return out;
+}
+
 int Session::completedCount() const
 {
     return m_store->isOpen() ? m_store->completedCount() : 0;
@@ -459,6 +472,7 @@ LocalTask Session::editedTask(const QVariantMap &input) const
     fields.description = input.value(QStringLiteral("description")).toString();
     fields.location = input.value(QStringLiteral("location")).toString();
     fields.url = input.value(QStringLiteral("url")).toString();
+    fields.tags = input.value(QStringLiteral("tags")).toStringList();
     fields.start = startDate.isEmpty()
             ? QString()
             : Ics::dueFromDateTime(startDate,
@@ -480,6 +494,7 @@ LocalTask Session::editedTask(const QVariantMap &input) const
     task.description = fields.description;
     task.location = fields.location;
     task.url = fields.url;
+    task.tags = fields.tags;
     task.due = fields.due;
     task.parentUid = fields.parentUid;
     task.priority = fields.priority;
@@ -627,6 +642,7 @@ QVariantMap Session::taskFields(const QString &href) const
     fields.insert(QStringLiteral("description"), task.description);
     fields.insert(QStringLiteral("location"), task.location);
     fields.insert(QStringLiteral("url"), task.url);
+    fields.insert(QStringLiteral("tags"), task.tags);
     fields.insert(QStringLiteral("status"), task.status);
     fields.insert(QStringLiteral("startDate"), Ics::dateFromDue(parsed.start));
     fields.insert(QStringLiteral("startTime"), Ics::timeFromDue(parsed.start));

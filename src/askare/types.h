@@ -2,6 +2,7 @@
 #define ASKARE_TYPES_H
 
 #include <QString>
+#include <QStringList>
 
 struct CalendarInfo
 {
@@ -16,6 +17,18 @@ struct CalendarInfo
     CalendarInfo()
         : allowsTodos(true)
         , writable(true)
+    {
+    }
+};
+
+// One tag and how many open tasks carry it, for the tag rows of the lists page.
+struct TagInfo
+{
+    QString name;
+    int openCount;
+
+    TagInfo()
+        : openCount(0)
     {
     }
 };
@@ -38,6 +51,8 @@ struct LocalTask
     QString description;
     QString location;
     QString url;
+    // The task's tags, held as CATEGORIES on the server.
+    QStringList tags;
     QString status;
     QString completed;
     QString due;
@@ -69,6 +84,7 @@ struct TodoFields
     QString description;
     QString location;
     QString url;
+    QStringList tags;
     QString status;
     QString completed;
     QString start;

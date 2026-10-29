@@ -20,6 +20,7 @@ Page {
     property string status: "NEEDS-ACTION"
     property string location
     property string url
+    property var tags: []
     property var subtasks: []
     readonly property bool isDone: page.percent >= 100
     readonly property int subtaskDoneCount: page.countDone(page.subtasks)
@@ -71,6 +72,7 @@ Page {
         page.status = dialog.status;
         page.location = dialog.location;
         page.url = dialog.url;
+        page.tags = dialog.tags;
     }
 
     function edit() {
@@ -82,6 +84,7 @@ Page {
             "description": page.description,
             "location": page.location,
             "url": page.url,
+            "tags": page.tags,
             "startDate": page.startDate,
             "startTime": page.startTime,
             "dueDate": page.dueDate,
@@ -239,7 +242,21 @@ Page {
                 }
 
             }
-            
+
+            Label {
+                x: Theme.horizontalPageMargin
+                color: Theme.secondaryColor
+                font.pixelSize: Theme.fontSizeSmall
+                text: qsTr("Tags")
+            }
+
+            TagChips {
+                x: Theme.horizontalPageMargin
+                width: parent.width - 2 * Theme.horizontalPageMargin
+                tags: page.tags
+            }
+
+
 ProgressBar {
     width: parent.width
     minimumValue: 0
