@@ -799,7 +799,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Web address</source>
+        <source>URL</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -902,7 +902,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Web address</source>
+        <source>URL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

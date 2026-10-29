@@ -799,7 +799,7 @@
         <translation>Posizione</translation>
     </message>
     <message>
-        <source>Web address</source>
+        <source>URL</source>
         <translation>Indirizzo web</translation>
     </message>
 </context>
@@ -902,7 +902,7 @@
         <translation>Posizione</translation>
     </message>
     <message>
-        <source>Web address</source>
+        <source>URL</source>
         <translation>Indirizzo web</translation>
     </message>
     <message>

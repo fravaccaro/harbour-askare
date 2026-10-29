@@ -423,8 +423,8 @@ Dialog {
 
                 width: parent.width
                 text: page.url
-                label: qsTr("Web address")
-                placeholderText: qsTr("Web address")
+                label: qsTr("URL")
+                placeholderText: qsTr("URL")
                 inputMethodHints: Qt.ImhUrlCharactersOnly | Qt.ImhNoAutoUppercase
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
                 EnterKey.onClicked: notesField.focus = true

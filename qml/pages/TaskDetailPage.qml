@@ -218,10 +218,10 @@ Page {
                 value: page.location === "" ? qsTr("None") : page.location
             }
 
-            // A web address stays tappable, so it is rendered as a link rather
+            // A URL stays tappable, so it is rendered as a link rather
             // than a plain DetailItem value.
             DetailItem {
-                label: qsTr("Web address")
+                label: qsTr("URL")
                 visible: page.url === ""
                 value: qsTr("None")
             }
@@ -234,7 +234,7 @@ Page {
                 Label {
                     color: Theme.secondaryColor
                     font.pixelSize: Theme.fontSizeSmall
-                    text: qsTr("Web address")
+                    text: qsTr("URL")
                 }
 
                 Label {
