@@ -24,7 +24,7 @@ Askare does not use the Nextcloud account in the Sailfish OS settings. That acco
 * **[Lists and tasks](lists)** - the task lists, the All, Current and Completed views, and the cover
 * **[Viewing and editing](editing)** - dates, priority, completion, notes in Markdown, and subtasks
 * **[Reminders](reminders)** - a notice before a task is due, and what it takes for one to arrive
-* **[Sync, files and permissions](files)** - when the lists are synced, where the copy is kept, and why the app asks for each permission
+* **[Sync, files and permissions](files)** - when the lists are refreshed, where the copy is kept, and why the app asks for each permission
 
 ## Further help
 

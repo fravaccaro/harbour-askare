@@ -28,11 +28,34 @@ QVector<LocalTask> openOf(const QVector<LocalTask> &tasks)
     return out;
 }
 
+// Drops cancelled tasks, which answer the setting of their own.
+QVector<LocalTask> withoutCancelled(const QVector<LocalTask> &tasks)
+{
+    QVector<LocalTask> out;
+    for (const LocalTask &task : tasks) {
+        if (!Ics::isCancelled(task.status))
+            out.append(task);
+    }
+    return out;
+}
+
+// The section a row belongs to, so the list draws one header per group.
+QString groupOf(const QString &status)
+{
+    if (Ics::isCancelled(status))
+        return QStringLiteral("cancelled");
+    if (Ics::isCompleted(status))
+        return QStringLiteral("completed");
+    return QStringLiteral("todo");
+}
+
+// The Completed view gathers everything no longer open: the tasks that were
+// finished and the ones that were cancelled, each under its own section.
 QVector<LocalTask> completedOf(const QVector<LocalTask> &tasks)
 {
     QVector<LocalTask> out;
     for (const LocalTask &task : tasks) {
-        if (Ics::isCompleted(task.status))
+        if (Ics::isCompleted(task.status) || Ics::isCancelled(task.status))
             out.append(task);
     }
     return out;
@@ -82,6 +105,7 @@ TaskModel::TaskModel(Store *store, QObject *parent)
     , m_store(store)
     , m_filter(QStringLiteral("all"))
     , m_showCompleted(true)
+    , m_showCancelled(false)
 {
 }
 
@@ -97,6 +121,15 @@ void TaskModel::setShowCompleted(bool show)
         return;
 
     m_showCompleted = show;
+    reload();
+}
+
+void TaskModel::setShowCancelled(bool show)
+{
+    if (show == m_showCancelled)
+        return;
+
+    m_showCancelled = show;
     reload();
 }
 
@@ -175,6 +208,7 @@ QHash<int, QByteArray> TaskModel::roleNames() const
     roles.insert(PercentRole, "percent");
     roles.insert(CompletedRole, "completed");
     roles.insert(DoneRole, "done");
+    roles.insert(GroupRole, "group");
     roles.insert(ChildCountRole, "childCount");
     roles.insert(ChildDoneCountRole, "childDoneCount");
     return roles;
@@ -217,6 +251,8 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         return task.completed;
     case DoneRole:
         return Ics::isCompleted(task.status);
+    case GroupRole:
+        return groupOf(task.status);
     case ChildCountRole:
         return tallyOf(task.uid).first;
     case ChildDoneCountRole:
@@ -246,8 +282,14 @@ void TaskModel::reload()
         m_items = m_store->topLevelTasks(m_calendarHref);
     else
         m_items = m_store->topLevelTasks();
-    if (!m_showCompleted && isMixedView())
-        m_items = openOf(m_items);
+    // Only the mixed views answer the two settings; the actionable views and
+    // the completed one already decide membership by status.
+    if (isMixedView()) {
+        if (!m_showCompleted)
+            m_items = openOf(m_items);
+        if (!m_showCancelled)
+            m_items = withoutCancelled(m_items);
+    }
     m_tallies = talliesOf(m_store->tasks());
     m_colors = colorsOf(m_store->calendars());
     endResetModel();

@@ -46,7 +46,7 @@ QVariant CalendarModel::data(const QModelIndex &index, int role) const
         int count = 0;
         const QVector<LocalTask> tasks = m_store->tasks(info.href);
         for (const LocalTask &task : tasks) {
-            if (!Ics::isCompleted(task.status))
+            if (!Ics::isCompleted(task.status) && !Ics::isCancelled(task.status))
                 ++count;
         }
         return count;

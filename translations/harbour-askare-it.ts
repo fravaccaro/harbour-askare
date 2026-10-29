@@ -188,8 +188,8 @@
         <translation>Nessun elenco attività</translation>
     </message>
     <message>
-        <source>Pull down to sync</source>
-        <translation>Tira giù per sincronizzare</translation>
+        <source>Pull down to refresh</source>
+        <translation>Tira giù per ricaricare</translation>
     </message>
     <message>
         <source>About</source>
@@ -200,8 +200,8 @@
         <translation>Impostazioni</translation>
     </message>
     <message>
-        <source>Sync</source>
-        <translation>Sincronizza</translation>
+        <source>Refresh</source>
+        <translation>Ricarica</translation>
     </message>
     <message>
         <source>Completed</source>
@@ -556,20 +556,20 @@
         <translation>Sincronizzazione</translation>
     </message>
     <message>
-        <source>Sync when the app starts</source>
-        <translation>Sincronizza all&apos;avvio</translation>
+        <source>Refresh when the app starts</source>
+        <translation>Ricarica all&apos;avvio</translation>
     </message>
     <message>
-        <source>Automatic sync</source>
-        <translation>Sincronizzazione automatica</translation>
+        <source>Automatic refresh</source>
+        <translation>Ricaricamento automatico</translation>
     </message>
     <message>
         <source>Only while Askare is running.</source>
         <translation>Solo mentre Askare è in esecuzione.</translation>
     </message>
     <message>
-        <source>Sync after saving a task</source>
-        <translation>Sincronizza dopo il salvataggio di un&apos;attività</translation>
+        <source>Refresh after saving a task</source>
+        <translation>Ricarica dopo il salvataggio di un&apos;attività</translation>
     </message>
     <message>
         <source>Fetches server changes once the task has been uploaded.</source>
@@ -590,6 +590,14 @@
     <message>
         <source>Completed tasks will appear under the Completed section.</source>
         <translation>Le attività completate appariranno sotto la sezione Completate.</translation>
+    </message>
+    <message>
+        <source>Show cancelled tasks</source>
+        <translation>Mostra attività annullate</translation>
+    </message>
+    <message>
+        <source>Cancelled tasks will appear under the Cancelled section, where they cannot be changed.</source>
+        <translation>Le attività annullate appariranno sotto la sezione Annullate, dove non possono essere modificate.</translation>
     </message>
 </context>
 <context>
@@ -882,6 +890,10 @@
 <context>
     <name>TasksPage</name>
     <message>
+        <source>Cancelled</source>
+        <translation>Annullate</translation>
+    </message>
+    <message>
         <source>Completed</source>
         <translation>Completate</translation>
     </message>
@@ -898,8 +910,8 @@
         <translation>Tira giù per aggiungere un&apos;attività</translation>
     </message>
     <message>
-        <source>Sync</source>
-        <translation>Sincronizza</translation>
+        <source>Refresh</source>
+        <translation>Ricarica</translation>
     </message>
     <message>
         <source>New task</source>

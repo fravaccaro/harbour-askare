@@ -15,7 +15,7 @@ Page {
         id: listView
 
         model: Tasks
-        section.property: "done"
+        section.property: "group"
 
         anchors {
             top: parent.top
@@ -44,7 +44,7 @@ Page {
             }
 
             MenuItem {
-                text: qsTr("Sync")
+                text: qsTr("Refresh")
                 onClicked: Askare.sync()
             }
 
@@ -62,7 +62,7 @@ Page {
         }
 
         section.delegate: SectionHeader {
-            text: section === "true" || section === true ? qsTr("Completed") : qsTr("To do")
+            text: section === "cancelled" ? qsTr("Cancelled") : (section === "completed" ? qsTr("Completed") : qsTr("To do"))
         }
 
         header: PageHeader {
@@ -73,6 +73,8 @@ Page {
             id: delegate
 
             contentHeight: Theme.itemSizeMedium
+            // A cancelled task asks for nothing, so its row only reports it.
+            enabled: group !== "cancelled"
             onClicked: app.pushTask(href)
 
             Rectangle {
@@ -120,7 +122,7 @@ Page {
                 Label {
                     width: parent.width
                     truncationMode: TruncationMode.Fade
-                    color: delegate.highlighted ? Theme.highlightColor : Theme.primaryColor
+                    color: delegate.highlighted ? Theme.highlightColor : (delegate.enabled ? Theme.primaryColor : Theme.secondaryColor)
                     font.strikeout: done
                     text: summary
                 }

@@ -40,7 +40,7 @@ Page {
         ViewPlaceholder {
             enabled: listView.count === 0 && !Askare.busy
             text: qsTr("No task lists")
-            hintText: qsTr("Pull down to sync")
+            hintText: qsTr("Pull down to refresh")
         }
 
         PullDownMenu {
@@ -57,7 +57,7 @@ Page {
             }
 
             MenuItem {
-                text: qsTr("Sync")
+                text: qsTr("Refresh")
                 onClicked: Askare.sync()
             }
 

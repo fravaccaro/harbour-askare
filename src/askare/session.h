@@ -36,6 +36,8 @@ class Session : public QObject
                NOTIFY syncAfterPushChanged)
     Q_PROPERTY(bool showCompletedTasks READ showCompletedTasks WRITE setShowCompletedTasks
                NOTIFY showCompletedTasksChanged)
+    Q_PROPERTY(bool showCancelledTasks READ showCancelledTasks WRITE setShowCancelledTasks
+               NOTIFY showCancelledTasksChanged)
     Q_PROPERTY(int openCount READ openCount NOTIFY coverChanged)
     Q_PROPERTY(int currentCount READ currentCount NOTIFY coverChanged)
     Q_PROPERTY(int importantCount READ importantCount NOTIFY coverChanged)
@@ -58,6 +60,7 @@ public:
     int syncInterval() const;
     bool syncAfterPush() const;
     bool showCompletedTasks() const;
+    bool showCancelledTasks() const;
     int openCount() const;
     int currentCount() const;
     int importantCount() const;
@@ -93,6 +96,7 @@ signals:
     void syncIntervalChanged();
     void syncAfterPushChanged();
     void showCompletedTasksChanged();
+    void showCancelledTasksChanged();
     void coverChanged();
     void tasksChanged();
     void loginUrlReady(const QString &url);
@@ -105,6 +109,7 @@ public slots:
     void setSyncInterval(int minutes);
     void setSyncAfterPush(bool enabled);
     void setShowCompletedTasks(bool show);
+    void setShowCancelledTasks(bool show);
 
 private:
     void setBusy(bool busy);
@@ -112,6 +117,7 @@ private:
     void applyCredentials();
     void applySyncTimer();
     void applyShowCompleted();
+    void applyShowCancelled();
     void syncIfStartupWanted();
     void reloadModels();
     void dropTask(const LocalTask &task);

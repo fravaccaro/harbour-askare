@@ -56,9 +56,13 @@ Session::Session(Config *config, Store *store, CalendarModel *calendars,
     connect(m_config, &Config::showCompletedChanged, this,
             &Session::showCompletedTasksChanged);
     connect(m_config, &Config::showCompletedChanged, this, &Session::applyShowCompleted);
+    connect(m_config, &Config::showCancelledChanged, this,
+            &Session::showCancelledTasksChanged);
+    connect(m_config, &Config::showCancelledChanged, this, &Session::applyShowCancelled);
     connect(m_config, &Config::readyChanged, this, &Session::syncIfStartupWanted);
     m_store->open();
     applyShowCompleted();
+    applyShowCancelled();
     if (m_config->isReady() && m_config->isConfigured())
         applyCredentials();
     applySyncTimer();
@@ -138,6 +142,21 @@ void Session::setShowCompletedTasks(bool show)
 void Session::applyShowCompleted()
 {
     m_tasks->setShowCompleted(m_config->showCompleted());
+}
+
+bool Session::showCancelledTasks() const
+{
+    return m_config->showCancelled();
+}
+
+void Session::setShowCancelledTasks(bool show)
+{
+    m_config->setShowCancelled(show);
+}
+
+void Session::applyShowCancelled()
+{
+    m_tasks->setShowCancelled(m_config->showCancelled());
 }
 
 void Session::applySyncTimer()

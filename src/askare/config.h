@@ -21,6 +21,8 @@ class Config : public QObject
                NOTIFY syncAfterPushChanged)
     Q_PROPERTY(bool showCompleted READ showCompleted WRITE setShowCompleted
                NOTIFY showCompletedChanged)
+    Q_PROPERTY(bool showCancelled READ showCancelled WRITE setShowCancelled
+               NOTIFY showCancelledChanged)
     Q_PROPERTY(bool configured READ isConfigured NOTIFY configuredChanged)
     Q_PROPERTY(bool ready READ isReady NOTIFY readyChanged)
     Q_PROPERTY(QString secretsError READ secretsError NOTIFY secretsErrorChanged)
@@ -54,6 +56,10 @@ public:
     bool showCompleted() const { return m_showCompleted; }
     void setShowCompleted(bool show);
 
+    // The same for cancelled tasks, which stay out of sight unless asked for.
+    bool showCancelled() const { return m_showCancelled; }
+    void setShowCancelled(bool show);
+
     bool isConfigured() const;
     bool isReady() const { return m_ready; }
     QString secretsError() const { return m_secretsError; }
@@ -71,6 +77,7 @@ signals:
     void syncIntervalChanged();
     void syncAfterPushChanged();
     void showCompletedChanged();
+    void showCancelledChanged();
     void configuredChanged();
     void readyChanged();
     void secretsErrorChanged();
@@ -90,6 +97,7 @@ private:
     int m_syncInterval;
     bool m_syncAfterPush;
     bool m_showCompleted;
+    bool m_showCancelled;
     bool m_ready;
 };
 

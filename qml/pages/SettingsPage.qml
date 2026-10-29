@@ -42,20 +42,28 @@ Page {
                 onCheckedChanged: Askare.showCompletedTasks = checked
             }
 
+            TextSwitch {
+                width: parent.width
+                text: qsTr("Show cancelled tasks")
+                description: qsTr("Cancelled tasks will appear under the Cancelled section, where they cannot be changed.")
+                checked: Askare.showCancelledTasks
+                onCheckedChanged: Askare.showCancelledTasks = checked
+            }
+
             SectionHeader {
                 text: qsTr("Synchronisation")
             }
 
             TextSwitch {
                 width: parent.width
-                text: qsTr("Sync when the app starts")
+                text: qsTr("Refresh when the app starts")
                 checked: Askare.syncOnStart
                 onCheckedChanged: Askare.syncOnStart = checked
             }
 
             TextSwitch {
                 width: parent.width
-                text: qsTr("Sync after saving a task")
+                text: qsTr("Refresh after saving a task")
                 description: qsTr("Fetches server changes once the task has been uploaded.")
                 checked: Askare.syncAfterPush
                 onCheckedChanged: Askare.syncAfterPush = checked
@@ -67,7 +75,7 @@ Page {
                 property bool ready: false
 
                 width: parent.width
-                label: qsTr("Automatic sync")
+                label: qsTr("Automatic refresh")
                 description: qsTr("Only while Askare is running.")
                 Component.onCompleted: {
                     currentIndex = page.intervalIndex(Askare.syncInterval);

@@ -55,11 +55,12 @@ QString taskColumns()
                           " FROM tasks");
 }
 
-// Open tasks come before completed ones: the task list groups by that flag, and
-// a list view only draws a group header where the value differs from the row
-// above, so an order that interleaves the two would scatter the headers. The
-// comparison is case-insensitive to match Ics::isCompleted(). Within a group a
-// missing due date sorts last, so dated tasks lead and undated ones trail.
+// Open tasks come first, then completed ones, then cancelled: the task list
+// groups by that rank, and a list view only draws a group header where the
+// value differs from the row above, so an order that interleaves the three
+// would scatter the headers. The comparison is case-insensitive to match
+// Ics::isCompleted() and Ics::isCancelled(). Within a group a missing due date
+// sorts last, so dated tasks lead and undated ones trail.
 // A task sits at the top when it names no parent, or names one that is not
 // here, so an orphan surfaces instead of vanishing with its missing parent.
 QString topLevelClause()
@@ -71,7 +72,8 @@ QString topLevelClause()
 
 QString taskOrder()
 {
-    return QStringLiteral(" ORDER BY upper(status) = 'COMPLETED',"
+    return QStringLiteral(" ORDER BY CASE WHEN upper(status) = 'CANCELLED' THEN 2"
+                          " WHEN upper(status) = 'COMPLETED' THEN 1 ELSE 0 END,"
                           " due IS NULL OR due = '', due, summary COLLATE NOCASE");
 }
 
@@ -349,7 +351,8 @@ int Store::openCount() const
 
     QSqlQuery query(m_db);
     query.exec(QStringLiteral("SELECT COUNT(*) FROM tasks WHERE deleted = 0"
-                              " AND status != 'COMPLETED'"));
+                              " AND upper(status) != 'COMPLETED'"
+                              " AND upper(status) != 'CANCELLED'"));
     return query.next() ? query.value(0).toInt() : 0;
 }
 
@@ -360,7 +363,8 @@ int Store::completedCount() const
 
     QSqlQuery query(m_db);
     query.exec(QStringLiteral("SELECT COUNT(*) FROM tasks WHERE deleted = 0"
-                              " AND status = 'COMPLETED'"));
+                              " AND (upper(status) = 'COMPLETED'"
+                              " OR upper(status) = 'CANCELLED')"));
     return query.next() ? query.value(0).toInt() : 0;
 }
 
@@ -399,7 +403,9 @@ LocalTask Store::nextOpen() const
 
     QSqlQuery query(m_db);
     query.exec(taskColumns() + QStringLiteral(" WHERE deleted = 0"
-                                              " AND status != 'COMPLETED' AND due != ''"
+                                              " AND upper(status) != 'COMPLETED'"
+                                              " AND upper(status) != 'CANCELLED'"
+                                              " AND due != ''"
                                               " ORDER BY due LIMIT 1"));
     return query.next() ? readTask(query) : LocalTask();
 }

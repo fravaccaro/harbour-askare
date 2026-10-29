@@ -13,10 +13,10 @@ Askare opens on a list of tasks. Swipe left from it to reach the **Lists** page,
 
 Above the task lists of the server sit three views that read across all of them:
 
-* **All** - every task, completed ones last
+* **All** - every task, the completed ones after the open ones and the cancelled ones last
 * **Current** - what is open and either due today or earlier, or carries no due date at all
 * **Important** - tasks with high priority
-* **Completed** - everything that is done
+* **Completed** - everything no longer open: finished tasks, and cancelled ones in a section of their own
 
 Below them stand the task lists the server keeps, each with the colour you gave it in Nextcloud and the number of tasks still open in it. Choosing one narrows the task list to it.
 
@@ -24,15 +24,21 @@ All and the view of one list count a subtask behind its parent; Current and Comp
 
 **Show completed tasks**, on the settings page, decides whether All and the view of one list keep finished tasks in sight. It is on to begin with. Turning it off leaves only open tasks there; the Completed view still shows them all.
 
+## Cancelled tasks
+
+A task whose status is **Cancelled** asks for nothing further, so it counts as neither open nor done. It stays out of Current, Important and the **To do** group, and the counts beside All and beside each list pass over it. The **Completed** view always keeps it, though, in a **Cancelled** section below the finished tasks, so cancelled work is never lost from sight.
+
+**Show cancelled tasks**, on the settings page, decides whether All and the view of one list show them as well. It is off to begin with, so a cancelled task shows only under Completed. Turning it on gathers them into a **Cancelled** section at the foot of those lists too. Wherever they appear, the rows only report the task: they are greyed and cannot be opened, marked or deleted from there. A cancelled subtask can still be edited from the task that holds it, and any task can be given another status again from the Nextcloud web interface.
+
 ## The task list
 
-Tasks are grouped under **To do** and **Completed**. Within a group, dated tasks come first in order of their date and undated ones trail. A row shows the title, the due date and time if the task has one, and how many of its subtasks are done. In the views that mix lists, a coloured bar on the left says which list a task belongs to.
+Tasks are grouped under **To do**, **Completed** and, where they are shown, **Cancelled**. Within a group, dated tasks come first in order of their date and undated ones trail. A row shows the title, the due date and time if the task has one, and how many of its subtasks are done. In the views that mix lists, a coloured bar on the left says which list a task belongs to.
 
 Tap the switch on a row to mark a task done or open again. Tap the rest of the row to open the task. Press and hold for **Mark done** and **Delete**; deleting a task with subtasks says how many tasks will go.
 
-The pulley menu offers **Sync** and **New task**. A new task started here lands in the list currently shown, or can be moved to another one in the editor.
+The pulley menu offers **Refresh** and **New task**. A new task started here lands in the list currently shown, or can be moved to another one in the editor.
 
-On the Lists page the pulley menu leads to **About**, **Settings** and **Sync**. About shows the version, donations, translations, and the licence.
+On the Lists page the pulley menu leads to **About**, **Settings** and **Refresh**. About shows the version, donations, translations, and the licence.
 
 ## The cover
 

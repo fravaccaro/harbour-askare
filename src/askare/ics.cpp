@@ -533,6 +533,13 @@ bool isCompleted(const QString &status)
     return status.compare(QLatin1String("COMPLETED"), Qt::CaseInsensitive) == 0;
 }
 
+// A cancelled task asks for nothing further, so the views that answer "what
+// needs doing" leave it out just as they leave out a completed one.
+bool isCancelled(const QString &status)
+{
+    return status.compare(QLatin1String("CANCELLED"), Qt::CaseInsensitive) == 0;
+}
+
 QString statusFromPercent(int percent)
 {
     if (percent >= 100)
@@ -551,7 +558,7 @@ int percentFromStatus(const QString &status, int percent)
 
 bool isCurrent(const QString &status, const QString &due)
 {
-    if (isCompleted(status))
+    if (isCompleted(status) || isCancelled(status))
         return false;
     if (due.isEmpty())
         return true;
@@ -564,7 +571,8 @@ bool isCurrent(const QString &status, const QString &due)
 // Priority 5 is medium and 6-9 low, so neither counts.
 bool isImportant(const QString &status, int priority)
 {
-    return !isCompleted(status) && priority >= 1 && priority <= 4;
+    return !isCompleted(status) && !isCancelled(status)
+            && priority >= 1 && priority <= 4;
 }
 
 }

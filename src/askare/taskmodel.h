@@ -35,6 +35,7 @@ public:
         PercentRole,
         CompletedRole,
         DoneRole,
+        GroupRole,
         ChildCountRole,
         ChildDoneCountRole
     };
@@ -57,6 +58,8 @@ public:
     // Whether the mixed views keep completed tasks; the dedicated completed
     // view ignores this.
     void setShowCompleted(bool show);
+    // The same for cancelled tasks, which the actionable views never show.
+    void setShowCancelled(bool show);
     void reload();
 
 signals:
@@ -77,6 +80,7 @@ private:
     QString m_calendarName;
     QString m_filter;
     bool m_showCompleted;
+    bool m_showCancelled;
     QVector<LocalTask> m_items;
     QHash<QString, ChildTally> m_tallies;
     QHash<QString, QString> m_colors;

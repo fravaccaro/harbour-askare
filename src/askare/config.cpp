@@ -24,6 +24,7 @@ Config::Config(QObject *parent)
     , m_syncInterval(0)
     , m_syncAfterPush(true)
     , m_showCompleted(true)
+    , m_showCancelled(false)
     , m_ready(false)
 {
     m_serverUrl = m_settings.value(QStringLiteral("server/url")).toString();
@@ -33,6 +34,7 @@ Config::Config(QObject *parent)
     m_syncInterval = m_settings.value(QStringLiteral("sync/intervalMinutes"), 0).toInt();
     m_syncAfterPush = m_settings.value(QStringLiteral("sync/afterPush"), true).toBool();
     m_showCompleted = m_settings.value(QStringLiteral("lists/showCompleted"), true).toBool();
+    m_showCancelled = m_settings.value(QStringLiteral("lists/showCancelled"), false).toBool();
     connect(&m_secrets, &SecretsStore::loaded, this, &Config::applyStoredPassword);
     connect(&m_secrets, &SecretsStore::failed, this, [this](const QString &error) {
         m_secretsError = error;
@@ -164,6 +166,16 @@ void Config::setShowCompleted(bool show)
     m_showCompleted = show;
     store(QStringLiteral("lists/showCompleted"), m_showCompleted);
     emit showCompletedChanged();
+}
+
+void Config::setShowCancelled(bool show)
+{
+    if (show == m_showCancelled)
+        return;
+
+    m_showCancelled = show;
+    store(QStringLiteral("lists/showCancelled"), m_showCancelled);
+    emit showCancelledChanged();
 }
 
 void Config::clearCredentials()

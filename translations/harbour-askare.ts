@@ -188,7 +188,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Pull down to sync</source>
+        <source>Pull down to refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -200,7 +200,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Sync</source>
+        <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -556,11 +556,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Sync when the app starts</source>
+        <source>Refresh when the app starts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Automatic sync</source>
+        <source>Automatic refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -568,7 +568,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Sync after saving a task</source>
+        <source>Refresh after saving a task</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -589,6 +589,14 @@
     </message>
     <message>
         <source>Completed tasks will appear under the Completed section.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show cancelled tasks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancelled tasks will appear under the Cancelled section, where they cannot be changed.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -882,6 +890,10 @@
 <context>
     <name>TasksPage</name>
     <message>
+        <source>Cancelled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Completed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -898,7 +910,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Sync</source>
+        <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
