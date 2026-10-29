@@ -17,6 +17,9 @@ Dialog {
     property int priority: 0
     property int percent: 0
     property int reminder: -1
+    property string status: "NEEDS-ACTION"
+    property string location
+    property string url
     property bool listIndexReady: false
     // A subtask is pinned to its parent's list, since RELATED-TO resolves by
     // UID only within one calendar.
@@ -125,21 +128,38 @@ Dialog {
         page.listIndexReady = true;
     }
 
+    // Status and completion stay in step: reaching 100% marks the task done,
+    // and dropping below it leaves a task that was done back in progress.
+    function syncStatusToPercent() {
+        if (!statusBox.ready)
+            return ;
+
+        if (page.percent >= 100)
+            statusBox.currentIndex = statusOptions.indexOf("COMPLETED");
+        else if (page.status === "COMPLETED")
+            statusBox.currentIndex = statusOptions.indexOf(page.percent > 0 ? "IN-PROCESS" : "NEEDS-ACTION");
+    }
+
     function save() {
         page.summary = summaryField.text;
         page.description = notesField.text;
+        page.location = locationField.text;
+        page.url = urlField.text;
         Askare.saveTask({
             "href": page.href,
             "calendarHref": page.chosenCalendar(),
             "parentUid": page.parentUid,
             "summary": page.summary,
             "description": page.description,
+            "location": page.location,
+            "url": page.url,
             "startDate": page.startDate,
             "startTime": page.startTime,
             "dueDate": page.dueDate,
             "dueTime": page.dueTime,
             "priority": page.priority,
             "percent": page.percent,
+            "status": page.status,
             "reminder": page.reminder
         });
     }
@@ -153,6 +173,10 @@ Dialog {
 
     ReminderOptions {
         id: reminderOptions
+    }
+
+    StatusOptions {
+        id: statusOptions
     }
 
     SilicaFlickable {
@@ -214,6 +238,8 @@ Dialog {
             }
 
             Slider {
+                id: completionSlider
+
                 width: parent.width
                 label: qsTr("Completion")
                 minimumValue: 0
@@ -221,7 +247,44 @@ Dialog {
                 stepSize: 5
                 valueText: value + "%"
                 Component.onCompleted: value = page.percent
-                onValueChanged: page.percent = value
+                onValueChanged: {
+                    page.percent = value;
+                    page.syncStatusToPercent();
+                }
+            }
+
+            ComboBox {
+                id: statusBox
+
+                property bool ready: false
+
+                width: parent.width
+                label: qsTr("Status")
+                Component.onCompleted: {
+                    currentIndex = statusOptions.indexOf(page.status);
+                    ready = true;
+                }
+                onCurrentIndexChanged: {
+                    if (!ready || currentIndex < 0)
+                        return ;
+
+                    page.status = statusOptions.values[currentIndex];
+                    if (page.status === "COMPLETED")
+                        completionSlider.value = 100;
+                }
+
+                menu: ContextMenu {
+                    Repeater {
+                        model: statusOptions.values
+
+                        MenuItem {
+                            text: statusOptions.labelFor(modelData)
+                        }
+
+                    }
+
+                }
+
             }
 
             PriorityTag {
@@ -325,6 +388,29 @@ Dialog {
                 visible: page.dueDate !== ""
                 text: qsTr("Clear due date")
                 onClicked: page.clearDue()
+            }
+
+            TextField {
+                id: locationField
+
+                width: parent.width
+                text: page.location
+                label: qsTr("Location")
+                placeholderText: qsTr("Location")
+                EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                EnterKey.onClicked: urlField.focus = true
+            }
+
+            TextField {
+                id: urlField
+
+                width: parent.width
+                text: page.url
+                label: qsTr("Web address")
+                placeholderText: qsTr("Web address")
+                inputMethodHints: Qt.ImhUrlCharactersOnly | Qt.ImhNoAutoUppercase
+                EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                EnterKey.onClicked: notesField.focus = true
             }
 
             TextArea {

@@ -402,7 +402,13 @@ LocalTask Session::editedTask(const QVariantMap &input) const
 {
     const QString startDate = input.value(QStringLiteral("startDate")).toString();
     const QString dueDate = input.value(QStringLiteral("dueDate")).toString();
-    const int percent = input.value(QStringLiteral("percent")).toInt();
+    // Status drives completion: a task marked done always reads as 100%, and
+    // the percent otherwise names the status when the caller leaves it unset.
+    const int rawPercent = input.value(QStringLiteral("percent")).toInt();
+    const QString status = input.contains(QStringLiteral("status"))
+            ? input.value(QStringLiteral("status")).toString()
+            : Ics::statusFromPercent(rawPercent);
+    const int percent = Ics::isCompleted(status) ? 100 : rawPercent;
     LocalTask task = m_store->task(input.value(QStringLiteral("href")).toString());
     ensureIdentity(&task, input.value(QStringLiteral("calendarHref")).toString());
 
@@ -410,6 +416,8 @@ LocalTask Session::editedTask(const QVariantMap &input) const
     fields.uid = task.uid.isEmpty() ? fields.uid : task.uid;
     fields.summary = input.value(QStringLiteral("summary")).toString();
     fields.description = input.value(QStringLiteral("description")).toString();
+    fields.location = input.value(QStringLiteral("location")).toString();
+    fields.url = input.value(QStringLiteral("url")).toString();
     fields.start = startDate.isEmpty()
             ? QString()
             : Ics::dueFromDateTime(startDate,
@@ -423,12 +431,14 @@ LocalTask Session::editedTask(const QVariantMap &input) const
     fields.parentUid = input.value(QStringLiteral("parentUid")).toString();
     fields.priority = input.value(QStringLiteral("priority")).toInt();
     fields.percent = percent;
-    fields.status = Ics::statusFromPercent(percent);
-    fields.completed = percent >= 100 ? Ics::nowStamp() : QString();
+    fields.status = status;
+    fields.completed = Ics::isCompleted(status) ? Ics::nowStamp() : QString();
 
     task.ics = task.ics.isEmpty() ? Ics::create(fields) : Ics::rewrite(task.ics, fields);
     task.summary = fields.summary;
     task.description = fields.description;
+    task.location = fields.location;
+    task.url = fields.url;
     task.due = fields.due;
     task.parentUid = fields.parentUid;
     task.priority = fields.priority;
@@ -494,7 +504,10 @@ void Session::applyPercent(const QString &href, int percent)
     if (fields.isEmpty())
         return;
 
+    // The quick toggle works the status out from the percentage, so it must
+    // override the stored status the snapshot carried along.
     fields.insert(QStringLiteral("percent"), percent);
+    fields.insert(QStringLiteral("status"), Ics::statusFromPercent(percent));
     saveTask(fields);
 }
 
@@ -542,6 +555,9 @@ QVariantMap Session::taskFields(const QString &href) const
     fields.insert(QStringLiteral("parentUid"), task.parentUid);
     fields.insert(QStringLiteral("summary"), task.summary);
     fields.insert(QStringLiteral("description"), task.description);
+    fields.insert(QStringLiteral("location"), task.location);
+    fields.insert(QStringLiteral("url"), task.url);
+    fields.insert(QStringLiteral("status"), task.status);
     fields.insert(QStringLiteral("startDate"), Ics::dateFromDue(parsed.start));
     fields.insert(QStringLiteral("startTime"), Ics::timeFromDue(parsed.start));
     fields.insert(QStringLiteral("dueDate"), Ics::dateFromDue(task.due));

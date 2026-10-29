@@ -3,15 +3,20 @@
     \brief A compact row for one subtask on its parent's detail page.
 
     Shows a done toggle, the title, and a due hint, and leaves navigation to
-    the caller. It carries no backend reference, so it can be previewed on its
-    own and reused wherever a task needs a one-line summary.
+    the caller. Press and hold offers Edit, the done toggle, and Delete, the
+    last behind a remorse timer counting \l subtreeCount tasks. It carries no
+    backend reference, so it can be previewed on its own and reused wherever a
+    task needs a one-line summary.
 
     \qml
     SubtaskRow {
         summary: "Buy milk"
         dueText: "20 Nov 09:30"
         done: false
+        subtreeCount: Askare.subtreeSize(href)
         onToggled: Askare.toggleDone(href)
+        onEditRequested: app.editTask(href)
+        onDeleteConfirmed: Askare.deleteTask(href)
         onClicked: app.pushTask(href)
     }
     \endqml
@@ -25,8 +30,12 @@ ListItem {
     property string summary
     property string dueText
     property bool done: false
+    // How many tasks a delete would take with it, this one included.
+    property int subtreeCount: 1
 
     signal toggled()
+    signal editRequested()
+    signal deleteConfirmed()
 
     contentHeight: Theme.itemSizeSmall
 
@@ -69,6 +78,29 @@ ListItem {
             color: Theme.secondaryColor
             font.pixelSize: Theme.fontSizeExtraSmall
             text: root.dueText
+        }
+
+    }
+
+    menu: ContextMenu {
+        MenuItem {
+            text: qsTr("Edit")
+            onClicked: root.editRequested()
+        }
+
+        MenuItem {
+            text: root.done ? qsTr("Mark to-do") : qsTr("Mark done")
+            onClicked: root.toggled()
+        }
+
+        MenuItem {
+            text: qsTr("Delete")
+            onClicked: {
+                var label = root.subtreeCount > 1 ? qsTr("Deleting %n tasks", "", root.subtreeCount) : qsTr("Deleting");
+                root.remorseAction(label, function() {
+                    root.deleteConfirmed();
+                });
+            }
         }
 
     }

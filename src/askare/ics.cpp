@@ -10,8 +10,8 @@
 namespace {
 
 const char *kKnown[] = {
-    "UID", "SUMMARY", "DESCRIPTION", "STATUS", "COMPLETED", "DTSTART", "DUE",
-    "PRIORITY", "PERCENT-COMPLETE", "DTSTAMP"
+    "UID", "SUMMARY", "DESCRIPTION", "LOCATION", "URL", "STATUS", "COMPLETED",
+    "DTSTART", "DUE", "PRIORITY", "PERCENT-COMPLETE", "DTSTAMP"
 };
 
 const int kKnownCount = sizeof(kKnown) / sizeof(kKnown[0]);
@@ -179,6 +179,12 @@ QString valueOrEmpty(const TodoFields &fields, const QString &name)
         return Ics::escape(fields.summary);
     if (name == QLatin1String("DESCRIPTION"))
         return Ics::escape(fields.description);
+    // LOCATION is a text value, so it is escaped here and written verbatim by
+    // fieldLine. URL is a URI and passes through unescaped.
+    if (name == QLatin1String("LOCATION"))
+        return Ics::escape(fields.location);
+    if (name == QLatin1String("URL"))
+        return fields.url;
     if (name == QLatin1String("STATUS"))
         return fields.status;
     if (name == QLatin1String("COMPLETED"))
@@ -204,6 +210,10 @@ void applyLine(TodoFields *fields, const QString &name, const QString &value)
         fields->summary = Ics::unescape(value);
     else if (name == QLatin1String("DESCRIPTION"))
         fields->description = Ics::unescape(value);
+    else if (name == QLatin1String("LOCATION"))
+        fields->location = Ics::unescape(value);
+    else if (name == QLatin1String("URL"))
+        fields->url = value;
     else if (name == QLatin1String("STATUS"))
         fields->status = value;
     else if (name == QLatin1String("COMPLETED"))
@@ -427,6 +437,8 @@ QString create(const TodoFields &fields)
     appendLine(&lines, fieldLine(QStringLiteral("LAST-MODIFIED"), stamp));
     appendLine(&lines, fieldLine(QStringLiteral("SUMMARY"), copy.summary));
     appendLine(&lines, fieldLine(QStringLiteral("DESCRIPTION"), copy.description));
+    appendLine(&lines, fieldLine(QStringLiteral("LOCATION"), escape(copy.location)));
+    appendLine(&lines, fieldLine(QStringLiteral("URL"), copy.url));
     appendLine(&lines, fieldLine(QStringLiteral("STATUS"), copy.status));
     appendLine(&lines, fieldLine(QStringLiteral("COMPLETED"), copy.completed));
     appendLine(&lines, fieldLine(QStringLiteral("DTSTART"), copy.start));

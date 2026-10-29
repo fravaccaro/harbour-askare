@@ -50,7 +50,8 @@ QString taskColumns()
 {
     return QStringLiteral("SELECT href, calendar_href, uid, etag, ics, summary,"
                           " description, status, completed, due, priority,"
-                          " reminder, reminded_for, parent_uid, dirty, deleted"
+                          " reminder, reminded_for, parent_uid, dirty, deleted,"
+                          " location, url"
                           " FROM tasks");
 }
 
@@ -83,6 +84,8 @@ void bindTask(QSqlQuery *query, const LocalTask &task)
     query->bindValue(QStringLiteral(":ics"), task.ics);
     query->bindValue(QStringLiteral(":summary"), task.summary);
     query->bindValue(QStringLiteral(":description"), task.description);
+    query->bindValue(QStringLiteral(":location"), task.location);
+    query->bindValue(QStringLiteral(":url"), task.url);
     query->bindValue(QStringLiteral(":status"), task.status);
     query->bindValue(QStringLiteral(":completed"), task.completed);
     query->bindValue(QStringLiteral(":due"), task.due);
@@ -162,6 +165,8 @@ bool Store::migrate()
     query.exec(QStringLiteral("ALTER TABLE tasks ADD COLUMN reminder INTEGER DEFAULT -1"));
     query.exec(QStringLiteral("ALTER TABLE tasks ADD COLUMN reminded_for TEXT"));
     query.exec(QStringLiteral("ALTER TABLE tasks ADD COLUMN parent_uid TEXT"));
+    query.exec(QStringLiteral("ALTER TABLE tasks ADD COLUMN location TEXT"));
+    query.exec(QStringLiteral("ALTER TABLE tasks ADD COLUMN url TEXT"));
     return calendars && tasks;
 }
 
@@ -230,6 +235,8 @@ LocalTask Store::readTask(const QSqlQuery &query) const
     task.parentUid = query.value(13).toString();
     task.dirty = query.value(14).toInt() != 0;
     task.deleted = query.value(15).toInt() != 0;
+    task.location = query.value(16).toString();
+    task.url = query.value(17).toString();
     return task;
 }
 
@@ -412,6 +419,8 @@ void Store::upsertRemoteTask(const QString &calendarHref, const RemoteTask &remo
     next.ics = remote.ics;
     next.summary = fields.summary;
     next.description = fields.description;
+    next.location = fields.location;
+    next.url = fields.url;
     next.status = fields.status;
     next.completed = fields.completed;
     next.due = fields.due;
@@ -468,11 +477,11 @@ void Store::upsertLocal(const LocalTask &task)
                                  "(href, calendar_href, uid, etag, ics, summary,"
                                  " description, status, completed, due, priority,"
                                  " reminder, reminded_for, parent_uid,"
-                                 " dirty, deleted)"
+                                 " dirty, deleted, location, url)"
                                  " VALUES (:href, :calendar, :uid, :etag, :ics,"
                                  " :summary, :description, :status, :completed,"
                                  " :due, :priority, :reminder, :reminded, :parent,"
-                                 " :dirty, :deleted)"));
+                                 " :dirty, :deleted, :location, :url)"));
     bindTask(&query, task);
     query.exec();
 }

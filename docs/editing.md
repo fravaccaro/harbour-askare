@@ -9,7 +9,7 @@ nav_order: 3
 
 ## The task
 
-Opening a task shows its priority, when it starts and when it is due, the reminder it carries, how far along it is, the notes, and its subtasks with a count of the ones already done. Tapping a subtask opens it like any other task.
+Opening a task shows its priority, when it starts and when it is due, the reminder it carries, how far along it is, the notes, and its subtasks with a count of the ones already done. Tapping a subtask opens it like any other task; press and hold offers **Edit**, **Mark done** and **Delete**, as a row of the task list does.
 
 The pulley menu holds **Edit**, **Mark done**, **Add subtask** and **Delete**.
 

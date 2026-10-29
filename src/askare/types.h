@@ -36,6 +36,8 @@ struct LocalTask
     QString ics;
     QString summary;
     QString description;
+    QString location;
+    QString url;
     QString status;
     QString completed;
     QString due;
@@ -65,6 +67,8 @@ struct TodoFields
     QString uid;
     QString summary;
     QString description;
+    QString location;
+    QString url;
     QString status;
     QString completed;
     QString start;

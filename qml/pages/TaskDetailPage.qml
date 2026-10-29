@@ -17,6 +17,9 @@ Page {
     property int priority: 0
     property int percent: 0
     property int reminder: -1
+    property string status: "NEEDS-ACTION"
+    property string location
+    property string url
     property var subtasks: []
     readonly property bool isDone: page.percent >= 100
     readonly property int subtaskDoneCount: page.countDone(page.subtasks)
@@ -65,6 +68,9 @@ Page {
         page.priority = dialog.priority;
         page.percent = dialog.percent;
         page.reminder = dialog.reminder;
+        page.status = dialog.status;
+        page.location = dialog.location;
+        page.url = dialog.url;
     }
 
     function edit() {
@@ -74,12 +80,15 @@ Page {
             "parentUid": page.parentUid,
             "summary": page.summary,
             "description": page.description,
+            "location": page.location,
+            "url": page.url,
             "startDate": page.startDate,
             "startTime": page.startTime,
             "dueDate": page.dueDate,
             "dueTime": page.dueTime,
             "priority": page.priority,
             "percent": page.percent,
+            "status": page.status,
             "reminder": page.reminder
         });
         dialog.accepted.connect(function() {
@@ -104,6 +113,10 @@ Page {
 
     ReminderOptions {
         id: reminderOptions
+    }
+
+    StatusOptions {
+        id: statusOptions
     }
 
     // Instantiated only for its band names, so the mapping stays in one place.
@@ -161,6 +174,11 @@ Page {
             }
 
             DetailItem {
+                label: qsTr("Status")
+                value: statusOptions.labelFor(page.status)
+            }
+
+            DetailItem {
                 label: qsTr("Start")
                 value: page.momentOr(page.startDate, page.startTime)
             }
@@ -173,6 +191,42 @@ Page {
             DetailItem {
                 label: qsTr("Reminder")
                 value: reminderOptions.labelFor(page.reminder)
+            }
+
+            DetailItem {
+                label: qsTr("Location")
+                value: page.location === "" ? qsTr("None") : page.location
+            }
+
+            // A web address stays tappable, so it is rendered as a link rather
+            // than a plain DetailItem value.
+            DetailItem {
+                label: qsTr("Web address")
+                visible: page.url === ""
+                value: qsTr("None")
+            }
+
+            Column {
+                x: Theme.horizontalPageMargin
+                width: parent.width - 2 * Theme.horizontalPageMargin
+                visible: page.url !== ""
+
+                Label {
+                    color: Theme.secondaryColor
+                    font.pixelSize: Theme.fontSizeSmall
+                    text: qsTr("Web address")
+                }
+
+                Label {
+                    width: parent.width
+                    wrapMode: Text.WrapAnywhere
+                    textFormat: Text.StyledText
+                    color: Theme.primaryColor
+                    linkColor: Theme.highlightColor
+                    text: '<a href="' + page.url + '">' + page.url + '</a>'
+                    onLinkActivated: Qt.openUrlExternally(link)
+                }
+
             }
 
             ProgressBar {
@@ -231,7 +285,10 @@ Page {
                     summary: modelData.summary
                     dueText: page.moment(modelData.dueDate, modelData.dueTime)
                     done: modelData.done
+                    subtreeCount: Askare.subtreeSize(modelData.href)
                     onToggled: Askare.toggleDone(modelData.href)
+                    onEditRequested: app.editTask(modelData.href)
+                    onDeleteConfirmed: Askare.deleteTask(modelData.href)
                     onClicked: app.pushTask(modelData.href)
                 }
 

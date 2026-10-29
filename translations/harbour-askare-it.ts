@@ -611,6 +611,36 @@
     </message>
 </context>
 <context>
+    <name>SubtaskRow</name>
+    <message>
+        <source>Edit</source>
+        <translation>Modifica</translation>
+    </message>
+    <message>
+        <source>Mark to-do</source>
+        <translation>Segna come da fare</translation>
+    </message>
+    <message>
+        <source>Mark done</source>
+        <translation>Segna come completata</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Elimina</translation>
+    </message>
+    <message numerus="yes">
+        <source>Deleting %n tasks</source>
+        <translation>
+            <numerusform>Eliminazione %n attività</numerusform>
+            <numerusform>Eliminazione %n attività</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Deleting</source>
+        <translation>Eliminazione</translation>
+    </message>
+</context>
+<context>
     <name>SupportDialog</name>
     <message>
         <source>Hi there!</source>
