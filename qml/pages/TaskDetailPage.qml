@@ -228,15 +228,21 @@ Page {
                 }
 
             }
-
-            ProgressBar {
-                width: parent.width
-                minimumValue: 0
-                maximumValue: 100
-                value: page.percent
-                label: qsTr("Completion")
-                valueText: page.percent + "%"
-            }
+            
+ProgressBar {
+    width: parent.width
+    minimumValue: 0
+    maximumValue: 100
+    value: page.percent
+    valueText: page.percent + "%"
+}
+Label {
+    width: parent.width
+    horizontalAlignment: Text.AlignHCenter
+    font.pixelSize: Theme.fontSizeSmall
+    color: Theme.secondaryColor
+    text: qsTr("Completion")
+}
 
             SectionHeader {
                 text: qsTr("Notes")
