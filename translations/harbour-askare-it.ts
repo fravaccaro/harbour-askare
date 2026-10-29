@@ -33,7 +33,7 @@
     </message>
     <message>
         <source>About Nextcloud Tasks</source>
-        <translation>Informazioni su Nextcloud Attività</translation>
+        <translation>Info su Nextcloud Attività</translation>
     </message>
 </context>
 <context>
