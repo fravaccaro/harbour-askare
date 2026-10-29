@@ -604,6 +604,25 @@
     </message>
 </context>
 <context>
+    <name>StatusOptions</name>
+    <message>
+        <source>In process</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Completed</source>
+        <translation type="unfinished">Completate</translation>
+    </message>
+    <message>
+        <source>Cancelled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Needs action</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Store</name>
     <message>
         <source>Tasks</source>
@@ -725,6 +744,18 @@
         <source>Notes</source>
         <translation>Note</translation>
     </message>
+    <message>
+        <source>Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Web address</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TaskEditPage</name>
@@ -815,6 +846,18 @@
     <message>
         <source>The start must not be after the due date.</source>
         <translation>La data di inizio non può essere successiva alla data di scadenza.</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Web address</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -937,10 +980,6 @@
     <message>
         <source>Open</source>
         <translation>Apri</translation>
-    </message>
-    <message>
-        <source>Askare</source>
-        <translation>Askare</translation>
     </message>
     <message>
         <source>Mark done</source>

@@ -65,6 +65,7 @@ DISTFILES += \
     harbour-askare.desktop \
     icons/harbour-askare.svg \
     qml/harbour-askare.qml \
+    qml/components/AskareNotification.qml \
     qml/components/AskareSupportDialog.qml \
     qml/cover/CoverPage.qml \
     qml/cover/cover-check.png \

@@ -31,6 +31,14 @@ nav_order: 1
 
 `src/main.cpp` publishes four context properties - `Askare` (the session), `Calendars`, `Tasks` and `Reminders` - and the pages bind to those. It also adds `qml/modules` to the QML import path so the bundled Opal modules resolve at runtime. Networking and ICS handling stay in C++; QML holds no request and parses no calendar data.
 
+## Messages to the user
+
+A passing message has one route: `app.showToast()` in `qml/harbour-askare.qml` hands it to the single `AskareNotification`, which publishes a transient notice. Anything the session reports through `errorMessage` - a failed sync, a server that refused a change - arrives that way, as does a task that is no longer there. No page carries its own copy of `errorMessage`.
+
+A failed sign-in is the exception: `loginFailed` reaches the sign-in pages, which say so in place, because the reason belongs to the form the user is looking at. That is why `onLoginFailed()` in `session.cpp` does not also set `errorMessage`.
+
+Reminders keep their own notifications, in `reminderNoticeComponent`: those persist, carry **Open** and **Mark done**, and are not toasts.
+
 ## CalDAV rules
 
 A sync walks the server in a fixed order: PROPFIND for the current user principal, PROPFIND for its calendar home set, PROPFIND for the calendars under it, then one REPORT per calendar for its VTODOs. Only afterwards does it upload what the device changed, with PUT and DELETE.

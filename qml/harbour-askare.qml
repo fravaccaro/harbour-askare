@@ -25,18 +25,12 @@ ApplicationWindow {
         pageStack.replaceAbove(null, Askare.configured ? tasksPage : loginPage);
     }
 
-    // A passing message: shown inside the window when the app is in front,
-    // otherwise a banner that is gone once it has been read.
-    function notify(text) {
-        if (text === "")
-            return ;
+    // Every passing message goes through one notice, so the app speaks the
+    // same way whether it is in front or in the background.
+    function showToast(text) {
+        if (text !== "")
+            globalNotification.toast(text);
 
-        if (app.applicationActive) {
-            Notices.show(text, Notice.Short);
-            return ;
-        }
-        backgroundNotice.previewBody = text;
-        backgroundNotice.publish();
     }
 
     function openTask(href) {
@@ -91,7 +85,7 @@ ApplicationWindow {
     function pushTask(href) {
         var fields = Askare.taskFields(href);
         if (!fields.href) {
-            app.notify(qsTr("That task is no longer here."));
+            app.showToast(qsTr("That task is no longer here."));
             return ;
         }
         var current = pageStack.currentPage;
@@ -106,7 +100,7 @@ ApplicationWindow {
     function editTask(href) {
         var fields = Askare.taskFields(href);
         if (!fields.href) {
-            app.notify(qsTr("That task is no longer here."));
+            app.showToast(qsTr("That task is no longer here."));
             return ;
         }
         pageStack.push(Qt.resolvedUrl("pages/TaskEditPage.qml"), fields);
@@ -236,7 +230,7 @@ ApplicationWindow {
                 app.showMain();
 
         }
-        onErrorMessageChanged: app.notify(Askare.errorMessage)
+        onErrorMessageChanged: app.showToast(Askare.errorMessage)
         onBusyChanged: {
             if (!Askare.busy)
                 Reminders.check();
@@ -244,14 +238,8 @@ ApplicationWindow {
         }
     }
 
-    Notification {
-        id: backgroundNotice
-
-        appName: "Askare"
-        appIcon: "harbour-askare"
-        isTransient: true
-        urgency: Notification.Low
-        previewSummary: qsTr("Askare")
+    AskareNotification {
+        id: globalNotification
     }
 
     // Sailfish keeps notification sounds in the category definitions, and has

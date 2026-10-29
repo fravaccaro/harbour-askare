@@ -113,16 +113,6 @@ Page {
                 onCheckedChanged: Askare.ignoreSslErrors = checked
             }
 
-            Label {
-                x: Theme.horizontalPageMargin
-                width: parent.width - 2 * Theme.horizontalPageMargin
-                wrapMode: Text.WordWrap
-                visible: Askare.errorMessage !== ""
-                color: Theme.errorColor
-                font.pixelSize: Theme.fontSizeExtraSmall
-                text: Askare.errorMessage
-            }
-
             Button {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: qsTr("Sign out")

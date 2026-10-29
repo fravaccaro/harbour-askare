@@ -11,20 +11,6 @@ Page {
 
     }
 
-    Label {
-        id: errorLabel
-
-        x: Theme.horizontalPageMargin
-        width: parent.width - 2 * Theme.horizontalPageMargin
-        wrapMode: Text.WordWrap
-        visible: Askare.errorMessage !== ""
-        color: Theme.errorColor
-        font.pixelSize: Theme.fontSizeExtraSmall
-        text: Askare.errorMessage
-        anchors.top: parent.top
-        anchors.topMargin: Theme.paddingMedium
-    }
-
     SilicaListView {
         id: listView
 
@@ -32,7 +18,7 @@ Page {
         section.property: "done"
 
         anchors {
-            top: errorLabel.visible ? errorLabel.bottom : parent.top
+            top: parent.top
             left: parent.left
             right: parent.right
             bottom: parent.bottom

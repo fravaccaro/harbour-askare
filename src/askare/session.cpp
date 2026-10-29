@@ -286,10 +286,11 @@ void Session::onLoggedIn(const QString &server, const QString &user,
     sync();
 }
 
+// The sign-in pages show the reason themselves, so it does not also become a
+// notice over whatever the user is looking at.
 void Session::onLoginFailed(const QString &error)
 {
     setBusy(false);
-    setError(error);
     emit loginFailed(error);
 }
 
