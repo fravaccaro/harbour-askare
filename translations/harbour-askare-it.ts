@@ -596,8 +596,8 @@
         <translation>Mostra attività annullate</translation>
     </message>
     <message>
-        <source>Cancelled tasks will appear under the Cancelled section, where they cannot be changed.</source>
-        <translation>Le attività annullate appariranno sotto la sezione Annullate, dove non possono essere modificate.</translation>
+        <source>Cancelled tasks will appear under the Cancelled section.</source>
+        <translation>Le attività annullate appariranno sotto la sezione Annullate.</translation>
     </message>
 </context>
 <context>

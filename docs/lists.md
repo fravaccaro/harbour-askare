@@ -28,7 +28,9 @@ All and the view of one list count a subtask behind its parent; Current and Comp
 
 A task whose status is **Cancelled** asks for nothing further, so it counts as neither open nor done. It stays out of Current, Important and the **To do** group, and the counts beside All and beside each list pass over it. The **Completed** view always keeps it, though, in a **Cancelled** section below the finished tasks, so cancelled work is never lost from sight.
 
-**Show cancelled tasks**, on the settings page, decides whether All and the view of one list show them as well. It is off to begin with, so a cancelled task shows only under Completed. Turning it on gathers them into a **Cancelled** section at the foot of those lists too. Wherever they appear, the rows only report the task: they are greyed and cannot be opened, marked or deleted from there. A cancelled subtask can still be edited from the task that holds it, and any task can be given another status again from the Nextcloud web interface.
+**Show cancelled tasks**, on the settings page, decides whether All and the view of one list show them as well. It is off to begin with, so a cancelled task shows only under Completed. Turning it on gathers them into a **Cancelled** section at the foot of those lists too.
+
+Wherever it appears, a cancelled task reads as struck through and muted. That is what tells it apart from a finished one, which is struck through but keeps its usual colour and a ticked box. A cancelled row carries no done box, and press and hold offers only **Edit** and **Delete**, because a cancelled task is not work waiting to be finished. It opens like any other, and **Edit** is where its status goes back to something open.
 
 ## The task list
 

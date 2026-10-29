@@ -72,9 +72,12 @@ Page {
         delegate: ListItem {
             id: delegate
 
+            // A cancelled task reads as struck through and muted rather than
+            // greyed out, so it can still be opened, edited and deleted. It
+            // carries no done toggle: it is not a task waiting to be finished.
+            readonly property bool cancelled: group === "cancelled"
+
             contentHeight: Theme.itemSizeMedium
-            // A cancelled task asks for nothing, so its row only reports it.
-            enabled: group !== "cancelled"
             onClicked: app.pushTask(href)
 
             Rectangle {
@@ -98,7 +101,8 @@ Page {
             TextSwitch {
                 id: doneSwitch
 
-                width: Theme.itemSizeSmall
+                width: delegate.cancelled ? 0 : Theme.itemSizeSmall
+                visible: !delegate.cancelled
                 checked: done
                 automaticCheck: false
                 onClicked: Askare.toggleDone(href)
@@ -114,6 +118,9 @@ Page {
             Column {
                 anchors {
                     left: doneSwitch.right
+                    // With no toggle to indent it, a cancelled row takes the
+                    // page margin instead of sitting against the edge.
+                    leftMargin: delegate.cancelled ? Theme.horizontalPageMargin : 0
                     right: parent.right
                     rightMargin: Theme.horizontalPageMargin
                     verticalCenter: parent.verticalCenter
@@ -122,8 +129,8 @@ Page {
                 Label {
                     width: parent.width
                     truncationMode: TruncationMode.Fade
-                    color: delegate.highlighted ? Theme.highlightColor : (delegate.enabled ? Theme.primaryColor : Theme.secondaryColor)
-                    font.strikeout: done
+                    color: delegate.highlighted ? Theme.highlightColor : (delegate.cancelled ? Theme.secondaryColor : Theme.primaryColor)
+                    font.strikeout: done || delegate.cancelled
                     text: summary
                 }
 
@@ -154,6 +161,7 @@ Page {
                 }
 
                 MenuItem {
+                    visible: !delegate.cancelled
                     text: done ? qsTr("Mark to-do") : qsTr("Mark done")
                     onClicked: Askare.toggleDone(href)
                 }

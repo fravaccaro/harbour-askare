@@ -596,7 +596,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cancelled tasks will appear under the Cancelled section, where they cannot be changed.</source>
+        <source>Cancelled tasks will appear under the Cancelled section.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

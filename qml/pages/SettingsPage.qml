@@ -45,7 +45,7 @@ Page {
             TextSwitch {
                 width: parent.width
                 text: qsTr("Show cancelled tasks")
-                description: qsTr("Cancelled tasks will appear under the Cancelled section, where they cannot be changed.")
+                description: qsTr("Cancelled tasks will appear under the Cancelled section.")
                 checked: Askare.showCancelledTasks
                 onCheckedChanged: Askare.showCancelledTasks = checked
             }

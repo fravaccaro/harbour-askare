@@ -8,11 +8,16 @@
     backend reference, so it can be previewed on its own and reused wherever a
     task needs a one-line summary.
 
+    A \l done row is struck through. A \l cancelled one is struck through and
+    muted, and drops the toggle from both the row and the menu, since it is not
+    work waiting to be finished.
+
     \qml
     SubtaskRow {
         summary: "Buy milk"
         dueText: "20 Nov 09:30"
         done: false
+        cancelled: false
         subtreeCount: Askare.subtreeSize(href)
         onToggled: Askare.toggleDone(href)
         onEditRequested: app.editTask(href)
@@ -30,6 +35,9 @@ ListItem {
     property string summary
     property string dueText
     property bool done: false
+    // A cancelled subtask reads as struck through and muted, and carries no
+    // done toggle: it is not work waiting to be finished.
+    property bool cancelled: false
     // How many tasks a delete would take with it, this one included.
     property int subtreeCount: 1
 
@@ -42,7 +50,8 @@ ListItem {
     TextSwitch {
         id: doneSwitch
 
-        width: Theme.itemSizeSmall
+        width: root.cancelled ? 0 : Theme.itemSizeSmall
+        visible: !root.cancelled
         checked: root.done
         automaticCheck: false
         onClicked: root.toggled()
@@ -57,6 +66,9 @@ ListItem {
     Column {
         anchors {
             left: doneSwitch.right
+            // With no toggle to indent it, a cancelled row takes the page
+            // margin instead of sitting against the edge.
+            leftMargin: root.cancelled ? Theme.horizontalPageMargin : 0
             right: parent.right
             rightMargin: Theme.horizontalPageMargin
             verticalCenter: parent.verticalCenter
@@ -65,9 +77,9 @@ ListItem {
         Label {
             width: parent.width
             truncationMode: TruncationMode.Fade
-            color: root.highlighted ? Theme.highlightColor : Theme.primaryColor
+            color: root.highlighted ? Theme.highlightColor : (root.cancelled ? Theme.secondaryColor : Theme.primaryColor)
             font.pixelSize: Theme.fontSizeSmall
-            font.strikeout: root.done
+            font.strikeout: root.done || root.cancelled
             text: root.summary
         }
 
@@ -89,6 +101,7 @@ ListItem {
         }
 
         MenuItem {
+            visible: !root.cancelled
             text: root.done ? qsTr("Mark to-do") : qsTr("Mark done")
             onClicked: root.toggled()
         }

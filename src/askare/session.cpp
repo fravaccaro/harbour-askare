@@ -645,9 +645,11 @@ QVariantList Session::subtasks(const QString &parentUid) const
     const QVector<LocalTask> children = m_store->children(parentUid);
     for (const LocalTask &child : children) {
         // A subtask row draws a toggle, which the detail page itself has no
-        // property for because it works the state out from the percentage.
+        // property for because it works the state out from the percentage, and
+        // drops it altogether once the task is cancelled.
         QVariantMap fields = taskFields(child.href);
         fields.insert(QStringLiteral("done"), Ics::isCompleted(child.status));
+        fields.insert(QStringLiteral("cancelled"), Ics::isCancelled(child.status));
         out.append(fields);
     }
     return out;

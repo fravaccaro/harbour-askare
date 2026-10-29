@@ -67,11 +67,15 @@ CoverBackground {
         }
 
         delegate: Label {
+            // A task no longer open reads the same whether it was finished or
+            // cancelled: the cover only says what still asks for something.
+            readonly property bool closed: model.done || model.group === "cancelled"
+
             width: taskList.width
             truncationMode: TruncationMode.Fade
             font.pixelSize: Theme.fontSizeSmall
-            font.strikeout: model.done
-            color: model.done ? Theme.secondaryColor : Theme.primaryColor
+            font.strikeout: closed
+            color: closed ? Theme.secondaryColor : Theme.primaryColor
             text: model.summary
         }
 

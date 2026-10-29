@@ -302,6 +302,7 @@ Label {
                     summary: modelData.summary
                     dueText: page.moment(modelData.dueDate, modelData.dueTime)
                     done: modelData.done
+                    cancelled: modelData.cancelled
                     subtreeCount: Askare.subtreeSize(modelData.href)
                     onToggled: Askare.toggleDone(modelData.href)
                     onEditRequested: app.editTask(modelData.href)
