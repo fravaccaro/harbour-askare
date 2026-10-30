@@ -727,10 +727,6 @@
 <context>
     <name>TaskDetailPage</name>
     <message>
-        <source>None</source>
-        <translation type="unfinished">Nessuna</translation>
-    </message>
-    <message>
         <source>Deleting</source>
         <translation type="unfinished">Eliminazione</translation>
     </message>
@@ -787,8 +783,16 @@
         <translation type="unfinished">Completamento</translation>
     </message>
     <message>
+        <source>Tags</source>
+        <translation type="unfinished">Etichette</translation>
+    </message>
+    <message>
         <source>Notes</source>
         <translation type="unfinished">Note</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation type="unfinished">Nessuna</translation>
     </message>
     <message>
         <source>Subtasks</source>
@@ -797,10 +801,6 @@
     <message>
         <source>%1 of %2 done</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tags</source>
-        <translation type="unfinished">Etichette</translation>
     </message>
 </context>
 <context>
