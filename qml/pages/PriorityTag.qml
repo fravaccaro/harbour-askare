@@ -46,6 +46,20 @@ Row {
         return qsTr("No priority");
     }
 
+    // A theme icon per band, so the row shows the level, not just a word.
+    function iconFor(value) {
+        if (value >= 1 && value <= 4)
+            return "image://theme/icon-m-page-up";
+
+        if (value === 5)
+            return "image://theme/icon-m-forward";
+
+        if (value >= 6 && value <= 9)
+            return "image://theme/icon-m-page-down";
+
+        return "";
+    }
+
     spacing: Theme.paddingSmall
     visible: root.priority > 0
 

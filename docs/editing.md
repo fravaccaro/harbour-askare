@@ -9,7 +9,7 @@ nav_order: 3
 
 ## The task
 
-Opening a task shows its priority, its status, when it starts and when it is due, the reminder it carries, where it is and the URL it links to, the tags it wears, how far along it is, the notes, and its subtasks with a count of the ones already done. An empty field still shows, reading **None**, so the task reads the same whether or not it carries one. The URL is a link that opens in the browser. Tapping a subtask opens it like any other task, with the same fields again however deep it sits; press and hold offers **Edit**, **Mark done** and **Delete**, as a row of the task list does.
+Opening a task always shows its status, reading **No status** when it has none. Its priority, when it starts and when it is due, the reminder it carries, where it is, and the URL it links to each show only when set, so a task carries just the fields it has. The URL is a link that opens in the browser. The tags it wears show as chips in their own section, reading **None** when it carries none. How far along the task is, the notes, and its subtasks with a count of the ones already done follow. Tapping a subtask opens it like any other task, with the same fields again however deep it sits; press and hold offers **Edit**, **Mark done** and **Delete**, as a row of the task list does.
 
 The pulley menu holds **Edit**, **Mark done**, **Add subtask** and **Delete**.
 

@@ -40,4 +40,21 @@ QtObject {
         return qsTr("No status");
     }
 
+    // A theme icon that stands for each state, so a row reads at a glance.
+    function iconFor(status) {
+        if (status === "IN-PROCESS")
+            return "image://theme/icon-m-refresh";
+
+        if (status === "COMPLETED")
+            return "image://theme/icon-m-accept";
+
+        if (status === "CANCELLED")
+            return "image://theme/icon-m-cancel";
+
+        if (status === "NEEDS-ACTION")
+            return "image://theme/icon-m-diagnostic";
+
+        return "image://theme/icon-m-about";
+    }
+
 }

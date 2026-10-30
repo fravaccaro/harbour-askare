@@ -727,80 +727,80 @@
 <context>
     <name>TaskDetailPage</name>
     <message>
+        <source>None</source>
+        <translation type="unfinished">Nessuna</translation>
+    </message>
+    <message>
         <source>Deleting</source>
-        <translation>Eliminazione</translation>
-    </message>
-    <message>
-        <source>Tags</source>
-        <translation>Etichette</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <translation>Modifica</translation>
-    </message>
-    <message>
-        <source>Mark to-do</source>
-        <translation>Segna come da fare</translation>
-    </message>
-    <message>
-        <source>Mark done</source>
-        <translation>Segna come completata</translation>
+        <translation type="unfinished">Eliminazione</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation>Elimina</translation>
-    </message>
-    <message>
-        <source>Completion</source>
-        <translation>Completamento</translation>
+        <translation type="unfinished">Elimina</translation>
     </message>
     <message>
         <source>Add subtask</source>
-        <translation>Aggiungi sottoattività</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Subtasks</source>
-        <translation>Sottoattività</translation>
+        <source>Edit</source>
+        <translation type="unfinished">Modifica</translation>
     </message>
     <message>
-        <source>%1 of %2 done</source>
-        <translation>%1 di %2 completate</translation>
+        <source>Mark to-do</source>
+        <translation type="unfinished">Segna come da fare</translation>
     </message>
     <message>
-        <source>None</source>
-        <translation>Nessuna</translation>
-    </message>
-    <message>
-        <source>Priority</source>
-        <translation>Priorità</translation>
-    </message>
-    <message>
-        <source>Start</source>
-        <translation>Inizio</translation>
-    </message>
-    <message>
-        <source>Due</source>
-        <translation>Scadenza</translation>
-    </message>
-    <message>
-        <source>Reminder</source>
-        <translation>Promemoria</translation>
-    </message>
-    <message>
-        <source>Notes</source>
-        <translation>Note</translation>
+        <source>Mark done</source>
+        <translation type="unfinished">Segna come completata</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation>Stato</translation>
+        <translation type="unfinished">Stato</translation>
+    </message>
+    <message>
+        <source>Priority</source>
+        <translation type="unfinished">Priorità</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation type="unfinished">Inizio</translation>
+    </message>
+    <message>
+        <source>Due</source>
+        <translation type="unfinished">Scadenza</translation>
+    </message>
+    <message>
+        <source>Reminder</source>
+        <translation type="unfinished">Promemoria</translation>
     </message>
     <message>
         <source>Location</source>
-        <translation>Posizione</translation>
+        <translation type="unfinished">Posizione</translation>
     </message>
     <message>
         <source>URL</source>
-        <translation>Indirizzo web</translation>
+        <translation type="unfinished">Indirizzo web</translation>
+    </message>
+    <message>
+        <source>Completion</source>
+        <translation type="unfinished">Completamento</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation type="unfinished">Note</translation>
+    </message>
+    <message>
+        <source>Subtasks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 of %2 done</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation type="unfinished">Etichette</translation>
     </message>
 </context>
 <context>

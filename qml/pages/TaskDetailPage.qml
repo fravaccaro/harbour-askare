@@ -33,11 +33,6 @@ Page {
         return time === "" ? date : date + " " + time;
     }
 
-    // The same moment for a row that stays put when the task has none.
-    function momentOr(date, time) {
-        return date === "" ? qsTr("None") : page.moment(date, time);
-    }
-
     function countDone(list) {
         var done = 0;
         for (var i = 0; i < list.length; ++i) {
@@ -188,65 +183,54 @@ Page {
                 description: Calendars.nameOfHref(page.calendarHref)
             }
 
-            DetailItem {
-                label: qsTr("Status")
-                value: statusOptions.labelFor(page.status)
+            IconMenuItem {
+                text: qsTr("Status")
+                description: statusOptions.labelFor(page.status)
+                icon.source: statusOptions.iconFor(page.status)
             }
 
-            DetailItem {
-                label: qsTr("Priority")
-                value: priorityBands.labelFor(page.priority)
+            IconMenuItem {
+                text: qsTr("Priority")
+                visible: page.priority > 0
+                description: priorityBands.labelFor(page.priority)
+                icon.source: priorityBands.iconFor(page.priority)
             }
 
-            DetailItem {
-                label: qsTr("Start")
-                value: page.momentOr(page.startDate, page.startTime)
+            IconMenuItem {
+                text: qsTr("Start")
+                visible: page.startDate !== ""
+                description: page.moment(page.startDate, page.startTime)
+                icon.source: "image://theme/icon-m-date"
             }
 
-            DetailItem {
-                label: qsTr("Due")
-                value: page.momentOr(page.dueDate, page.dueTime)
+            IconMenuItem {
+                text: qsTr("Due")
+                visible: page.dueDate !== ""
+                description: page.moment(page.dueDate, page.dueTime)
+                icon.source: "image://theme/icon-m-date"
             }
 
-            DetailItem {
-                label: qsTr("Reminder")
-                value: reminderOptions.labelFor(page.reminder)
+            IconMenuItem {
+                text: qsTr("Reminder")
+                visible: page.reminder >= 0
+                description: reminderOptions.labelFor(page.reminder)
+                icon.source: "image://theme/icon-m-alarm"
             }
 
-            DetailItem {
-                label: qsTr("Location")
-                value: page.location === "" ? qsTr("None") : page.location
+            IconMenuItem {
+                text: qsTr("Location")
+                visible: page.location !== ""
+                description: page.location
+                icon.source: "image://theme/icon-m-location"
             }
 
-            // A URL stays tappable, so it is rendered as a link rather
-            // than a plain DetailItem value.
-            DetailItem {
-                label: qsTr("URL")
-                visible: page.url === ""
-                value: qsTr("None")
-            }
-
-            Column {
-                x: Theme.horizontalPageMargin
-                width: parent.width - 2 * Theme.horizontalPageMargin
+            // A URL stays tappable: the row opens it in the browser.
+            IconMenuItem {
+                text: qsTr("URL")
                 visible: page.url !== ""
-
-                Label {
-                    color: Theme.secondaryColor
-                    font.pixelSize: Theme.fontSizeSmall
-                    text: qsTr("URL")
-                }
-
-                Label {
-                    width: parent.width
-                    wrapMode: Text.WrapAnywhere
-                    textFormat: Text.StyledText
-                    color: Theme.primaryColor
-                    linkColor: Theme.highlightColor
-                    text: '<a href="' + page.url + '">' + page.url + '</a>'
-                    onLinkActivated: Qt.openUrlExternally(link)
-                }
-
+                description: page.url
+                icon.source: "image://theme/icon-m-website"
+                onClicked: Qt.openUrlExternally(page.url)
             }
 
             ProgressBar {
@@ -257,14 +241,13 @@ Page {
                 valueText: page.percent + "%"
             }
 
-            Label {
-                width: parent.width
-                horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: Theme.fontSizeSmall
-                color: Theme.secondaryColor
-                text: qsTr("Completion")
-            }
+                Label {
+                    color: Theme.secondaryColor
+                    font.pixelSize: Theme.fontSizeSmall
+                    text: qsTr("URL")
+                }
 
+             
             SectionHeader {
                 text: qsTr("Tags")
             }
