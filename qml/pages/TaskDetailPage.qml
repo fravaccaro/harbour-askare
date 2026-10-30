@@ -230,7 +230,11 @@ Page {
                 visible: page.url !== ""
                 description: page.url
                 icon.source: "image://theme/icon-m-website"
-                onClicked: Qt.openUrlExternally(page.url)
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: Qt.openUrlExternally(page.url)
+                }
             }
 
             ProgressBar {
