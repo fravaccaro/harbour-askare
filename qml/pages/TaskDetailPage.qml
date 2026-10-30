@@ -184,55 +184,63 @@ Page {
             }
 
             IconMenuItem {
-                text: qsTr("Status")
-                description: statusOptions.labelFor(page.status)
+                description: qsTr("Status")
+                text: statusOptions.labelFor(page.status)
                 icon.source: statusOptions.iconFor(page.status)
             }
 
             IconMenuItem {
-                text: qsTr("Priority")
+                description: qsTr("Priority")
                 visible: page.priority > 0
-                description: priorityBands.labelFor(page.priority)
+                text: priorityBands.labelFor(page.priority)
                 icon.source: priorityBands.iconFor(page.priority)
             }
 
             IconMenuItem {
-                text: qsTr("Start")
+                description: qsTr("Start")
                 visible: page.startDate !== ""
-                description: page.moment(page.startDate, page.startTime)
+                text: page.moment(page.startDate, page.startTime)
                 icon.source: "image://theme/icon-m-date"
             }
 
             IconMenuItem {
-                text: qsTr("Due")
+                description: qsTr("Due")
                 visible: page.dueDate !== ""
-                description: page.moment(page.dueDate, page.dueTime)
+                text: page.moment(page.dueDate, page.dueTime)
                 icon.source: "image://theme/icon-m-date"
             }
 
             IconMenuItem {
-                text: qsTr("Reminder")
+                description: qsTr("Reminder")
                 visible: page.reminder >= 0
-                description: reminderOptions.labelFor(page.reminder)
+                text: reminderOptions.labelFor(page.reminder)
                 icon.source: "image://theme/icon-m-alarm"
             }
 
             IconMenuItem {
-                text: qsTr("Location")
+                description: qsTr("Location")
                 visible: page.location !== ""
-                description: page.location
+                text: page.location
                 icon.source: "image://theme/icon-m-location"
             }
 
-            // A URL stays tappable: the row opens it in the browser.
-            IconMenuItem {
-                text: qsTr("URL")
-                visible: page.url !== ""
-                description: page.url
-                icon.source: "image://theme/icon-m-website"
-                onClicked: Qt.openUrlExternally(page.url)
-            }
-
+// A MenuItem only emits clicked inside a menu, so the row shows
+// as a plain IconMenuItem with an overlaid MouseArea for the tap.
+Item {
+    width: parent.width
+    height: urlItem.height
+    visible: page.url !== ""
+    IconMenuItem {
+        id: urlItem
+        description: qsTr("Website")
+        text: page.url
+        icon.source: "image://theme/icon-m-website"
+    }
+    MouseArea {
+        anchors.fill: parent
+        onClicked: Qt.openUrlExternally(page.url)
+    }
+}
             SectionHeader {
                 text: qsTr("Completion")
             }

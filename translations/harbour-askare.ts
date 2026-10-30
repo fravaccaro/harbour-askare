@@ -775,10 +775,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>URL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Completion</source>
         <translation type="unfinished"></translation>
     </message>
@@ -800,6 +796,10 @@
     </message>
     <message>
         <source>%1 of %2 done</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Website</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

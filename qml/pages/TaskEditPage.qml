@@ -253,7 +253,7 @@ Dialog {
 
             }
 
-            ComboBox {
+            IconComboBox {
                 id: statusBox
 
                 property bool ready: false
@@ -278,8 +278,9 @@ Dialog {
                     Repeater {
                         model: statusOptions.values
 
-                        MenuItem {
+                        IconMenuItem {
                             text: statusOptions.labelFor(modelData)
+                            icon.source: statusOptions.iconFor(modelData)
                         }
 
                     }
@@ -368,7 +369,7 @@ Dialog {
                 text: qsTr("The start must not be after the due date.")
             }
 
-            ComboBox {
+            IconComboBox {
                 // Guards the task's reminder while the menu is still building.
                 property bool ready: false
 
@@ -390,8 +391,9 @@ Dialog {
                     Repeater {
                         model: reminderOptions.values
 
-                        MenuItem {
+                        IconMenuItem {
                             text: reminderOptions.labelFor(modelData)
+                            icon.source: "image://theme/icon-m-alarm"
                         }
 
                     }
