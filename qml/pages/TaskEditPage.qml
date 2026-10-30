@@ -209,7 +209,7 @@ Dialog {
 
             DialogHeader {
                 acceptText: page.href === "" ? qsTr("Add task") : qsTr("Save")
-                title: page.newSubtask ? qsTr("New subtask") : (page.href === "" ? qsTr("New task") : qsTr("Task"))
+                title: page.newSubtask ? qsTr("New subtask") : (page.href === "" ? qsTr("New task") : qsTr("Edit task"))
             }
 
             TextField {
@@ -299,6 +299,7 @@ Dialog {
                 visible: false
             }
 
+
             Slider {
                 width: parent.width
                 label: qsTr("Priority")
@@ -323,16 +324,6 @@ Dialog {
                 onValueChanged: {
                     page.percent = value;
                     page.syncStatusToPercent();
-                }
-            }
-
-                Icon {
-                    anchors {
-                        left: parent.left
-                        leftMargin: Theme.horizontalPageMargin
-                        verticalCenter: parent.verticalCenter
-                    }
-                    source: "image://theme/icon-m-acknowledge"
                 }
             }
 
@@ -506,7 +497,7 @@ Dialog {
                 width: parent.width
                 text: page.description
                 label: qsTr("Notes")
-                placeholderText: qsTr("Notes")
+                placeholderText: qsTr("Write a note...")
                 leftItem: Icon {
                     source: "image://theme/icon-m-note"
                 }
