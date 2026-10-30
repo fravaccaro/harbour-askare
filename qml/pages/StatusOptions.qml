@@ -54,7 +54,7 @@ QtObject {
         if (status === "NEEDS-ACTION")
             return "image://theme/icon-m-diagnostic";
 
-        return "image://theme/icon-m-about";
+        return "image://theme/icon-m-question";
     }
 
 }

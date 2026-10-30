@@ -14,6 +14,16 @@ QString hrefIn(const QString &calendarHref, const QString &uid)
     return Url::pathWithSlash(calendarHref) + uid + QStringLiteral(".ics");
 }
 
+// A QStringList reaches QML as a sequence wrapper, which boxes as one element
+// when carried through a plain object. A QVariantList arrives as a real array.
+QVariantList toVariantList(const QStringList &values)
+{
+    QVariantList out;
+    for (const QString &value : values)
+        out.append(value);
+    return out;
+}
+
 void ensureIdentity(LocalTask *task, const QString &calendarHref)
 {
     if (!task->href.isEmpty())
@@ -658,7 +668,7 @@ QVariantMap Session::taskFields(const QString &href) const
     fields.insert(QStringLiteral("description"), task.description);
     fields.insert(QStringLiteral("location"), task.location);
     fields.insert(QStringLiteral("url"), task.url);
-    fields.insert(QStringLiteral("tags"), task.tags);
+    fields.insert(QStringLiteral("tags"), toVariantList(task.tags));
     fields.insert(QStringLiteral("status"), task.status);
     fields.insert(QStringLiteral("startDate"), Ics::dateFromDue(parsed.start));
     fields.insert(QStringLiteral("startTime"), Ics::timeFromDue(parsed.start));

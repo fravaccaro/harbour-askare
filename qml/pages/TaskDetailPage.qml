@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import Opal.LinkHandler 1.0
 
 Page {
     id: page
@@ -224,23 +225,26 @@ Page {
                 icon.source: "image://theme/icon-m-location"
             }
 
-// A MenuItem only emits clicked inside a menu, so the row shows
-// as a plain IconMenuItem with an overlaid MouseArea for the tap.
-Item {
-    width: parent.width
-    height: urlItem.height
-    visible: page.url !== ""
-    IconMenuItem {
-        id: urlItem
-        description: qsTr("Website")
-        text: page.url
-        icon.source: "image://theme/icon-m-website"
-    }
-    MouseArea {
-        anchors.fill: parent
-        onClicked: Qt.openUrlExternally(page.url)
-    }
-}
+            // A MenuItem only emits clicked inside a menu, so the row is a
+            // BackgroundItem: it gives the tap highlight and feeds it into the
+            // IconMenuItem so the icon and text light up with it.
+            BackgroundItem {
+                id: urlRow
+
+                width: parent.width
+                contentHeight: urlItem.height
+                visible: page.url !== ""
+                onClicked: LinkHandler.openOrCopyUrl(page.url, page.summary)
+
+                IconMenuItem {
+                    id: urlItem
+
+                    highlighted: urlRow.highlighted
+                    description: qsTr("Website")
+                    text: page.url
+                    icon.source: "image://theme/icon-m-website"
+                }
+            }
             SectionHeader {
                 text: qsTr("Completion")
             }

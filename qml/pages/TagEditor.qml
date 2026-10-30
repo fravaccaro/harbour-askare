@@ -131,6 +131,9 @@ Column {
         width: parent.width
         label: qsTr("New tag")
         placeholderText: qsTr("New tag")
+        leftItem: Icon {
+            source: "image://theme/icon-m-favorite"
+        }
         inputMethodHints: Qt.ImhNoAutoUppercase
         EnterKey.iconSource: "image://theme/icon-m-add"
         EnterKey.onClicked: {

@@ -219,16 +219,20 @@ Dialog {
                 text: page.summary
                 label: qsTr("Name")
                 placeholderText: qsTr("Name")
+                leftItem: Icon {
+                    source: "image://theme/icon-m-edit"
+                }
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
                 EnterKey.onClicked: notesField.focus = true
             }
 
-            ComboBox {
+            IconComboBox {
                 id: listBox
 
                 width: parent.width
                 visible: !page.newSubtask
                 label: qsTr("List")
+                icon.source: "image://theme/icon-m-events"
                 // Shown only once another list is picked, so an untouched
                 // subtask does not warn about a move that is not happening.
                 description: page.isSubtask && page.chosenCalendar() !== page.calendarHref ? qsTr("This subtask becomes a task of its own, and its own subtasks follow it.") : ""
@@ -322,11 +326,31 @@ Dialog {
                 }
             }
 
+                Icon {
+                    anchors {
+                        left: parent.left
+                        leftMargin: Theme.horizontalPageMargin
+                        verticalCenter: parent.verticalCenter
+                    }
+                    source: "image://theme/icon-m-acknowledge"
+                }
+            }
+
             ValueButton {
                 width: parent.width
                 label: qsTr("Start")
                 value: page.startDate === "" ? qsTr("None") : page.startDate
+                labelMargin: leftMargin + Theme.iconSizeMedium + Theme.paddingMedium
                 onClicked: page.pickStart()
+
+                Icon {
+                    anchors {
+                        left: parent.left
+                        leftMargin: Theme.horizontalPageMargin
+                        verticalCenter: parent.verticalCenter
+                    }
+                    source: "image://theme/icon-m-date"
+                }
             }
 
             ValueButton {
@@ -334,7 +358,17 @@ Dialog {
                 enabled: page.startDate !== ""
                 label: qsTr("Start time")
                 value: page.startTime === "" ? qsTr("All day") : page.startTime
+                labelMargin: leftMargin + Theme.iconSizeMedium + Theme.paddingMedium
                 onClicked: page.pickStartTime()
+
+                Icon {
+                    anchors {
+                        left: parent.left
+                        leftMargin: Theme.horizontalPageMargin
+                        verticalCenter: parent.verticalCenter
+                    }
+                    source: "image://theme/icon-m-timer"
+                }
             }
 
             Button {
@@ -348,7 +382,17 @@ Dialog {
                 width: parent.width
                 label: qsTr("Due")
                 value: page.dueDate === "" ? qsTr("None") : page.dueDate
+                labelMargin: leftMargin + Theme.iconSizeMedium + Theme.paddingMedium
                 onClicked: page.pickDue()
+
+                Icon {
+                    anchors {
+                        left: parent.left
+                        leftMargin: Theme.horizontalPageMargin
+                        verticalCenter: parent.verticalCenter
+                    }
+                    source: "image://theme/icon-m-date"
+                }
             }
 
             ValueButton {
@@ -356,7 +400,17 @@ Dialog {
                 enabled: page.dueDate !== ""
                 label: qsTr("Time")
                 value: page.dueTime === "" ? qsTr("All day") : page.dueTime
+                labelMargin: leftMargin + Theme.iconSizeMedium + Theme.paddingMedium
                 onClicked: page.pickDueTime()
+
+                Icon {
+                    anchors {
+                        left: parent.left
+                        leftMargin: Theme.horizontalPageMargin
+                        verticalCenter: parent.verticalCenter
+                    }
+                    source: "image://theme/icon-m-timer"
+                }
             }
 
             Label {
@@ -416,6 +470,9 @@ Dialog {
                 text: page.location
                 label: qsTr("Location")
                 placeholderText: qsTr("Location")
+                leftItem: Icon {
+                    source: "image://theme/icon-m-location"
+                }
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
                 EnterKey.onClicked: urlField.focus = true
             }
@@ -427,6 +484,9 @@ Dialog {
                 text: page.url
                 label: qsTr("URL")
                 placeholderText: qsTr("URL")
+                leftItem: Icon {
+                    source: "image://theme/icon-m-website"
+                }
                 inputMethodHints: Qt.ImhUrlCharactersOnly | Qt.ImhNoAutoUppercase
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
                 EnterKey.onClicked: notesField.focus = true
@@ -447,6 +507,9 @@ Dialog {
                 text: page.description
                 label: qsTr("Notes")
                 placeholderText: qsTr("Notes")
+                leftItem: Icon {
+                    source: "image://theme/icon-m-note"
+                }
             }
 
         }
