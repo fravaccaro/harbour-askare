@@ -1,6 +1,6 @@
+import Opal.LinkHandler 1.0
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import Opal.LinkHandler 1.0
 
 Page {
     id: page
@@ -217,6 +217,7 @@ Page {
                     value: page.percent
                     valueText: page.percent + "%"
                 }
+
             }
 
             IconField {
@@ -232,6 +233,7 @@ Page {
                     width: parent.width - x - tagsField.grooveRightMargin
                     tags: page.tags
                 }
+
             }
 
             SectionHeader {
@@ -290,8 +292,8 @@ Page {
                     text: page.url
                     icon.source: "image://theme/icon-m-website"
                 }
-            }
 
+            }
 
             IconField {
                 id: notesField
@@ -320,6 +322,7 @@ Page {
                     text: page.description === "" ? qsTr("None") : Askare.renderNotes(page.description)
                     onLinkActivated: Qt.openUrlExternally(link)
                 }
+
             }
 
             SectionHeader {

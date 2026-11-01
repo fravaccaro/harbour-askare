@@ -219,11 +219,13 @@ Dialog {
                 text: page.summary
                 label: qsTr("Name")
                 placeholderText: qsTr("Name")
+                EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                EnterKey.onClicked: notesField.focus = true
+
                 leftItem: Icon {
                     source: "image://theme/icon-m-edit"
                 }
-                EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                EnterKey.onClicked: notesField.focus = true
+
             }
 
             IconComboBox {
@@ -321,6 +323,7 @@ Dialog {
                     Component.onCompleted: value = page.priority
                     onValueChanged: page.priority = value
                 }
+
             }
 
             IconField {
@@ -348,6 +351,7 @@ Dialog {
                         page.syncStatusToPercent();
                     }
                 }
+
             }
 
             TagEditor {
@@ -371,13 +375,16 @@ Dialog {
                 onClicked: page.pickStart()
 
                 Icon {
+                    source: "image://theme/icon-m-date"
+
                     anchors {
                         left: parent.left
                         leftMargin: Theme.horizontalPageMargin
                         verticalCenter: parent.verticalCenter
                     }
-                    source: "image://theme/icon-m-date"
+
                 }
+
             }
 
             ValueButton {
@@ -390,13 +397,16 @@ Dialog {
                 onClicked: page.pickStartTime()
 
                 Icon {
+                    source: "image://theme/icon-m-timer"
+
                     anchors {
                         left: parent.left
                         leftMargin: Theme.horizontalPageMargin
                         verticalCenter: parent.verticalCenter
                     }
-                    source: "image://theme/icon-m-timer"
+
                 }
+
             }
 
             Button {
@@ -415,13 +425,16 @@ Dialog {
                 onClicked: page.pickDue()
 
                 Icon {
+                    source: "image://theme/icon-m-date"
+
                     anchors {
                         left: parent.left
                         leftMargin: Theme.horizontalPageMargin
                         verticalCenter: parent.verticalCenter
                     }
-                    source: "image://theme/icon-m-date"
+
                 }
+
             }
 
             ValueButton {
@@ -434,13 +447,16 @@ Dialog {
                 onClicked: page.pickDueTime()
 
                 Icon {
+                    source: "image://theme/icon-m-timer"
+
                     anchors {
                         left: parent.left
                         leftMargin: Theme.horizontalPageMargin
                         verticalCenter: parent.verticalCenter
                     }
-                    source: "image://theme/icon-m-timer"
+
                 }
+
             }
 
             Label {
@@ -493,8 +509,6 @@ Dialog {
 
             }
 
-
-
             SectionHeader {
                 text: qsTr("Details")
             }
@@ -506,11 +520,13 @@ Dialog {
                 text: page.location
                 label: qsTr("Location")
                 placeholderText: qsTr("Location")
+                EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                EnterKey.onClicked: urlField.focus = true
+
                 leftItem: Icon {
                     source: "image://theme/icon-m-location"
                 }
-                EnterKey.iconSource: "image://theme/icon-m-enter-next"
-                EnterKey.onClicked: urlField.focus = true
+
             }
 
             TextField {
@@ -520,14 +536,15 @@ Dialog {
                 text: page.url
                 label: qsTr("Website")
                 placeholderText: qsTr("Website")
-                leftItem: Icon {
-                    source: "image://theme/icon-m-website"
-                }
                 inputMethodHints: Qt.ImhUrlCharactersOnly | Qt.ImhNoAutoUppercase
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
                 EnterKey.onClicked: notesField.focus = true
-            }
 
+                leftItem: Icon {
+                    source: "image://theme/icon-m-website"
+                }
+
+            }
 
             TextArea {
                 id: notesField
@@ -536,9 +553,11 @@ Dialog {
                 text: page.description
                 label: qsTr("Notes")
                 placeholderText: qsTr("Write a note...")
+
                 leftItem: Icon {
                     source: "image://theme/icon-m-note"
                 }
+
             }
 
         }
