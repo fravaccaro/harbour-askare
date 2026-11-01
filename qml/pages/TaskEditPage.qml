@@ -353,6 +353,7 @@ Dialog {
                 label: qsTr("Start")
                 value: page.startDate === "" ? qsTr("None") : page.startDate
                 labelMargin: leftMargin + Theme.iconSizeMedium + Theme.paddingMedium
+                minimumContentHeight: Theme.itemSizeMedium + Theme.paddingSmall
                 onClicked: page.pickStart()
 
                 Icon {
@@ -371,6 +372,7 @@ Dialog {
                 label: qsTr("Start time")
                 value: page.startTime === "" ? qsTr("All day") : page.startTime
                 labelMargin: leftMargin + Theme.iconSizeMedium + Theme.paddingMedium
+                minimumContentHeight: Theme.itemSizeMedium + Theme.paddingSmall
                 onClicked: page.pickStartTime()
 
                 Icon {
@@ -395,6 +397,7 @@ Dialog {
                 label: qsTr("Due")
                 value: page.dueDate === "" ? qsTr("None") : page.dueDate
                 labelMargin: leftMargin + Theme.iconSizeMedium + Theme.paddingMedium
+                minimumContentHeight: Theme.itemSizeMedium + Theme.paddingSmall
                 onClicked: page.pickDue()
 
                 Icon {
@@ -413,6 +416,7 @@ Dialog {
                 label: qsTr("Time")
                 value: page.dueTime === "" ? qsTr("All day") : page.dueTime
                 labelMargin: leftMargin + Theme.iconSizeMedium + Theme.paddingMedium
+                minimumContentHeight: Theme.itemSizeMedium + Theme.paddingSmall
                 onClicked: page.pickDueTime()
 
                 Icon {

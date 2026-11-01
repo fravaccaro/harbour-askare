@@ -58,9 +58,10 @@ Item {
     default property alias _content: contentItem.data
 
     width: parent ? parent.width : Screen.width
-    // The caption closes the row: a control reserves room under its groove for
-    // the label it is not drawing, and that empty room would pad the row twice.
-    height: caption.visible ? caption.y + caption.height : contentItem.height
+    // The caption closes the row, on the padding ValueButton keeps under its
+    // own text: a control reserves room under its groove for the label it is
+    // not drawing, and that empty room would otherwise pad the row twice.
+    height: caption.visible ? caption.y + caption.height + Theme.paddingMedium : contentItem.height
 
     HighlightImage {
         id: iconImage
