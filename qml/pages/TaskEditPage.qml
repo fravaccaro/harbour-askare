@@ -350,6 +350,18 @@ Dialog {
                 }
             }
 
+            TagEditor {
+                id: tagEditor
+
+                width: parent.width
+                tags: page.tags
+                suggestions: page.tagNames()
+            }
+
+            SectionHeader {
+                text: qsTr("Schedule")
+            }
+
             ValueButton {
                 width: parent.width
                 label: qsTr("Start")
@@ -441,6 +453,13 @@ Dialog {
                 text: qsTr("The start must not be after the due date.")
             }
 
+            Button {
+                anchors.horizontalCenter: parent.horizontalCenter
+                visible: page.dueDate !== ""
+                text: qsTr("Clear due date")
+                onClicked: page.clearDue()
+            }
+
             IconComboBox {
                 // Guards the task's reminder while the menu is still building.
                 property bool ready: false
@@ -474,11 +493,10 @@ Dialog {
 
             }
 
-            Button {
-                anchors.horizontalCenter: parent.horizontalCenter
-                visible: page.dueDate !== ""
-                text: qsTr("Clear due date")
-                onClicked: page.clearDue()
+
+
+            SectionHeader {
+                text: qsTr("Details")
             }
 
             TextField {
@@ -510,13 +528,6 @@ Dialog {
                 EnterKey.onClicked: notesField.focus = true
             }
 
-            TagEditor {
-                id: tagEditor
-
-                width: parent.width
-                tags: page.tags
-                suggestions: page.tagNames()
-            }
 
             TextArea {
                 id: notesField

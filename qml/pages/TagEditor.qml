@@ -131,6 +131,7 @@ Column {
         id: entry
 
         width: parent.width
+        textLeftMargin: chipsField.contentLeft
         label: qsTr("New tag")
         placeholderText: qsTr("Add a tag...")
         inputMethodHints: Qt.ImhNoAutoUppercase
@@ -142,7 +143,7 @@ Column {
     }
 
     Label {
-        x: Theme.horizontalPageMargin
+        x: chipsField.contentLeft
         visible: root.available.length > 0
         color: Theme.secondaryColor
         font.pixelSize: Theme.fontSizeSmall
@@ -150,8 +151,8 @@ Column {
     }
 
     Flow {
-        x: Theme.horizontalPageMargin
-        width: parent.width - 2 * Theme.horizontalPageMargin
+        x: chipsField.contentLeft
+        width: parent.width - x - Theme.horizontalPageMargin
         spacing: Theme.paddingSmall
 
         Repeater {

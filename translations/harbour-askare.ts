@@ -806,6 +806,14 @@
         <source>Website</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Schedule</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TaskEditPage</name>
@@ -915,6 +923,14 @@
     </message>
     <message>
         <source>Website</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Schedule</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Details</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

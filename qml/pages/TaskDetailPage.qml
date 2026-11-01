@@ -197,55 +197,6 @@ Page {
                 icon.source: priorityBands.iconFor(page.priority)
             }
 
-            IconMenuItem {
-                description: qsTr("Start")
-                visible: page.startDate !== ""
-                text: page.moment(page.startDate, page.startTime)
-                icon.source: "image://theme/icon-m-date"
-            }
-
-            IconMenuItem {
-                description: qsTr("Due")
-                visible: page.dueDate !== ""
-                text: page.moment(page.dueDate, page.dueTime)
-                icon.source: "image://theme/icon-m-date"
-            }
-
-            IconMenuItem {
-                description: qsTr("Reminder")
-                visible: page.reminder >= 0
-                text: reminderOptions.labelFor(page.reminder)
-                icon.source: "image://theme/icon-m-alarm"
-            }
-
-            IconMenuItem {
-                description: qsTr("Location")
-                visible: page.location !== ""
-                text: page.location
-                icon.source: "image://theme/icon-m-location"
-            }
-
-            // A MenuItem only emits clicked inside a menu, so the row is a
-            // BackgroundItem: it gives the tap highlight and feeds it into the
-            // IconMenuItem so the icon and text light up with it.
-            BackgroundItem {
-                id: urlRow
-
-                width: parent.width
-                contentHeight: urlItem.height
-                visible: page.url !== ""
-                onClicked: LinkHandler.openOrCopyUrl(page.url, page.summary)
-
-                IconMenuItem {
-                    id: urlItem
-
-                    highlighted: urlRow.highlighted
-                    description: qsTr("Website")
-                    text: page.url
-                    icon.source: "image://theme/icon-m-website"
-                }
-            }
-
             IconField {
                 id: completionField
 
@@ -283,28 +234,96 @@ Page {
             }
 
             SectionHeader {
-                text: qsTr("Notes")
+                text: qsTr("Schedule")
+            }
+            IconMenuItem {
+                description: qsTr("Start")
+                visible: page.startDate !== ""
+                text: page.moment(page.startDate, page.startTime)
+                icon.source: "image://theme/icon-m-date"
             }
 
-            Label {
-                x: Theme.horizontalPageMargin
-                width: parent.width - 2 * Theme.horizontalPageMargin
-                visible: page.description !== ""
-                wrapMode: Text.WordWrap
-                textFormat: Text.RichText
-                color: Theme.primaryColor
-                linkColor: Theme.highlightColor
-                text: Askare.renderNotes(page.description)
-                onLinkActivated: Qt.openUrlExternally(link)
+            IconMenuItem {
+                description: qsTr("Due")
+                visible: page.dueDate !== ""
+                text: page.moment(page.dueDate, page.dueTime)
+                icon.source: "image://theme/icon-m-date"
             }
 
-            Label {
-                x: Theme.horizontalPageMargin
-                width: parent.width - 2 * Theme.horizontalPageMargin
-                visible: page.description === ""
-                color: Theme.secondaryColor
-                font.pixelSize: Theme.fontSizeSmall
-                text: qsTr("None")
+            IconMenuItem {
+                description: qsTr("Reminder")
+                visible: page.reminder >= 0
+                text: reminderOptions.labelFor(page.reminder)
+                icon.source: "image://theme/icon-m-alarm"
+            }
+
+            SectionHeader {
+                text: qsTr("Details")
+            }
+
+            IconMenuItem {
+                description: qsTr("Location")
+                visible: page.location !== ""
+                text: page.location
+                icon.source: "image://theme/icon-m-location"
+            }
+
+            // A MenuItem only emits clicked inside a menu, so the row is a
+            // BackgroundItem: it gives the tap highlight and feeds it into the
+            // IconMenuItem so the icon and text light up with it.
+            BackgroundItem {
+                id: urlRow
+
+                width: parent.width
+                contentHeight: urlItem.height
+                visible: page.url !== ""
+                onClicked: LinkHandler.openOrCopyUrl(page.url, page.summary)
+
+                IconMenuItem {
+                    id: urlItem
+
+                    highlighted: urlRow.highlighted
+                    description: qsTr("Website")
+                    text: page.url
+                    icon.source: "image://theme/icon-m-website"
+                }
+            }
+
+
+            IconField {
+                id: notesField
+
+                width: parent.width
+                description: qsTr("Notes")
+                icon.source: "image://theme/icon-m-note"
+                // A note runs to as many lines as it likes, so the icon keeps
+                // to the first of them rather than floating mid-paragraph.
+                lineCenterY: Math.min(notesContent.height, Theme.itemSizeSmall) / 2
+
+                Column {
+                    id: notesContent
+
+                    x: notesField.grooveLeftMargin
+                    width: parent.width - x - notesField.grooveRightMargin
+
+                    Label {
+                        width: parent.width
+                        visible: page.description !== ""
+                        wrapMode: Text.WordWrap
+                        textFormat: Text.RichText
+                        color: Theme.primaryColor
+                        linkColor: Theme.highlightColor
+                        text: Askare.renderNotes(page.description)
+                        onLinkActivated: Qt.openUrlExternally(link)
+                    }
+
+                    Label {
+                        visible: page.description === ""
+                        color: Theme.secondaryColor
+                        font.pixelSize: Theme.fontSizeSmall
+                        text: qsTr("None")
+                    }
+                }
             }
 
             SectionHeader {
