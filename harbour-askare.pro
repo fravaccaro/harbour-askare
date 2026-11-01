@@ -71,6 +71,7 @@ DISTFILES += \
     qml/cover/cover-check.png \
     qml/pages/AboutPage.qml \
     qml/pages/FilterItem.qml \
+    qml/pages/IconField.qml \
     qml/pages/ListsPage.qml \
     qml/pages/LoginPage.qml \
     qml/pages/PriorityTag.qml \

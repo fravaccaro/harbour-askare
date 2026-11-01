@@ -299,31 +299,52 @@ Dialog {
                 visible: false
             }
 
+            IconField {
+                id: priorityField
 
-            Slider {
                 width: parent.width
-                label: qsTr("Priority")
-                minimumValue: 0
-                maximumValue: 9
-                stepSize: 1
-                valueText: priorityBands.labelFor(value)
-                Component.onCompleted: value = page.priority
-                onValueChanged: page.priority = value
+                description: qsTr("Priority")
+                icon.source: "image://theme/icon-m-levels"
+                lineCenterY: prioritySlider.height - Theme.itemSizeSmall / 2
+
+                Slider {
+                    id: prioritySlider
+
+                    width: parent.width
+                    leftMargin: priorityField.grooveLeftMargin
+                    rightMargin: priorityField.grooveRightMargin
+                    minimumValue: 0
+                    maximumValue: 9
+                    stepSize: 1
+                    valueText: priorityBands.labelFor(value)
+                    Component.onCompleted: value = page.priority
+                    onValueChanged: page.priority = value
+                }
             }
 
-            Slider {
-                id: completionSlider
+            IconField {
+                id: completionField
 
                 width: parent.width
-                label: qsTr("Completion")
-                minimumValue: 0
-                maximumValue: 100
-                stepSize: 5
-                valueText: value + "%"
-                Component.onCompleted: value = page.percent
-                onValueChanged: {
-                    page.percent = value;
-                    page.syncStatusToPercent();
+                description: qsTr("Completion")
+                icon.source: "image://theme/icon-m-acknowledge"
+                lineCenterY: completionSlider.height - Theme.itemSizeSmall / 2
+
+                Slider {
+                    id: completionSlider
+
+                    width: parent.width
+                    leftMargin: completionField.grooveLeftMargin
+                    rightMargin: completionField.grooveRightMargin
+                    minimumValue: 0
+                    maximumValue: 100
+                    stepSize: 5
+                    valueText: value + "%"
+                    Component.onCompleted: value = page.percent
+                    onValueChanged: {
+                        page.percent = value;
+                        page.syncStatusToPercent();
+                    }
                 }
             }
 

@@ -245,19 +245,28 @@ Page {
                     icon.source: "image://theme/icon-m-website"
                 }
             }
-            SectionHeader {
-                text: qsTr("Completion")
-            }
 
-            ProgressBar {
+            IconField {
+                id: completionField
+
                 width: parent.width
-                minimumValue: 0
-                maximumValue: 100
-                value: page.percent
-                valueText: page.percent + "%"
+                description: qsTr("Completion")
+                icon.source: "image://theme/icon-m-acknowledge"
+                lineCenterY: completionBar.barCenterY
+
+                ProgressBar {
+                    id: completionBar
+
+                    width: parent.width
+                    leftMargin: completionField.grooveLeftMargin
+                    rightMargin: completionField.grooveRightMargin
+                    minimumValue: 0
+                    maximumValue: 100
+                    value: page.percent
+                    valueText: page.percent + "%"
+                }
             }
 
-             
             SectionHeader {
                 text: qsTr("Tags")
             }
