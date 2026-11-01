@@ -64,59 +64,61 @@ Column {
 
     spacing: Theme.paddingSmall
 
-    Label {
-        x: Theme.horizontalPageMargin
-        color: Theme.secondaryColor
-        font.pixelSize: Theme.fontSizeSmall
-        text: qsTr("Tags")
-    }
+    IconField {
+        id: chipsField
 
-    Flow {
-        x: Theme.horizontalPageMargin
-        width: parent.width - 2 * Theme.horizontalPageMargin
-        spacing: Theme.paddingSmall
+        width: parent.width
+        description: qsTr("Tags")
+        icon.source: "image://theme/icon-m-asterisk"
 
-        Label {
-            visible: root.tags.length === 0
-            color: Theme.secondaryColor
-            font.pixelSize: Theme.fontSizeSmall
-            text: qsTr("None")
-        }
+        Flow {
+            x: chipsField.grooveLeftMargin
+            width: parent.width - x - chipsField.grooveRightMargin
+            spacing: Theme.paddingSmall
 
-        Repeater {
-            model: root.tags
+            Label {
+                visible: root.tags.length === 0
+                color: Theme.secondaryColor
+                font.pixelSize: Theme.fontSizeSmall
+                text: qsTr("None")
+            }
 
-            Rectangle {
-                width: chipRow.width + 2 * Theme.paddingMedium
-                height: chipRow.height + Theme.paddingSmall
-                radius: height / 2
-                color: Theme.rgba(Theme.highlightColor, chipArea.pressed ? 0.4 : 0.2)
+            Repeater {
+                model: root.tags
 
-                Row {
-                    id: chipRow
+                Rectangle {
+                    width: chipRow.width + 2 * Theme.paddingMedium
+                    height: chipRow.height + Theme.paddingSmall
+                    radius: height / 2
+                    color: Theme.rgba(Theme.highlightColor, chipArea.pressed ? 0.4 : 0.2)
 
-                    anchors.centerIn: parent
-                    spacing: Theme.paddingSmall
+                    Row {
+                        id: chipRow
 
-                    Label {
-                        color: Theme.highlightColor
-                        font.pixelSize: Theme.fontSizeSmall
-                        text: modelData
+                        anchors.centerIn: parent
+                        spacing: Theme.paddingSmall
+
+                        Label {
+                            color: Theme.highlightColor
+                            font.pixelSize: Theme.fontSizeSmall
+                            text: modelData
+                        }
+
+                        Label {
+                            color: Theme.highlightColor
+                            font.pixelSize: Theme.fontSizeSmall
+                            text: "\u00d7"
+                        }
+
                     }
 
-                    Label {
-                        color: Theme.highlightColor
-                        font.pixelSize: Theme.fontSizeSmall
-                        text: "\u00d7"
+                    MouseArea {
+                        id: chipArea
+
+                        anchors.fill: parent
+                        onClicked: root.removeAt(index)
                     }
 
-                }
-
-                MouseArea {
-                    id: chipArea
-
-                    anchors.fill: parent
-                    onClicked: root.removeAt(index)
                 }
 
             }
@@ -131,9 +133,6 @@ Column {
         width: parent.width
         label: qsTr("New tag")
         placeholderText: qsTr("Add a tag...")
-        leftItem: Icon {
-            source: "image://theme/icon-m-asterisk"
-        }
         inputMethodHints: Qt.ImhNoAutoUppercase
         EnterKey.iconSource: "image://theme/icon-m-add"
         EnterKey.onClicked: {

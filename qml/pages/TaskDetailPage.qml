@@ -253,6 +253,7 @@ Page {
                 description: qsTr("Completion")
                 icon.source: "image://theme/icon-m-acknowledge"
                 lineCenterY: completionBar.barCenterY
+                lineBottomY: lineCenterY
 
                 ProgressBar {
                     id: completionBar
@@ -267,14 +268,18 @@ Page {
                 }
             }
 
-            SectionHeader {
-                text: qsTr("Tags")
-            }
+            IconField {
+                id: tagsField
 
-            TagChips {
-                x: Theme.horizontalPageMargin
-                width: parent.width - 2 * Theme.horizontalPageMargin
-                tags: page.tags
+                width: parent.width
+                description: qsTr("Tags")
+                icon.source: "image://theme/icon-m-asterisk"
+
+                TagChips {
+                    x: tagsField.grooveLeftMargin
+                    width: parent.width - x - tagsField.grooveRightMargin
+                    tags: page.tags
+                }
             }
 
             SectionHeader {

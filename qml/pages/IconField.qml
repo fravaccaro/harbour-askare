@@ -15,11 +15,18 @@
     clamps to the control's own left edge: given the whole width it would climb
     over the icon.
 
-    The icon and the caption sit around \c lineCenterY, which defaults to the
-    middle of the control. A Silica Slider carrying a \c valueText reserves an
-    ascent above its groove and only half an item below it, so it names
+    The icon centres on \c lineCenterY and the caption follows \c lineBottomY,
+    both of which default to the content itself: an icon beside its middle and
+    a caption under it, which is what plain content such as a row of chips
+    wants. A control that draws a groove and then reserves empty room beneath
+    it names the groove for both, or the caption would sit a second padding
+    away. A Silica Slider carrying a \c valueText reserves an ascent above its
+    groove and only half an item below it, so it names
     \c {height - Theme.itemSizeSmall / 2}; a ProgressBar names its
     \c barCenterY.
+
+    Content that draws no groove of its own starts at \c grooveLeftMargin and
+    stops at \c grooveRightMargin, so it keeps the value column too.
 
     \qml
     IconField {
@@ -29,6 +36,7 @@
         description: qsTr("Completion")
         icon.source: "image://theme/icon-m-acknowledge"
         lineCenterY: bar.barCenterY
+        lineBottomY: lineCenterY
 
         ProgressBar {
             id: bar
@@ -51,6 +59,7 @@ Item {
     property string description
     property bool highlighted
     property real lineCenterY: contentItem.height / 2
+    property real lineBottomY: contentItem.height
     // Where the value of a row begins, the icon and its padding apart.
     readonly property real contentLeft: Theme.horizontalPageMargin + Theme.iconSizeMedium + Theme.paddingMedium
     readonly property real grooveLeftMargin: Theme.paddingMedium
@@ -85,7 +94,7 @@ Item {
         id: caption
 
         x: root.contentLeft
-        y: root.lineCenterY + Theme.paddingSmall
+        y: root.lineBottomY + Theme.paddingSmall
         width: parent.width - x - Theme.horizontalPageMargin
         visible: text.length
         color: Theme.rgba(root.highlighted ? Theme.highlightColor : Theme.primaryColor, Theme.opacityHigh)

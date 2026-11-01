@@ -306,6 +306,7 @@ Dialog {
                 description: qsTr("Priority")
                 icon.source: "image://theme/icon-m-levels"
                 lineCenterY: prioritySlider.height - Theme.itemSizeSmall / 2
+                lineBottomY: lineCenterY
 
                 Slider {
                     id: prioritySlider
@@ -329,6 +330,7 @@ Dialog {
                 description: qsTr("Completion")
                 icon.source: "image://theme/icon-m-acknowledge"
                 lineCenterY: completionSlider.height - Theme.itemSizeSmall / 2
+                lineBottomY: lineCenterY
 
                 Slider {
                     id: completionSlider
