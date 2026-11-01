@@ -6,9 +6,9 @@ Name:       harbour-askare
 # package imports them anyway.
 %define __provides_exclude_from ^%{_datadir}/.*$
 
-Summary:    Nextcloud tasks for Sailfish OS
+Summary:    Nextcloud Tasks for Sailfish OS
 Version:    0.1.1
-Release:    2
+Release:    3
 License:    GPLv3
 URL:        https://github.com/fravaccaro/harbour-askare
 Source0:    %{name}-%{version}.tar.bz2
@@ -29,7 +29,7 @@ BuildRequires:  desktop-file-utils
 BuildRequires:  qt5-qttools-linguist
 
 %description
-Askare lists and edits Nextcloud tasks over CalDAV. Sign in through the
+Askare lists and edits Nextcloud Tasks over CalDAV. Sign in through the
 server's own page, then keep the lists on the device and sync them by hand.
 
 %if 0%{?_chum}

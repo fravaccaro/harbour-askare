@@ -58,6 +58,11 @@ Item {
     property alias icon: iconImage
     property string description
     property bool highlighted
+    // Plain content sits flush at the top, where a Silica row keeps a breath
+    // above its value. A field that is only content asks for that breath so it
+    // shares the rhythm of the IconMenuItem rows beside it; a control that
+    // reserves its own top room leaves this at zero.
+    property real topPadding: 0
     property real lineCenterY: contentItem.height / 2
     property real lineBottomY: contentItem.height
     // Where the value of a row begins, the icon and its padding apart.
@@ -70,13 +75,13 @@ Item {
     // The caption closes the row, on the padding ValueButton keeps under its
     // own text: a control reserves room under its groove for the label it is
     // not drawing, and that empty room would otherwise pad the row twice.
-    height: caption.visible ? caption.y + caption.height + Theme.paddingMedium : contentItem.height
+    height: caption.visible ? caption.y + caption.height + Theme.paddingMedium : contentItem.y + contentItem.height
 
     HighlightImage {
         id: iconImage
 
         x: Theme.horizontalPageMargin
-        y: root.lineCenterY - height / 2
+        y: root.topPadding + root.lineCenterY - height / 2
         sourceSize.width: Theme.iconSizeMedium
         sourceSize.height: Theme.iconSizeMedium
         highlighted: root.highlighted
@@ -86,6 +91,7 @@ Item {
         id: contentItem
 
         x: root.contentLeft - Theme.paddingMedium
+        y: root.topPadding
         width: parent.width - x
         height: childrenRect.height
     }
@@ -94,7 +100,7 @@ Item {
         id: caption
 
         x: root.contentLeft
-        y: root.lineBottomY + Theme.paddingSmall
+        y: root.topPadding + root.lineBottomY + Theme.paddingSmall
         width: parent.width - x - Theme.horizontalPageMargin
         visible: text.length
         color: Theme.rgba(root.highlighted ? Theme.highlightColor : Theme.primaryColor, Theme.opacityHigh)

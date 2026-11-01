@@ -4,7 +4,7 @@ X-Nemo-Application-Type=silica-qt5
 Icon=harbour-askare
 Exec=harbour-askare
 Name=Askare
-Comment=Nextcloud tasks
+Comment=Nextcloud Tasks
 Comment[it]=Attività Nextcloud
 
 [X-Sailjail]

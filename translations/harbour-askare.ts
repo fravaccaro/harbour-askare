@@ -4,7 +4,7 @@
 <context>
     <name>AboutPage</name>
     <message>
-        <source>A Nextcloud task client for Sailfish OS.</source>
+        <source>A Nextcloud Tasks client for Sailfish OS.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

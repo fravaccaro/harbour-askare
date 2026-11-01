@@ -29,7 +29,7 @@ The SailfishOS Community Team is on Liberapay:
 
 - Add, edit and delete tasks with a name, completion, priority, start and due dates, and notes written in Markdown.
 - Subtasks support.
-- A reminder before a task is due.
+- Customizable due date reminders.
 
 ## Requirements
 

@@ -4,7 +4,7 @@
 <context>
     <name>AboutPage</name>
     <message>
-        <source>A Nextcloud task client for Sailfish OS.</source>
+        <source>A Nextcloud Tasks client for Sailfish OS.</source>
         <translation>Un client Nextcloud Attività per Sailfish OS</translation>
     </message>
     <message>
@@ -110,7 +110,7 @@
     </message>
     <message>
         <source>Not signed in</source>
-        <translation>Accesso non effettuato</translation>
+        <translation>Non connesso</translation>
     </message>
     <message>
         <source>No tasks</source>
@@ -577,7 +577,7 @@
     </message>
     <message>
         <source>Fetches server changes once the task has been uploaded.</source>
-        <translation>Recupera le modifiche dal server una volta caricata l&apos;attività.</translation>
+        <translation>Recupera le modifiche dal server dopo l&apos;invio dell&apos;attività.</translation>
     </message>
     <message>
         <source>Connection</source>
@@ -683,7 +683,7 @@
     </message>
     <message>
         <source>Thank you for using my little app! Maybe you can contribute back?</source>
-        <translation>razie per usare la mia piccola app! Forse puoi ricambiare con un contributo?</translation>
+        <translation>Grazie per usare la mia piccola app! Forse puoi ricambiare con un contributo?</translation>
     </message>
     <message>
         <source>Thank you for your support!</source>
@@ -725,213 +725,213 @@
     </message>
     <message>
         <source>Add a tag...</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi un&apos;etichetta...</translation>
     </message>
 </context>
 <context>
     <name>TaskDetailPage</name>
     <message>
         <source>Deleting</source>
-        <translation type="unfinished">Eliminazione</translation>
+        <translation>Eliminazione</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Elimina</translation>
+        <translation>Elimina</translation>
     </message>
     <message>
         <source>Add subtask</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi sottoattività</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished">Modifica</translation>
+        <translation>Modifica</translation>
     </message>
     <message>
         <source>Mark to-do</source>
-        <translation type="unfinished">Segna come da fare</translation>
+        <translation>Segna come da fare</translation>
     </message>
     <message>
         <source>Mark done</source>
-        <translation type="unfinished">Segna come completata</translation>
+        <translation>Segna come completata</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished">Stato</translation>
+        <translation>Stato</translation>
     </message>
     <message>
         <source>Priority</source>
-        <translation type="unfinished">Priorità</translation>
+        <translation>Priorità</translation>
     </message>
     <message>
         <source>Start</source>
-        <translation type="unfinished">Inizio</translation>
+        <translation>Inizio</translation>
     </message>
     <message>
         <source>Due</source>
-        <translation type="unfinished">Scadenza</translation>
+        <translation>Scadenza</translation>
     </message>
     <message>
         <source>Reminder</source>
-        <translation type="unfinished">Promemoria</translation>
+        <translation>Promemoria</translation>
     </message>
     <message>
         <source>Location</source>
-        <translation type="unfinished">Posizione</translation>
+        <translation>Posizione</translation>
     </message>
     <message>
         <source>Completion</source>
-        <translation type="unfinished">Completamento</translation>
+        <translation>Completamento</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished">Etichette</translation>
+        <translation>Etichette</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished">Note</translation>
+        <translation>Note</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished">Nessuna</translation>
+        <translation>Nessuna</translation>
     </message>
     <message>
         <source>Subtasks</source>
-        <translation type="unfinished"></translation>
+        <translation>Sottoattività</translation>
     </message>
     <message>
         <source>%1 of %2 done</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 di %2 completate</translation>
     </message>
     <message>
         <source>Website</source>
-        <translation type="unfinished"></translation>
+        <translation>Sito web</translation>
     </message>
     <message>
         <source>Schedule</source>
-        <translation type="unfinished"></translation>
+        <translation>Pianificazione</translation>
     </message>
     <message>
         <source>Details</source>
-        <translation type="unfinished">Dettagli</translation>
+        <translation>Dettagli</translation>
     </message>
 </context>
 <context>
     <name>TaskEditPage</name>
     <message>
         <source>Add task</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi attività</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Salva</translation>
     </message>
     <message>
         <source>New subtask</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuova sottoattività</translation>
     </message>
     <message>
         <source>New task</source>
-        <translation type="unfinished">Nuova attività</translation>
+        <translation>Nuova attività</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <source>List</source>
-        <translation type="unfinished"></translation>
+        <translation>Elenco</translation>
     </message>
     <message>
         <source>This subtask becomes a task of its own, and its own subtasks follow it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Questa sottoattività diventa un&apos;attività a sé stante, e le sue sottoattività la seguono.</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished">Stato</translation>
+        <translation>Stato</translation>
     </message>
     <message>
         <source>Priority</source>
-        <translation type="unfinished">Priorità</translation>
+        <translation>Priorità</translation>
     </message>
     <message>
         <source>Completion</source>
-        <translation type="unfinished">Completamento</translation>
+        <translation>Completamento</translation>
     </message>
     <message>
         <source>Start</source>
-        <translation type="unfinished">Inizio</translation>
+        <translation>Inizio</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished">Nessuna</translation>
+        <translation>Nessuna</translation>
     </message>
     <message>
         <source>Start time</source>
-        <translation type="unfinished"></translation>
+        <translation>Ora inizio</translation>
     </message>
     <message>
         <source>All day</source>
-        <translation type="unfinished"></translation>
+        <translation>Tutto il giorno</translation>
     </message>
     <message>
         <source>Clear start date</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimuovi data di inizio</translation>
     </message>
     <message>
         <source>Due</source>
-        <translation type="unfinished">Scadenza</translation>
+        <translation>Scadenza</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Orario</translation>
     </message>
     <message>
         <source>The start must not be after the due date.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;inizio non può essere successivo alla scadenza.</translation>
     </message>
     <message>
         <source>Reminder</source>
-        <translation type="unfinished">Promemoria</translation>
+        <translation>Promemoria</translation>
     </message>
     <message>
         <source>Send a notification while Askare is running.</source>
-        <translation type="unfinished"></translation>
+        <translation>Invia una notifica mentre Askare è in esecuzione.</translation>
     </message>
     <message>
         <source>Set a due date first.</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta prima una data di scadenza.</translation>
     </message>
     <message>
         <source>Clear due date</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimuovi data di scadenza</translation>
     </message>
     <message>
         <source>Location</source>
-        <translation type="unfinished">Posizione</translation>
+        <translation>Posizione</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished">Note</translation>
+        <translation>Note</translation>
     </message>
     <message>
         <source>Edit task</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifica attività</translation>
     </message>
     <message>
         <source>Write a note...</source>
-        <translation type="unfinished"></translation>
+        <translation>Scrivi una nota...</translation>
     </message>
     <message>
         <source>Website</source>
-        <translation type="unfinished"></translation>
+        <translation>Sito web</translation>
     </message>
     <message>
         <source>Schedule</source>
-        <translation type="unfinished"></translation>
+        <translation>Pianificazione</translation>
     </message>
     <message>
         <source>Details</source>
-        <translation type="unfinished">Dettagli</translation>
+        <translation>Dettagli</translation>
     </message>
 </context>
 <context>

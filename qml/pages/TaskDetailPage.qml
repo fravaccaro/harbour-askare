@@ -223,6 +223,7 @@ Page {
                 id: tagsField
 
                 width: parent.width
+                topPadding: Theme.paddingMedium
                 description: qsTr("Tags")
                 icon.source: "image://theme/icon-m-asterisk"
 
@@ -234,8 +235,10 @@ Page {
             }
 
             SectionHeader {
+                visible: page.startDate !== "" || page.dueDate !== "" || page.reminder >= 0
                 text: qsTr("Schedule")
             }
+
             IconMenuItem {
                 description: qsTr("Start")
                 visible: page.startDate !== ""
@@ -296,33 +299,26 @@ Page {
                 width: parent.width
                 description: qsTr("Notes")
                 icon.source: "image://theme/icon-m-note"
-                // A note runs to as many lines as it likes, so the icon keeps
-                // to the first of them rather than floating mid-paragraph.
-                lineCenterY: Math.min(notesContent.height, Theme.itemSizeSmall) / 2
+                // A note sits at its natural height so the caption follows the
+                // text, not a padded band. When that height is shorter than the
+                // icon, the row is padded so the icon centres on the text
+                // instead of climbing above the row; a long note keeps the icon
+                // on its first line.
+                lineCenterY: Math.min(notesLabel.height, Theme.itemSizeSmall) / 2
+                topPadding: Math.max(0, (Theme.iconSizeMedium - notesLabel.height) / 2)
 
-                Column {
-                    id: notesContent
+                Label {
+                    id: notesLabel
 
                     x: notesField.grooveLeftMargin
                     width: parent.width - x - notesField.grooveRightMargin
-
-                    Label {
-                        width: parent.width
-                        visible: page.description !== ""
-                        wrapMode: Text.WordWrap
-                        textFormat: Text.RichText
-                        color: Theme.primaryColor
-                        linkColor: Theme.highlightColor
-                        text: Askare.renderNotes(page.description)
-                        onLinkActivated: Qt.openUrlExternally(link)
-                    }
-
-                    Label {
-                        visible: page.description === ""
-                        color: Theme.secondaryColor
-                        font.pixelSize: Theme.fontSizeSmall
-                        text: qsTr("None")
-                    }
+                    wrapMode: Text.WordWrap
+                    textFormat: page.description === "" ? Text.PlainText : Text.RichText
+                    color: page.description === "" ? Theme.secondaryColor : Theme.primaryColor
+                    font.pixelSize: page.description === "" ? Theme.fontSizeSmall : Theme.fontSizeMedium
+                    linkColor: Theme.highlightColor
+                    text: page.description === "" ? qsTr("None") : Askare.renderNotes(page.description)
+                    onLinkActivated: Qt.openUrlExternally(link)
                 }
             }
 

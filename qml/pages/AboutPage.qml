@@ -9,7 +9,7 @@ A.AboutPageBase {
     appName: "Askare"
     appIcon: Qt.resolvedUrl("../../appicon.png")
     appVersion: Qt.application.version
-    description: qsTr("A Nextcloud task client for Sailfish OS.")
+    description: qsTr("A Nextcloud Tasks client for Sailfish OS.")
     authors: ["fravaccaro"]
     homepageUrl: "https://fravaccaro.com/harbour-askare/"
     sourcesUrl: "https://github.com/fravaccaro/harbour-askare"

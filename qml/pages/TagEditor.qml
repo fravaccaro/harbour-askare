@@ -68,6 +68,7 @@ Column {
         id: chipsField
 
         width: parent.width
+        topPadding: Theme.paddingMedium
         description: qsTr("Tags")
         icon.source: "image://theme/icon-m-asterisk"
 
