@@ -723,6 +723,10 @@
         <source>Tags already in use</source>
         <translation>Etichette già in uso</translation>
     </message>
+    <message>
+        <source>Add a tag...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TaskDetailPage</name>
@@ -822,10 +826,6 @@
         <translation type="unfinished">Nuova attività</translation>
     </message>
     <message>
-        <source>Task</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -902,12 +902,20 @@
         <translation type="unfinished">Posizione</translation>
     </message>
     <message>
-        <source>URL</source>
+        <source>Notes</source>
+        <translation type="unfinished">Note</translation>
+    </message>
+    <message>
+        <source>Edit task</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Notes</source>
-        <translation type="unfinished">Note</translation>
+        <source>Write a note...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Website</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

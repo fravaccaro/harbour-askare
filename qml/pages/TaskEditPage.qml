@@ -473,8 +473,8 @@ Dialog {
 
                 width: parent.width
                 text: page.url
-                label: qsTr("URL")
-                placeholderText: qsTr("URL")
+                label: qsTr("Website")
+                placeholderText: qsTr("Website")
                 leftItem: Icon {
                     source: "image://theme/icon-m-website"
                 }

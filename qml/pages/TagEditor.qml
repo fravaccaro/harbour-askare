@@ -130,9 +130,9 @@ Column {
 
         width: parent.width
         label: qsTr("New tag")
-        placeholderText: qsTr("New tag")
+        placeholderText: qsTr("Add a tag...")
         leftItem: Icon {
-            source: "image://theme/icon-m-favorite"
+            source: "image://theme/icon-m-asterisk"
         }
         inputMethodHints: Qt.ImhNoAutoUppercase
         EnterKey.iconSource: "image://theme/icon-m-add"
