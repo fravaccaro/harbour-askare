@@ -44,7 +44,11 @@ Tasks are grouped under **To do**, **Completed** and, where they are shown, **Ca
 
 Tap the switch on a row to mark a task done or open again. Tap the rest of the row to open the task. Press and hold for **Mark done** and **Delete**; deleting a task with subtasks says how many tasks will go.
 
-The pulley menu offers **Refresh** and **New task**. A new task started here lands in the list currently shown, or can be moved to another one in the editor.
+The pulley menu offers **Refresh**, **Search** and **New task**. A new task started here lands in the list currently shown, or can be moved to another one in the editor.
+
+## Searching
+
+**Search** in the pulley menu opens a field above the list; **Hide search** closes it again and clears it. Typing narrows the list to the tasks that carry the text, matched without regard to case against the title, the notes, the location and the tags. The search stays with whichever view is shown: in a smart list or a tag it narrows what is already there, while in **All** or a single list it reaches every task in scope, so a matching subtask surfaces instead of hiding behind a parent that does not match. When nothing matches, the list says so.
 
 On the Lists page the pulley menu leads to **About**, **Settings** and **Refresh**. About shows the version, donations, translations, and the licence.
 

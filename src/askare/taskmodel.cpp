@@ -85,6 +85,34 @@ QVector<LocalTask> taggedOf(const QVector<LocalTask> &tasks, const QString &tag)
     return out;
 }
 
+// Whether a task carries the query in any text a reader would scan for it:
+// its title, its notes, where it is, and the tags it wears.
+bool taskMatches(const LocalTask &task, const QString &needle)
+{
+    if (task.summary.contains(needle, Qt::CaseInsensitive))
+        return true;
+    if (task.description.contains(needle, Qt::CaseInsensitive))
+        return true;
+    if (task.location.contains(needle, Qt::CaseInsensitive))
+        return true;
+    for (const QString &tag : task.tags) {
+        if (tag.contains(needle, Qt::CaseInsensitive))
+            return true;
+    }
+    return false;
+}
+
+// The tasks that answer the query, in the order they arrived.
+QVector<LocalTask> matchingOf(const QVector<LocalTask> &tasks, const QString &needle)
+{
+    QVector<LocalTask> out;
+    for (const LocalTask &task : tasks) {
+        if (taskMatches(task, needle))
+            out.append(task);
+    }
+    return out;
+}
+
 // A row shows which list owns it by colour, so the colours are read once per
 // reload instead of once per row.
 QHash<QString, QString> colorsOf(const QVector<CalendarInfo> &calendars)
@@ -197,6 +225,17 @@ void TaskModel::showTag(const QString &tag)
     apply(QStringLiteral("tag"), QString(), tag);
 }
 
+void TaskModel::setSearch(const QString &text)
+{
+    const QString next = text.trimmed();
+    if (next == m_search)
+        return;
+
+    m_search = next;
+    emit searchChanged();
+    reload();
+}
+
 void TaskModel::apply(const QString &filter, const QString &href, const QString &name)
 {
     const bool same = filter == m_filter && href == m_calendarHref && name == m_calendarName;
@@ -293,6 +332,16 @@ TaskModel::ChildTally TaskModel::tallyOf(const QString &uid) const
     return m_tallies.value(uid, ChildTally(0, 0));
 }
 
+QVector<LocalTask> TaskModel::withSettings(const QVector<LocalTask> &tasks) const
+{
+    QVector<LocalTask> out = tasks;
+    if (!m_showCompleted)
+        out = openOf(out);
+    if (!m_showCancelled)
+        out = withoutCancelled(out);
+    return out;
+}
+
 void TaskModel::reload()
 {
     beginResetModel();
@@ -312,11 +361,17 @@ void TaskModel::reload()
         m_items = m_store->topLevelTasks();
     // Only the mixed views answer the two settings; the actionable views and
     // the completed one already decide membership by status.
-    if (isMixedView()) {
-        if (!m_showCompleted)
-            m_items = openOf(m_items);
-        if (!m_showCancelled)
-            m_items = withoutCancelled(m_items);
+    if (isMixedView())
+        m_items = withSettings(m_items);
+    // A tag or a smart list already lays every task out flat, so searching
+    // them narrows what is there. All and a single list show parents only, so
+    // a search widens to every task in scope, or a matching subtask would hide
+    // behind a parent that does not match.
+    if (!m_search.isEmpty()) {
+        if (m_filter == QLatin1String("all") || m_filter == QLatin1String("calendar"))
+            m_items = withSettings(matchingOf(m_store->tasks(m_calendarHref), m_search));
+        else
+            m_items = matchingOf(m_items, m_search);
     }
     m_tallies = talliesOf(m_store->tasks());
     m_colors = colorsOf(m_store->calendars());

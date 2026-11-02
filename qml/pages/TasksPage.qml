@@ -1,8 +1,11 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import "../components"
 
 Page {
     id: page
+
+    property bool searchVisible: false
 
     allowedOrientations: Orientation.All
     onStatusChanged: {
@@ -26,8 +29,8 @@ Page {
 
         ViewPlaceholder {
             enabled: listView.count === 0 && !Askare.busy
-            text: qsTr("No tasks")
-            hintText: qsTr("Pull down to add a task")
+            text: Tasks.search !== "" ? qsTr("No matches") : qsTr("No tasks")
+            hintText: Tasks.search !== "" ? qsTr("Try another search") : qsTr("Pull down to add a task")
         }
 
         PullDownMenu {
@@ -49,6 +52,11 @@ Page {
             }
 
             MenuItem {
+                text: page.searchVisible ? qsTr("Hide search") : qsTr("Search")
+                onClicked: page.searchVisible = !page.searchVisible
+            }
+
+            MenuItem {
                 enabled: Askare.configured && Calendars.count > 0
                 text: qsTr("New task")
                 onClicked: pageStack.push(Qt.resolvedUrl("TaskEditPage.qml"), {
@@ -65,8 +73,12 @@ Page {
             text: section === "cancelled" ? qsTr("Cancelled") : (section === "completed" ? qsTr("Completed") : qsTr("To do"))
         }
 
-        header: PageHeader {
+        header: TaskListHeader {
+            width: listView.width
             title: Tasks.title
+            searchVisible: page.searchVisible
+            searchText: Tasks.search
+            onSearchRequested: Tasks.search = text
         }
 
         delegate: ListItem {
