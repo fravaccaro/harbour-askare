@@ -27,6 +27,7 @@ class Session : public QObject
     Q_PROPERTY(QString secretsError READ secretsError NOTIFY secretsErrorChanged)
     Q_PROPERTY(QString loginUrl READ loginUrl NOTIFY loginUrlChanged)
     Q_PROPERTY(QString serverUrl READ serverUrl NOTIFY serverUrlChanged)
+    Q_PROPERTY(QString username READ username NOTIFY usernameChanged)
     Q_PROPERTY(bool ignoreSslErrors READ ignoreSslErrors WRITE setIgnoreSslErrors
                NOTIFY ignoreSslErrorsChanged)
     Q_PROPERTY(bool syncOnStart READ syncOnStart WRITE setSyncOnStart NOTIFY syncOnStartChanged)
@@ -57,6 +58,7 @@ public:
     QString secretsError() const;
     QString loginUrl() const { return m_loginUrl; }
     QString serverUrl() const;
+    QString username() const;
     bool ignoreSslErrors() const;
     bool syncOnStart() const;
     int syncInterval() const;
@@ -94,6 +96,7 @@ signals:
     void secretsErrorChanged();
     void loginUrlChanged();
     void serverUrlChanged();
+    void usernameChanged();
     void ignoreSslErrorsChanged();
     void syncOnStartChanged();
     void syncIntervalChanged();

@@ -92,6 +92,7 @@ Session::Session(Config *config, Store *store, CalendarModel *calendars,
     connect(m_config, &Config::configuredChanged, this, &Session::onConfiguredChanged);
     connect(m_config, &Config::secretsErrorChanged, this, &Session::secretsErrorChanged);
     connect(m_config, &Config::serverUrlChanged, this, &Session::serverUrlChanged);
+    connect(m_config, &Config::usernameChanged, this, &Session::usernameChanged);
     connect(m_config, &Config::ignoreSslErrorsChanged, this, &Session::ignoreSslErrorsChanged);
     connect(m_config, &Config::syncOnStartChanged, this, &Session::syncOnStartChanged);
     connect(m_config, &Config::syncAfterPushChanged, this, &Session::syncAfterPushChanged);
@@ -131,6 +132,11 @@ QString Session::secretsError() const
 QString Session::serverUrl() const
 {
     return m_config->serverUrl();
+}
+
+QString Session::username() const
+{
+    return m_config->username();
 }
 
 bool Session::ignoreSslErrors() const
