@@ -18,6 +18,10 @@ Page {
         id: listView
 
         model: Tasks
+        // Nothing here is picked out, and a current item would be: the view
+        // gives it the focus, which a search field in the header has just
+        // taken, and every keystroke rebuilds the model and hands it back.
+        currentIndex: -1
         section.property: "group"
 
         anchors {
