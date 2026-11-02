@@ -1,5 +1,7 @@
 * Sat Oct 24 2026 fravaccaro 0.2.0-1
 - Added search
+- Added conflict resolution page
+- Settings shows the user logged in
 
 * Sat Oct 24 2026 fravaccaro 0.1.1-3
 - Added tags
