@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="it">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="it">
 <context>
     <name>AboutPage</name>
     <message>
@@ -232,6 +234,10 @@
         <source>The server did not return a password.</source>
         <translation>Il server non ha restituito una password.</translation>
     </message>
+    <message>
+        <source>The sign-in attempt took too long. Start again.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LoginPage</name>
@@ -312,10 +318,12 @@
     </message>
     <message numerus="yes">
         <source>show license(s)</source>
-        <translation><numerusform>mostra licenza
-</numerusform><numerusform>mostra licenze
-</numerusform><numerusform>mostra licenze
-</numerusform></translation>
+        <translation>
+            <numerusform>mostra licenza
+</numerusform>
+            <numerusform>mostra licenze
+</numerusform>
+        </translation>
     </message>
     <message>
         <source>News</source>
@@ -359,7 +367,10 @@
     </message>
     <message numerus="yes">
         <source>License(s)</source>
-        <translation><numerusform>Licenza</numerusform><numerusform>Licenze</numerusform><numerusform>Licenze</numerusform></translation>
+        <translation>
+            <numerusform>Licenza</numerusform>
+            <numerusform>Licenze</numerusform>
+        </translation>
     </message>
     <message>
         <source>Note: please check the source code for most accurate information.</source>
@@ -477,6 +488,10 @@
         <source>Tasks</source>
         <translation>Attività</translation>
     </message>
+    <message>
+        <source>The server stopped answering.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ReminderOptions</name>
@@ -490,15 +505,24 @@
     </message>
     <message numerus="yes">
         <source>%n day(s) before</source>
-        <translation><numerusform>%n giorno prima</numerusform><numerusform>%n giorni prima</numerusform><numerusform>%n giorni prima</numerusform></translation>
+        <translation>
+            <numerusform>%n giorno prima</numerusform>
+            <numerusform>%n giorni prima</numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <source>%n hour(s) before</source>
-        <translation><numerusform>%n ora prima</numerusform><numerusform>%n ore prima</numerusform><numerusform>%n ore prima</numerusform></translation>
+        <translation>
+            <numerusform>%n ora prima</numerusform>
+            <numerusform>%n ore prima</numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <source>%n minute(s) before</source>
-        <translation><numerusform>%n minuto prima</numerusform><numerusform>%n minuti prima</numerusform><numerusform>%n minuti prima</numerusform></translation>
+        <translation>
+            <numerusform>%n minuto prima</numerusform>
+            <numerusform>%n minuti prima</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -536,7 +560,10 @@
     </message>
     <message numerus="yes">
         <source>Every %n minute(s)</source>
-        <translation><numerusform>Ogni %n minuto</numerusform><numerusform>Ogni %n minuti</numerusform><numerusform>Ogni %n minuti</numerusform></translation>
+        <translation>
+            <numerusform>Ogni %n minuto</numerusform>
+            <numerusform>Ogni %n minuti</numerusform>
+        </translation>
     </message>
     <message>
         <source>Synchronisation</source>
@@ -585,6 +612,10 @@
     <message>
         <source>Cancelled tasks will appear under the Cancelled section.</source>
         <translation>Le attività annullate appariranno sotto la sezione Annullate.</translation>
+    </message>
+    <message>
+        <source>Signed in as %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -648,7 +679,10 @@
     </message>
     <message numerus="yes">
         <source>Deleting %n tasks</source>
-        <translation><numerusform>Eliminazione %n attività</numerusform><numerusform>Eliminazione %n attività</numerusform><numerusform>Eliminazione %n attività</numerusform></translation>
+        <translation>
+            <numerusform>Eliminazione %n attività</numerusform>
+            <numerusform>Eliminazione %n attività</numerusform>
+        </translation>
     </message>
     <message>
         <source>Deleting</source>
@@ -915,6 +949,13 @@
     </message>
 </context>
 <context>
+    <name>TaskListHeader</name>
+    <message>
+        <source>Search tasks</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>TaskModel</name>
     <message>
         <source>Current</source>
@@ -981,7 +1022,10 @@
     </message>
     <message numerus="yes">
         <source>Deleting %n tasks</source>
-        <translation><numerusform>Eliminazione %n attività</numerusform><numerusform>Eliminazione %n attività</numerusform><numerusform>Eliminazione %n attività</numerusform></translation>
+        <translation>
+            <numerusform>Eliminazione %n attività</numerusform>
+            <numerusform>Eliminazione %n attività</numerusform>
+        </translation>
     </message>
     <message>
         <source>Subtasks %1/%2</source>
@@ -998,6 +1042,22 @@
     <message>
         <source>Edit</source>
         <translation>Modifica</translation>
+    </message>
+    <message>
+        <source>No matches</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Try another search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

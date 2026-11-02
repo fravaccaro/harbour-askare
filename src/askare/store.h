@@ -23,7 +23,10 @@ public:
     void replaceCalendars(const QVector<CalendarInfo> &calendars);
     QVector<CalendarInfo> calendars() const;
 
-    void mergeRemote(const QString &calendarHref, const QVector<RemoteTask> &tasks);
+    // Returns the remote versions it would not write because the task carries
+    // an edit of its own made against a version the server no longer holds.
+    QVector<RemoteTask> mergeRemote(const QString &calendarHref,
+                                    const QVector<RemoteTask> &tasks);
     // Every task, whatever its place in the tree. Reminders and the cover
     // counts rely on this staying flat.
     QVector<LocalTask> tasks(const QString &calendarHref = QString()) const;
@@ -43,6 +46,10 @@ public:
     void upsertLocal(const LocalTask &task);
     void markReminded(const QString &href, const QString &stamp);
     void markClean(const QString &href, const QString &etag);
+    // Leaves the task owed, carrying the version the server asked for.
+    void setEtag(const QString &href, const QString &etag);
+    // Writes the server's version over a task changed here.
+    void acceptRemote(const QString &calendarHref, const RemoteTask &remote);
     void markDeleted(const QString &href);
     void remove(const QString &href);
 
@@ -50,6 +57,7 @@ private:
     bool migrate();
     QVector<LocalTask> selectTasks(const QString &extra, const QString &calendarHref) const;
     LocalTask readTask(const QSqlQuery &query) const;
+    bool clashesWith(const RemoteTask &remote) const;
     void upsertRemoteTask(const QString &calendarHref, const RemoteTask &task);
     void dropMissing(const QString &calendarHref, const QStringList &keep);
 

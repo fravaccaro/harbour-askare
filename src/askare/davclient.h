@@ -44,6 +44,9 @@ signals:
     void todosReady(const QVector<RemoteTask> &tasks);
     void uploaded(const QString &href, const QString &etag);
     void removed(const QString &href);
+    // The server refused a conditional write: the task changed there since the
+    // version it names. Not a failure of its own, so it is reported apart.
+    void conflicted(const QString &href);
     void failed(const QString &error);
 
 private:

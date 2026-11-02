@@ -76,8 +76,10 @@ Page {
         header: TaskListHeader {
             width: listView.width
             title: Tasks.title
+            conflictCount: Askare.conflictCount
             searchVisible: page.searchVisible
             searchText: Tasks.search
+            onConflictClicked: pageStack.push(Qt.resolvedUrl("ConflictPage.qml"))
             onSearchRequested: Tasks.search = text
         }
 

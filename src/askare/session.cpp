@@ -24,6 +24,34 @@ QVariantList toVariantList(const QStringList &values)
     return out;
 }
 
+// Only a field the two versions disagree on is worth putting to the user.
+// Priority, status and reminder travel as they are stored, since the words for
+// them live in the QML objects that already hold that mapping.
+void appendDifference(QVariantList *rows, const QString &field, const QString &label,
+                      const QVariant &mine, const QVariant &theirs)
+{
+    if (mine == theirs)
+        return;
+
+    QVariantMap row;
+    row.insert(QStringLiteral("field"), field);
+    row.insert(QStringLiteral("label"), label);
+    row.insert(QStringLiteral("mine"), mine);
+    row.insert(QStringLiteral("theirs"), theirs);
+    rows->append(row);
+}
+
+// A moment as the pages word it: the date, and the time when there is one.
+QString momentText(const QString &due)
+{
+    const QString date = Ics::dateFromDue(due);
+    if (date.isEmpty())
+        return QString();
+
+    const QString time = Ics::timeFromDue(due);
+    return time.isEmpty() ? date : date + QLatin1Char(' ') + time;
+}
+
 void ensureIdentity(LocalTask *task, const QString &calendarHref)
 {
     if (!task->href.isEmpty())
@@ -73,6 +101,7 @@ Session::Session(Config *config, Store *store, CalendarModel *calendars,
     , m_tasks(tasks)
     , m_busy(false)
     , m_pushOnly(false)
+    , m_pullAfterConflict(false)
     , m_uploaded(0)
     , m_syncedOnStart(false)
 {
@@ -88,6 +117,7 @@ Session::Session(Config *config, Store *store, CalendarModel *calendars,
     connect(&m_dav, &DavClient::uploaded, this, &Session::onUploaded);
     connect(&m_dav, &DavClient::removed, this, &Session::onRemoved);
     connect(&m_dav, &DavClient::failed, this, &Session::onDavFailed);
+    connect(&m_dav, &DavClient::conflicted, this, &Session::onConflicted);
     connect(m_config, &Config::readyChanged, this, &Session::readyChanged);
     connect(m_config, &Config::configuredChanged, this, &Session::onConfiguredChanged);
     connect(m_config, &Config::secretsErrorChanged, this, &Session::secretsErrorChanged);
@@ -337,6 +367,9 @@ void Session::logout()
     cancelLogin();
     m_syncTimer.stop();
     m_syncedOnStart = false;
+    m_conflicts.clear();
+    m_refused.clear();
+    emit conflictsChanged();
     m_store->clear();
     m_config->clearCredentials();
     m_tasks->showAll();
@@ -409,7 +442,7 @@ void Session::onCalendars(const QVector<CalendarInfo> &calendars)
 void Session::fetchNextCalendar()
 {
     if (m_pendingCalendars.isEmpty()) {
-        m_pendingUploads = m_store->dirtyTasks();
+        m_pendingUploads = withoutConflicts(m_store->dirtyTasks());
         pushNext();
         return;
     }
@@ -421,8 +454,180 @@ void Session::fetchNextCalendar()
 
 void Session::onTodos(const QVector<RemoteTask> &tasks)
 {
-    m_store->mergeRemote(m_currentCalendarHref, tasks);
+    const QVector<RemoteTask> clashes = m_store->mergeRemote(m_currentCalendarHref, tasks);
+    for (const RemoteTask &remote : clashes)
+        noteConflict(remote);
+
     fetchNextCalendar();
+}
+
+// A task changed on both sides. The merge left the edit made here alone, so
+// the two versions are still whole and the user can be asked which to keep.
+void Session::noteConflict(const RemoteTask &remote)
+{
+    // Whatever becomes of the task now supersedes any earlier refusal of it.
+    m_refused.remove(remote.href);
+    const LocalTask mine = m_store->task(remote.href);
+    const TodoFields theirs = Ics::parse(remote.ics);
+    // Both sides arrived at the same task: nothing to choose between, and
+    // nothing worth saying about it either.
+    if (differencesBetween(Ics::parse(mine.ics), theirs).isEmpty()) {
+        m_store->markClean(remote.href, remote.etag);
+        return;
+    }
+
+    // Deleted here. The delete is the answer the user has already given; it
+    // only wants the version the server asks for to go through.
+    if (mine.deleted) {
+        m_store->setEtag(remote.href, remote.etag);
+        return;
+    }
+
+    const int at = indexOfConflict(remote.href);
+    // Asked already and still unanswered: the pair is kept current rather than
+    // the same question put twice.
+    if (at >= 0) {
+        m_conflicts[at] = qMakePair(mine, remote);
+        return;
+    }
+
+    m_conflicts.append(qMakePair(mine, remote));
+    emit conflictsChanged();
+    setError(tr("%1 changed on the server as well. Choose which version to keep.")
+             .arg(mine.summary));
+}
+
+int Session::indexOfConflict(const QString &href) const
+{
+    for (int i = 0; i < m_conflicts.size(); ++i) {
+        if (m_conflicts.at(i).first.href == href)
+            return i;
+    }
+
+    return -1;
+}
+
+// Takes the pair out, so an answer settles a task once and the next sync is
+// free to raise it again.
+bool Session::takeConflict(const QString &href, QPair<LocalTask, RemoteTask> *pair)
+{
+    const int at = indexOfConflict(href);
+    if (at < 0)
+        return false;
+
+    *pair = m_conflicts.at(at);
+    m_conflicts.remove(at);
+    return true;
+}
+
+// A task waiting to be settled must not go out: the version it carries is the
+// one the server has already refused, and sending it only earns another 412.
+QVector<LocalTask> Session::withoutConflicts(const QVector<LocalTask> &tasks) const
+{
+    if (m_conflicts.isEmpty() && m_refused.isEmpty())
+        return tasks;
+
+    QVector<LocalTask> out;
+    for (const LocalTask &task : tasks) {
+        if (indexOfConflict(task.href) < 0 && !m_refused.contains(task.href))
+            out.append(task);
+    }
+    return out;
+}
+
+// A parent is named by uid, which is no answer to put to the user. A parent
+// this device has not got stays named by its uid rather than by nothing.
+QString Session::taskName(const QString &uid) const
+{
+    if (uid.isEmpty())
+        return QString();
+
+    const QVector<LocalTask> tasks = m_store->tasks();
+    for (const LocalTask &task : tasks) {
+        if (task.uid == uid)
+            return task.summary;
+    }
+
+    return uid;
+}
+
+// Every field a task carries that the user set, so a version differing only in
+// something not listed here is taken for identical and settled without asking.
+// The completion stamp and the uid are left out: both follow from the rest.
+QVariantList Session::differencesBetween(const TodoFields &mine,
+                                         const TodoFields &theirs) const
+{
+    QVariantList rows;
+    appendDifference(&rows, QStringLiteral("summary"), tr("Name"),
+                     mine.summary, theirs.summary);
+    appendDifference(&rows, QStringLiteral("status"), tr("Status"),
+                     mine.status, theirs.status);
+    appendDifference(&rows, QStringLiteral("priority"), tr("Priority"),
+                     mine.priority, theirs.priority);
+    appendDifference(&rows, QStringLiteral("percent"), tr("Completion"),
+                     mine.percent, theirs.percent);
+    appendDifference(&rows, QStringLiteral("start"), tr("Start"),
+                     momentText(mine.start), momentText(theirs.start));
+    appendDifference(&rows, QStringLiteral("due"), tr("Due"),
+                     momentText(mine.due), momentText(theirs.due));
+    appendDifference(&rows, QStringLiteral("reminder"), tr("Reminder"),
+                     mine.reminder, theirs.reminder);
+    appendDifference(&rows, QStringLiteral("tags"), tr("Tags"),
+                     mine.tags.join(QStringLiteral(", ")),
+                     theirs.tags.join(QStringLiteral(", ")));
+    appendDifference(&rows, QStringLiteral("location"), tr("Location"),
+                     mine.location, theirs.location);
+    appendDifference(&rows, QStringLiteral("url"), tr("Address"), mine.url, theirs.url);
+    appendDifference(&rows, QStringLiteral("description"), tr("Notes"),
+                     mine.description, theirs.description);
+    appendDifference(&rows, QStringLiteral("parent"), tr("Subtask of"),
+                     taskName(mine.parentUid), taskName(theirs.parentUid));
+    return rows;
+}
+
+QVariantMap Session::conflictRow(const QPair<LocalTask, RemoteTask> &pair) const
+{
+    QVariantMap row;
+    row.insert(QStringLiteral("href"), pair.first.href);
+    row.insert(QStringLiteral("summary"), pair.first.summary);
+    row.insert(QStringLiteral("differences"),
+               differencesBetween(Ics::parse(pair.first.ics), Ics::parse(pair.second.ics)));
+    return row;
+}
+
+QVariantList Session::conflicts() const
+{
+    QVariantList list;
+    list.reserve(m_conflicts.size());
+    for (int i = 0; i < m_conflicts.size(); ++i)
+        list.append(conflictRow(m_conflicts.at(i)));
+
+    return list;
+}
+
+// The task stays owed and takes on the version the server answered with, so
+// what goes out is a conditional write again rather than one that overwrites
+// whatever is there by then.
+void Session::resolveKeepMine(const QString &href)
+{
+    QPair<LocalTask, RemoteTask> pair;
+    if (!takeConflict(href, &pair))
+        return;
+
+    m_store->setEtag(href, pair.second.etag);
+    emit conflictsChanged();
+    pushDirty();
+}
+
+void Session::resolveKeepTheirs(const QString &href)
+{
+    QPair<LocalTask, RemoteTask> pair;
+    if (!takeConflict(href, &pair))
+        return;
+
+    m_store->acceptRemote(pair.first.calendarHref, pair.second);
+    reloadModels();
+    emit conflictsChanged();
 }
 
 void Session::pushNext()
@@ -444,13 +649,34 @@ void Session::finishSync()
     // Only a run that uploaded something may pull afterwards: a task the server
     // keeps rejecting stays dirty, and pushDirty() below would re-queue it.
     const bool pullAfterPush = m_pushOnly && m_uploaded > 0 && m_config->syncAfterPush();
+    // A refused write earns a pull whatever the settings say: the pull is what
+    // reads the version the server holds, and so what raises the question.
+    const bool pull = pullAfterPush || m_pullAfterConflict;
+    m_pullAfterConflict = false;
     setBusy(false);
     reloadModels();
     if (m_syncTimer.isActive())
         m_syncTimer.start();
     pushDirty();
-    if (pullAfterPush && !m_busy)
+    if (pull && !m_busy)
         QTimer::singleShot(0, this, &Session::sync);
+}
+
+// A write refused for the version it names. The task keeps its edit and stays
+// owed; the pull this earns reads what the server holds and puts the two side
+// by side. Until then the task is held back, so a refusal the pull turns out
+// not to explain is offered once and not again in a circle. The rest of what
+// is owed is still worth sending, so the run carries on.
+void Session::onConflicted(const QString &href)
+{
+    m_refused.insert(href);
+    m_pullAfterConflict = true;
+    if (!m_pendingUploads.isEmpty()) {
+        pushNext();
+        return;
+    }
+
+    finishSync();
 }
 
 void Session::onUploaded(const QString &href, const QString &etag)
@@ -541,7 +767,7 @@ void Session::pushDirty()
     if (!m_config->isConfigured() || m_busy)
         return;
 
-    m_pendingUploads = m_store->dirtyTasks();
+    m_pendingUploads = withoutConflicts(m_store->dirtyTasks());
     if (m_pendingUploads.isEmpty())
         return;
 

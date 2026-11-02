@@ -2,6 +2,8 @@
 #define ASKARE_SESSION_H
 
 #include <QObject>
+#include <QPair>
+#include <QSet>
 #include <QString>
 #include <QTimer>
 #include <QVariantList>
@@ -46,6 +48,7 @@ class Session : public QObject
     Q_PROPERTY(QString nextDueSummary READ nextDueSummary NOTIFY coverChanged)
     // One entry per tag in use, as { name, count }, for the lists page.
     Q_PROPERTY(QVariantList tags READ tags NOTIFY coverChanged)
+    Q_PROPERTY(int conflictCount READ conflictCount NOTIFY conflictsChanged)
 
 public:
     explicit Session(Config *config, Store *store, CalendarModel *calendars,
@@ -71,6 +74,7 @@ public:
     int completedCount() const;
     QString nextDueSummary() const;
     QVariantList tags() const;
+    int conflictCount() const { return m_conflicts.size(); }
 
     Q_INVOKABLE void startLogin(const QString &serverUrl);
     Q_INVOKABLE void cancelLogin();
@@ -87,6 +91,11 @@ public:
     Q_INVOKABLE QVariantMap taskFields(const QString &href) const;
     Q_INVOKABLE QVariantList subtasks(const QString &parentUid) const;
     Q_INVOKABLE int subtreeSize(const QString &href) const;
+    // One entry per task waiting to be settled, as { href, summary, differences },
+    // where differences names only the fields the two versions disagree on.
+    Q_INVOKABLE QVariantList conflicts() const;
+    Q_INVOKABLE void resolveKeepMine(const QString &href);
+    Q_INVOKABLE void resolveKeepTheirs(const QString &href);
 
 signals:
     void readyChanged();
@@ -105,6 +114,7 @@ signals:
     void showCancelledTasksChanged();
     void coverChanged();
     void tasksChanged();
+    void conflictsChanged();
     void loginUrlReady(const QString &url);
     void loginSucceeded();
     void loginFailed(const QString &error);
@@ -148,7 +158,15 @@ private:
     void onUploaded(const QString &href, const QString &etag);
     void onRemoved(const QString &href);
     void onDavFailed(const QString &error);
+    void onConflicted(const QString &href);
     void onConfiguredChanged();
+    void noteConflict(const RemoteTask &remote);
+    int indexOfConflict(const QString &href) const;
+    bool takeConflict(const QString &href, QPair<LocalTask, RemoteTask> *pair);
+    QVector<LocalTask> withoutConflicts(const QVector<LocalTask> &tasks) const;
+    QVariantMap conflictRow(const QPair<LocalTask, RemoteTask> &pair) const;
+    QVariantList differencesBetween(const TodoFields &mine, const TodoFields &theirs) const;
+    QString taskName(const QString &uid) const;
 
     Config *m_config;
     Store *m_store;
@@ -159,12 +177,21 @@ private:
     QTimer m_syncTimer;
     QVector<CalendarInfo> m_pendingCalendars;
     QVector<LocalTask> m_pendingUploads;
+    // Tasks changed here and on the server at once, each the edit made here
+    // beside the version the server holds. Kept only while the app runs: one
+    // closed before the question is answered meets the task on the next sync.
+    QVector<QPair<LocalTask, RemoteTask> > m_conflicts;
+    // Tasks the server refused for their version, held back until a pull says
+    // what to make of them, so a refusal is never answered by sending again.
+    QSet<QString> m_refused;
     QString m_currentCalendarHref;
     QString m_loginUrl;
     QString m_error;
     bool m_busy;
     // True while a run only uploads, so it can be followed by a full sync.
     bool m_pushOnly;
+    // A refused write earns the run a pull, which is what finds the conflict.
+    bool m_pullAfterConflict;
     int m_uploaded;
     bool m_syncedOnStart;
 };

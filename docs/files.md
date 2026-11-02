@@ -21,6 +21,15 @@ Three settings decide when a sync happens on its own:
 
 Changes made on the device are kept and uploaded on the next sync, so tasks can be written while the server is out of reach. A task the server keeps rejecting stays marked as changed and is offered again on each run; the reason the server gave is shown above the task list and on the settings page.
 
+### A task changed on both sides
+
+A sync reads the server's version before it uploads anything, so a task changed here and on the server at once is caught before either version is overwritten. The task is held back from the upload, and a row above the task list says how many are waiting. Tapping it opens a page naming the fields the two versions disagree on and what each side says of them, with two answers in the pulley menu:
+
+* **Keep my version** uploads the change made here, over the version the server holds.
+* **Keep the server's version** takes what the server holds and drops the change made here.
+
+A task changed to the same effect on both sides is settled without asking. The questions are not written down anywhere: Askare closed before they are answered meets the same tasks again on the next sync.
+
 ## Where the data lives
 
 Sailjail, the Sailfish OS sandbox, gives the app three private directories named after the organisation and application of its desktop file:

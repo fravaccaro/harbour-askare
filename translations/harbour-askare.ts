@@ -234,6 +234,10 @@
         <source>The server did not return a password.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>The sign-in attempt took too long. Start again.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LoginPage</name>
@@ -482,6 +486,10 @@
         <source>Tasks</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>The server stopped answering.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ReminderOptions</name>
@@ -601,6 +609,10 @@
     </message>
     <message>
         <source>Cancelled tasks will appear under the Cancelled section.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Signed in as %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -935,6 +947,13 @@
     </message>
 </context>
 <context>
+    <name>TaskListHeader</name>
+    <message>
+        <source>Search tasks</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>TaskModel</name>
     <message>
         <source>Current</source>
@@ -1020,6 +1039,22 @@
     </message>
     <message>
         <source>Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No matches</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Try another search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
