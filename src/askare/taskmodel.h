@@ -17,6 +17,7 @@ class TaskModel : public QAbstractListModel
     Q_PROPERTY(QString calendarHref READ calendarHref NOTIFY calendarHrefChanged)
     Q_PROPERTY(QString filter READ filter NOTIFY filterChanged)
     Q_PROPERTY(QString tag READ tag NOTIFY tagChanged)
+    Q_PROPERTY(QString search READ search WRITE setSearch NOTIFY searchChanged)
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
 
 public:
@@ -46,6 +47,7 @@ public:
     QString calendarHref() const { return m_calendarHref; }
     QString filter() const { return m_filter; }
     QString tag() const { return m_tag; }
+    QString search() const { return m_search; }
     QString title() const;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -58,6 +60,9 @@ public:
     Q_INVOKABLE void showCompleted();
     Q_INVOKABLE void showCalendar(const QString &href, const QString &name);
     Q_INVOKABLE void showTag(const QString &tag);
+    // Narrows whichever view is shown to the tasks whose text carries the
+    // query; an empty query shows the view in full.
+    void setSearch(const QString &text);
     // Whether the mixed views keep completed tasks; the dedicated completed
     // view ignores this.
     void setShowCompleted(bool show);
@@ -69,6 +74,7 @@ signals:
     void calendarHrefChanged();
     void filterChanged();
     void tagChanged();
+    void searchChanged();
     void titleChanged();
 
 private:
@@ -77,6 +83,8 @@ private:
 
     void apply(const QString &filter, const QString &href, const QString &name);
     bool isMixedView() const;
+    // Drops completed and cancelled tasks the mixed-view settings hide.
+    QVector<LocalTask> withSettings(const QVector<LocalTask> &tasks) const;
     ChildTally tallyOf(const QString &uid) const;
 
     Store *m_store;
@@ -84,6 +92,7 @@ private:
     QString m_calendarName;
     QString m_filter;
     QString m_tag;
+    QString m_search;
     bool m_showCompleted;
     bool m_showCancelled;
     QVector<LocalTask> m_items;

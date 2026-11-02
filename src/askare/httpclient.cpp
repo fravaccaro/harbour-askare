@@ -4,8 +4,15 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QSslError>
+#include <QTimer>
 
 namespace {
+
+// Qt 5.6 has no transfer timeout of its own, and a reply that never arrives
+// would leave the session busy for good, refusing every later sync. The
+// watchdog is reset by every byte that moves, so a slow answer is left alone
+// and only a stalled one is cut off.
+const int StallTimeoutMs = 30000;
 
 QString networkError(QNetworkReply *reply)
 {
@@ -20,6 +27,10 @@ QString networkError(QNetworkReply *reply)
     case QNetworkReply::TemporaryNetworkFailureError:
     case QNetworkReply::NetworkSessionFailedError:
         return QObject::tr("The network did not answer.");
+    // Nothing else in the app aborts a reply, so a cancelled one is the
+    // watchdog below having given up on a request that stopped moving.
+    case QNetworkReply::OperationCanceledError:
+        return QObject::tr("The server stopped answering.");
     default:
         return reply->errorString();
     }
@@ -87,11 +98,30 @@ void HttpClient::send(const QByteArray &method, const QUrl &url,
     }
     reply->setProperty("requestUrl", url);
     connect(reply, &QNetworkReply::finished, this, &HttpClient::onFinished);
+    watchForStall(reply);
     if (m_ignoreSsl) {
         connect(reply, &QNetworkReply::sslErrors, this, [reply](const QList<QSslError> &) {
             reply->ignoreSslErrors();
         });
     }
+}
+
+// The watchdog belongs to the reply, so it is taken down with it.
+void HttpClient::watchForStall(QNetworkReply *reply)
+{
+    QTimer *watchdog = new QTimer(reply);
+    watchdog->setSingleShot(true);
+    watchdog->setInterval(StallTimeoutMs);
+    connect(watchdog, &QTimer::timeout, reply, &QNetworkReply::abort);
+    connect(reply, &QNetworkReply::finished, watchdog, &QTimer::stop);
+    // A byte in either direction means the request is alive after all.
+    connect(reply, &QNetworkReply::downloadProgress, watchdog, [watchdog]() {
+        watchdog->start();
+    });
+    connect(reply, &QNetworkReply::uploadProgress, watchdog, [watchdog]() {
+        watchdog->start();
+    });
+    watchdog->start();
 }
 
 void HttpClient::onFinished()

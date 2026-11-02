@@ -437,6 +437,15 @@ LocalTask Store::nextOpen() const
     return query.next() ? readTask(query) : LocalTask();
 }
 
+// The task was changed here and on the server at once: the edit is still owed,
+// and the version it was made against is not the one the server holds any more.
+// An equal version is the ordinary case of a local edit the server has not seen.
+bool Store::clashesWith(const RemoteTask &remote) const
+{
+    const LocalTask existing = task(remote.href);
+    return existing.dirty && existing.etag != remote.etag;
+}
+
 void Store::upsertRemoteTask(const QString &calendarHref, const RemoteTask &remote)
 {
     const LocalTask existing = task(remote.href);
@@ -488,17 +497,23 @@ void Store::dropMissing(const QString &calendarHref, const QStringList &keep)
     }
 }
 
-void Store::mergeRemote(const QString &calendarHref, const QVector<RemoteTask> &tasks)
+QVector<RemoteTask> Store::mergeRemote(const QString &calendarHref,
+                                       const QVector<RemoteTask> &tasks)
 {
+    QVector<RemoteTask> clashes;
     if (!isOpen())
-        return;
+        return clashes;
 
     QStringList keep;
     for (const RemoteTask &task : tasks) {
         keep.append(task.href);
-        upsertRemoteTask(calendarHref, task);
+        if (clashesWith(task))
+            clashes.append(task);
+        else
+            upsertRemoteTask(calendarHref, task);
     }
     dropMissing(calendarHref, keep);
+    return clashes;
 }
 
 void Store::upsertLocal(const LocalTask &task)
@@ -544,6 +559,29 @@ void Store::markClean(const QString &href, const QString &etag)
     query.bindValue(QStringLiteral(":etag"), etag);
     query.bindValue(QStringLiteral(":href"), href);
     query.exec();
+}
+
+// Unlike markClean(), the task stays owed: the edit made here still has to go
+// out, but it now carries the version the server asked for, so what goes out
+// is a conditional write again rather than one that overwrites blindly.
+void Store::setEtag(const QString &href, const QString &etag)
+{
+    if (!isOpen())
+        return;
+
+    QSqlQuery query(m_db);
+    query.prepare(QStringLiteral("UPDATE tasks SET etag = :etag WHERE href = :href"));
+    query.bindValue(QStringLiteral(":etag"), etag);
+    query.bindValue(QStringLiteral(":href"), href);
+    query.exec();
+}
+
+// Taking the server's version is the one write that goes over an edit made
+// here, so the flag that holds upsertRemoteTask() back is cleared first.
+void Store::acceptRemote(const QString &calendarHref, const RemoteTask &remote)
+{
+    markClean(remote.href, remote.etag);
+    upsertRemoteTask(calendarHref, remote);
 }
 
 void Store::markDeleted(const QString &href)

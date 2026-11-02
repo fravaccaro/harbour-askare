@@ -103,6 +103,55 @@
     </message>
 </context>
 <context>
+    <name>ConflictField</name>
+    <message>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>On this phone: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>On the server: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ConflictPage</name>
+    <message>
+        <source>Keep the server&apos;s version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keep my version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Which version?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This task was changed here and on the server. Pull down to keep one version or the other.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>%n more task(s) wait after this one.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Nothing to settle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A task changed on both sides is found again by the next sync</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CoverPage</name>
     <message>
         <source>Askare</source>
@@ -232,6 +281,10 @@
     </message>
     <message>
         <source>The server did not return a password.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The sign-in attempt took too long. Start again.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -482,6 +535,10 @@
         <source>Tasks</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>The server stopped answering.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ReminderOptions</name>
@@ -519,6 +576,58 @@
     <name>Session</name>
     <message>
         <source>Choose a list for the task.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 changed on the server as well. Choose which version to keep.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Priority</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Completion</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Due</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reminder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subtask of</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -601,6 +710,10 @@
     </message>
     <message>
         <source>Cancelled tasks will appear under the Cancelled section.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Signed in as %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -935,6 +1048,20 @@
     </message>
 </context>
 <context>
+    <name>TaskListHeader</name>
+    <message>
+        <source>Search tasks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>%n task(s) changed on the server as well</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>TaskModel</name>
     <message>
         <source>Current</source>
@@ -1020,6 +1147,22 @@
     </message>
     <message>
         <source>Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No matches</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Try another search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

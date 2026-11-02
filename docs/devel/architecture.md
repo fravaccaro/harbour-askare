@@ -13,8 +13,8 @@ nav_order: 1
 |---|---|
 | `src/askare/config.*` | Server URL, user name, TLS preference and the sync settings in `~/.config/org.frapps/harbour-askare/settings.conf` |
 | `src/askare/secretsstore.*` | The app password in a device-lock collection of Sailfish Secrets |
-| `src/askare/loginflow.*` | Nextcloud login flow v2: ask for a login page, then poll until the server hands over an app password |
-| `src/askare/httpclient.*` | `QNetworkAccessManager` wrapper: basic auth, custom methods, ETags, TLS preference |
+| `src/askare/loginflow.*` | Nextcloud login flow v2: ask for a login page, then poll until the server hands over an app password, or give up after twenty minutes, when the server drops the token |
+| `src/askare/httpclient.*` | `QNetworkAccessManager` wrapper: basic auth, custom methods, ETags, TLS preference, and a watchdog that abandons a reply thirty seconds after the last byte moved |
 | `src/askare/davclient.*` | CalDAV PROPFIND, REPORT, PUT and DELETE, and the order they run in |
 | `src/askare/davxml.*` | Readers for the DAV responses: principal, home set, calendars, to-dos, errors |
 | `src/askare/ics.*` | VTODO unfold, parse, rewrite, and the date arithmetic reminders need |
@@ -46,6 +46,8 @@ A sync walks the server in a fixed order: PROPFIND for the current user principa
 Collection hrefs keep their **trailing slash**, through `Url::pathWithSlash()`, so a task href built from a calendar href matches what the server returns.
 
 A change is uploaded with `If-Match` carrying the ETag the task was last read at, and a new task with `If-None-Match: *`, so neither a task changed on both sides nor a name already taken is overwritten. A task the server refuses stays marked dirty and is offered again on the next run; only a run that uploaded something may pull afterwards, so a rejected task cannot drive an endless loop.
+
+A refused version is a question rather than a failure. `Store::mergeRemote()` returns the remote versions it would not write because the task carries an edit of its own made against a version the server no longer holds, and `Session::noteConflict()` either settles the pair - the two say the same thing field for field, or the task was deleted here and only wants the ETag the delete is refused over - or keeps it for `ConflictPage` to ask about. The pairs live no longer than the app does, so a question left unanswered is met again by the next sync. The merge is where this is caught, rather than the 412: a CalDAV refusal carries no body to read the server's version from, and the REPORT that precedes every push has already read it. A task waiting to be settled is kept out of the push queue by `withoutConflicts()`, and so is one the server refused outright, held in `m_refused` until a pull says what to make of it - without that, `finishSync()`'s own `pushDirty()` would offer the same refused version again in a circle.
 
 Reminders are a `VALARM` inside the VTODO, with a trigger relative to the end of the task, which is how Nextcloud Tasks writes them. Subtasks are a `RELATED-TO` naming the UID of the parent, which resolves only within one calendar. A subtask is therefore created in its parent's list, and a subtask moved to another list is detached: `moveSubtree()` passes the root through `detached()`, which clears `parentUid` on the row and rewrites the ICS without the parent link, so it arrives as a task of its own. This is not only tidiness: `Store::topLevelClause()` and `Store::children()` match `parent_uid` across the whole table, with no calendar scope, so a moved subtask that kept its parent would be dropped from the top-level views while still listed under its old parent in the list it left.
 

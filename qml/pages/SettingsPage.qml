@@ -113,6 +113,16 @@ Page {
                 text: Askare.serverUrl
             }
 
+            Label {
+                x: Theme.horizontalPageMargin
+                width: parent.width - 2 * Theme.horizontalPageMargin
+                visible: Askare.username !== ""
+                truncationMode: TruncationMode.Fade
+                color: Theme.secondaryColor
+                font.pixelSize: Theme.fontSizeSmall
+                text: qsTr("Signed in as %1").arg(Askare.username)
+            }
+
             TextSwitch {
                 width: parent.width
                 text: qsTr("Ignore certificate errors")

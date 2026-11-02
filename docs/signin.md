@@ -13,6 +13,8 @@ Once the server grants access it creates an app password named Askare, and Askar
 
 The app password is kept in **Sailfish Secrets**, in a collection locked with the device lock, not in a plain file.
 
+The **Connection** section of the settings page names the server and, under it, the account the app password belongs to, so a server holding more than one account says which one is in use.
+
 ## Self-signed certificates
 
 A server whose certificate the device does not trust cannot be reached until **Ignore certificate errors** is turned on. The switch sits on the sign-in page and, afterwards, on the settings page. Leave it off for a server with a certificate the device already trusts.

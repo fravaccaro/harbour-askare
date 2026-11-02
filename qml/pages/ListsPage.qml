@@ -41,6 +41,9 @@ Page {
 
         anchors.fill: parent
         model: Calendars
+        // No row here is picked out, so none is left looking pressed after a
+        // sync rebuilds the model.
+        currentIndex: -1
 
         ViewPlaceholder {
             enabled: listView.count === 0 && !Askare.busy

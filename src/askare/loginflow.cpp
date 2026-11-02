@@ -21,6 +21,12 @@ QString jsonError(int status)
     return QObject::tr("The server refused the login (%1).").arg(status);
 }
 
+// Nextcloud drops a login flow v2 token twenty minutes after it hands it out,
+// and the poll endpoint answers 404 either way, so there is nothing to tell an
+// expired attempt from one still waiting to be approved. Giving up when the
+// server does is what turns an endless poll into something the user is told.
+const int PollDeadlineMs = 20 * 60 * 1000;
+
 }
 
 LoginFlow::LoginFlow(QObject *parent)
@@ -30,9 +36,12 @@ LoginFlow::LoginFlow(QObject *parent)
 {
     m_http.setUserAgent(QStringLiteral("Askare"));
     m_timer.setInterval(2000);
+    m_deadline.setSingleShot(true);
+    m_deadline.setInterval(PollDeadlineMs);
     connect(&m_http, &HttpClient::finished, this, &LoginFlow::onHttpFinished);
     connect(&m_http, &HttpClient::failed, this, &LoginFlow::onHttpFailed);
     connect(&m_timer, &QTimer::timeout, this, &LoginFlow::pollOnce);
+    connect(&m_deadline, &QTimer::timeout, this, &LoginFlow::onDeadline);
 }
 
 void LoginFlow::start(const QString &serverUrl, bool ignoreSsl)
@@ -57,6 +66,7 @@ void LoginFlow::start(const QString &serverUrl, bool ignoreSsl)
 void LoginFlow::cancel()
 {
     m_timer.stop();
+    m_deadline.stop();
     m_active = false;
     m_starting = false;
     m_token.clear();
@@ -106,6 +116,13 @@ void LoginFlow::handleStart(int status, const QByteArray &body)
     m_starting = false;
     emit loginUrlReady(login);
     m_timer.start();
+    m_deadline.start();
+}
+
+void LoginFlow::onDeadline()
+{
+    cancel();
+    emit failed(tr("The sign-in attempt took too long. Start again."));
 }
 
 void LoginFlow::handlePoll(int status, const QByteArray &body)

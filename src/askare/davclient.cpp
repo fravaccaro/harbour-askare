@@ -228,6 +228,11 @@ void DavClient::handlePut(int status, const QByteArray &body, const QString &eta
 {
     const QString href = m_pendingHref;
     m_operation = Idle;
+    if (status == 412) {
+        emit conflicted(href);
+        return;
+    }
+
     if (status != 200 && status != 201 && status != 204) {
         const QString detail = DavXml::errorMessage(body);
         qWarning() << "askare: PUT" << resolve(href) << "status" << status << detail;
@@ -243,6 +248,11 @@ void DavClient::handleDelete(int status)
 {
     const QString href = m_pendingHref;
     m_operation = Idle;
+    if (status == 412) {
+        emit conflicted(href);
+        return;
+    }
+
     if (status != 200 && status != 204 && status != 404) {
         emit failed(tr("The task could not be deleted (%1).").arg(status));
         return;

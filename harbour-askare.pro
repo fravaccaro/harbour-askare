@@ -59,6 +59,7 @@ appicon.path = /usr/share/$${TARGET}
 INSTALLS += appicon
 
 TRANSLATIONS += \
+    translations/harbour-askare-en.ts \
     translations/harbour-askare-it.ts
 
 DISTFILES += \
@@ -67,9 +68,12 @@ DISTFILES += \
     qml/harbour-askare.qml \
     qml/components/AskareNotification.qml \
     qml/components/AskareSupportDialog.qml \
+    qml/components/ConflictField.qml \
+    qml/components/TaskListHeader.qml \
     qml/cover/CoverPage.qml \
     qml/cover/cover-check.png \
     qml/pages/AboutPage.qml \
+    qml/pages/ConflictPage.qml \
     qml/pages/FilterItem.qml \
     qml/pages/IconField.qml \
     qml/pages/ListsPage.qml \
