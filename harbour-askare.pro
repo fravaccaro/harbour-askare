@@ -59,6 +59,7 @@ appicon.path = /usr/share/$${TARGET}
 INSTALLS += appicon
 
 TRANSLATIONS += \
+    translations/harbour-askare-en.ts \
     translations/harbour-askare-it.ts
 
 DISTFILES += \
