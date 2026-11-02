@@ -61,6 +61,7 @@ Request a new language or contribute on the [Transifex project page](https://exp
 
 - [Nextcloud Tasks](https://apps.nextcloud.com/apps/tasks), the server app whose to-dos this client reads and writes.
 - [Opal](https://github.com/Pretty-SFOS/opal) QML modules (About, SupportMe, LinkHandler) by [Mirian Margiani](https://github.com/Pretty-SFOS/opal-about).
+- Thanks to Coderus for the AGENTS.md draft.
 - Thanks to all translators and testers.
 
 ## AI disclosure
