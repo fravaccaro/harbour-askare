@@ -31,9 +31,13 @@ private:
     void handleStart(int status, const QByteArray &body);
     void handlePoll(int status, const QByteArray &body);
     void pollOnce();
+    void onDeadline();
 
     HttpClient m_http;
     QTimer m_timer;
+    // Bounds the polling, which the server answers the same whether the token
+    // is still waiting for approval or already gone.
+    QTimer m_deadline;
     QUrl m_pollUrl;
     QString m_token;
     bool m_starting;

@@ -13,8 +13,8 @@ nav_order: 1
 |---|---|
 | `src/askare/config.*` | Server URL, user name, TLS preference and the sync settings in `~/.config/org.frapps/harbour-askare/settings.conf` |
 | `src/askare/secretsstore.*` | The app password in a device-lock collection of Sailfish Secrets |
-| `src/askare/loginflow.*` | Nextcloud login flow v2: ask for a login page, then poll until the server hands over an app password |
-| `src/askare/httpclient.*` | `QNetworkAccessManager` wrapper: basic auth, custom methods, ETags, TLS preference |
+| `src/askare/loginflow.*` | Nextcloud login flow v2: ask for a login page, then poll until the server hands over an app password, or give up after twenty minutes, when the server drops the token |
+| `src/askare/httpclient.*` | `QNetworkAccessManager` wrapper: basic auth, custom methods, ETags, TLS preference, and a watchdog that abandons a reply thirty seconds after the last byte moved |
 | `src/askare/davclient.*` | CalDAV PROPFIND, REPORT, PUT and DELETE, and the order they run in |
 | `src/askare/davxml.*` | Readers for the DAV responses: principal, home set, calendars, to-dos, errors |
 | `src/askare/ics.*` | VTODO unfold, parse, rewrite, and the date arithmetic reminders need |

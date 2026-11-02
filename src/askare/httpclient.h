@@ -34,6 +34,7 @@ signals:
 private:
     void onFinished();
     void applyAuth(QNetworkRequest *request) const;
+    void watchForStall(QNetworkReply *reply);
 
     QNetworkAccessManager m_manager;
     QString m_userAgent;
