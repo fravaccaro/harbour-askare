@@ -630,6 +630,10 @@
         <source>Subtask of</source>
         <translation>Subtask of</translation>
     </message>
+    <message>
+        <source>%1 was deleted on the server. The change made here is kept and sent again.</source>
+        <translation>%1 was deleted on the server. The change made here is kept and sent again.</translation>
+    </message>
 </context>
 <context>
     <name>SettingsPage</name>

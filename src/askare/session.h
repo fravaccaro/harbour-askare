@@ -161,6 +161,11 @@ private:
     void onConflicted(const QString &href);
     void onConfiguredChanged();
     void noteConflict(const RemoteTask &remote);
+    // Settles the tasks the server refused and then did not list, the pull
+    // being the only thing that can say a refused task is gone rather than
+    // merely changed.
+    void settleVanished(const QVector<RemoteTask> &seen);
+    void restartVanished(const LocalTask &mine);
     int indexOfConflict(const QString &href) const;
     bool takeConflict(const QString &href, QPair<LocalTask, RemoteTask> *pair);
     QVector<LocalTask> withoutConflicts(const QVector<LocalTask> &tasks) const;
@@ -177,6 +182,10 @@ private:
     QTimer m_syncTimer;
     QVector<CalendarInfo> m_pendingCalendars;
     QVector<LocalTask> m_pendingUploads;
+    // The task the write now on the wire was built from. The answer is taken
+    // against this rather than against the row, which the user may have
+    // edited again while that answer was on its way.
+    LocalTask m_inFlight;
     // Tasks changed here and on the server at once, each the edit made here
     // beside the version the server holds. Kept only while the app runs: one
     // closed before the question is answered meets the task on the next sync.

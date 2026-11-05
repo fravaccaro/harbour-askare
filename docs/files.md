@@ -30,6 +30,10 @@ A sync reads the server's version before it uploads anything, so a task changed 
 
 A task changed to the same effect on both sides is settled without asking. The questions are not written down anywhere: Askare closed before they are answered meets the same tasks again on the next sync.
 
+### A task deleted on the server
+
+A task can be deleted elsewhere - on the web page, or on another device - while a change to it is still waiting here. The server refuses the upload for naming a version it no longer has, and the sync that follows is what finds the task gone rather than merely changed. The change was yours and nobody has seen it, so the task is written back as it stood here, keeping the subtasks that name it, and Askare says so: *… was deleted on the server. The change made here is kept and sent again.* If the deletion was the point and the task is not wanted back, deleting it again is all it takes. A task that was already waiting to be deleted here asks for nothing: the server has done what the delete wanted.
+
 ## Where the data lives
 
 Sailjail, the Sailfish OS sandbox, gives the app three private directories named after the organisation and application of its desktop file:

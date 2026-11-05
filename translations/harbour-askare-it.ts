@@ -632,6 +632,10 @@
         <source>Subtask of</source>
         <translation>Sottoattività di</translation>
     </message>
+    <message>
+        <source>%1 was deleted on the server. The change made here is kept and sent again.</source>
+        <translation>%1 è stata eliminata sul server. La modifica fatta qui è conservata e inviata di nuovo.</translation>
+    </message>
 </context>
 <context>
     <name>SettingsPage</name>

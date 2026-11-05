@@ -459,7 +459,53 @@ void Session::onTodos(const QVector<RemoteTask> &tasks)
     for (const RemoteTask &remote : clashes)
         noteConflict(remote);
 
+    settleVanished(tasks);
     fetchNextCalendar();
+}
+
+// A task the server refused and then did not list is one it no longer has:
+// the refusal was an If-Match naming a resource deleted elsewhere since, and
+// the pull it earned is what says so. The REPORT is read as the whole of the
+// calendar, which is what dropMissing() already takes it for.
+void Session::settleVanished(const QVector<RemoteTask> &seen)
+{
+    if (m_refused.isEmpty())
+        return;
+
+    QSet<QString> present;
+    for (const RemoteTask &task : seen)
+        present.insert(task.href);
+
+    const QSet<QString> refused = m_refused;
+    for (const QString &href : refused) {
+        const LocalTask mine = m_store->task(href);
+        const bool readHere = !mine.href.isEmpty()
+                && Url::pathWithSlash(mine.calendarHref) == m_currentCalendarHref;
+        if (!readHere || present.contains(href))
+            continue;
+
+        m_refused.remove(href);
+        restartVanished(mine);
+    }
+}
+
+// The delete such a task was waiting to make has already happened elsewhere,
+// so it is simply let go of. Anything else is an edit nobody has seen, which
+// is kept: dropping the ETag turns the next write into the If-None-Match: *
+// that puts the task back where it was, under the href and uid it already
+// has, so a subtask still names its parent. Without this the task would stay
+// owed and held in m_refused for as long as the app ran, offering an edit
+// that could never go out and saying nothing about it.
+void Session::restartVanished(const LocalTask &mine)
+{
+    if (mine.deleted) {
+        m_store->remove(mine.href);
+        return;
+    }
+
+    m_store->setEtag(mine.href, QString());
+    setError(tr("%1 was deleted on the server. The change made here is kept "
+                "and sent again.").arg(mine.summary));
 }
 
 // A task changed on both sides. The merge left the edit made here alone, so
@@ -639,6 +685,9 @@ void Session::pushNext()
     }
 
     const LocalTask task = m_pendingUploads.takeFirst();
+    // Kept so the answer can be told from the row it was built from: the user
+    // may edit that row again before the answer arrives.
+    m_inFlight = task;
     if (task.deleted)
         m_dav.remove(task.href, task.etag);
     else
@@ -680,10 +729,24 @@ void Session::onConflicted(const QString &href)
     finishSync();
 }
 
+// The write landed, but the row may have been edited again while its answer
+// travelled: saveTask() writes to the store whatever is on the wire. Calling
+// markClean() then would clear the mark that was to send that newer edit -
+// and the edit itself would go unnoticed until the next pull wrote the
+// server's older copy over it. The version alone is taken instead, leaving
+// the task owed so what goes out next is a conditional write of the edit.
 void Session::onUploaded(const QString &href, const QString &etag)
 {
     ++m_uploaded;
-    m_store->markClean(href, etag);
+    const LocalTask now = m_store->task(href);
+    // A delete made meanwhile counts the same: markClean() would unmark it.
+    const bool editedAgain = !now.href.isEmpty()
+            && (now.deleted || now.ics != m_inFlight.ics);
+    if (editedAgain)
+        m_store->setEtag(href, etag);
+    else
+        m_store->markClean(href, etag);
+
     pushNext();
 }
 
