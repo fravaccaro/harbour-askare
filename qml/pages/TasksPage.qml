@@ -146,6 +146,10 @@ Page {
 
                 Label {
                     width: parent.width
+                    // The row is a fixed height, so the title holds to one
+                    // line: a summary carrying a line break would otherwise
+                    // spill over the rows around it.
+                    maximumLineCount: 1
                     truncationMode: TruncationMode.Fade
                     color: delegate.highlighted ? Theme.highlightColor : (delegate.cancelled ? Theme.secondaryColor : Theme.primaryColor)
                     font.strikeout: done || delegate.cancelled

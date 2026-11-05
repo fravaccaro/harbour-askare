@@ -329,7 +329,10 @@ QVector<LocalTask> Store::dirtyTasks() const
         return out;
 
     QSqlQuery query(m_db);
-    query.exec(taskColumns() + QStringLiteral(" WHERE dirty = 1"));
+    // Writes before deletes: a task carried to another list is both at once,
+    // and taking it away first would leave it on no server until the write
+    // that puts it in its new list goes through.
+    query.exec(taskColumns() + QStringLiteral(" WHERE dirty = 1 ORDER BY deleted"));
     while (query.next())
         out.append(readTask(query));
     return out;

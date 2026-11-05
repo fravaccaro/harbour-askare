@@ -102,6 +102,7 @@ Session::Session(Config *config, Store *store, CalendarModel *calendars,
     , m_busy(false)
     , m_pushOnly(false)
     , m_pullAfterConflict(false)
+    , m_pushDeferred(false)
     , m_uploaded(0)
     , m_syncedOnStart(false)
 {
@@ -705,6 +706,10 @@ void Session::onDavFailed(const QString &error)
     setBusy(false);
     setError(error);
     reloadModels();
+    // Only an edit sets the flag, and pushDirty() clears it before sending, so
+    // a run that keeps failing is retried once rather than over and over.
+    if (m_pushDeferred)
+        pushDirty();
 }
 
 LocalTask Session::editedTask(const QVariantMap &input) const
@@ -764,9 +769,17 @@ LocalTask Session::editedTask(const QVariantMap &input) const
 
 void Session::pushDirty()
 {
-    if (!m_config->isConfigured() || m_busy)
+    if (!m_config->isConfigured())
         return;
 
+    // A run is already on the wire. The edit is owed a push of its own once
+    // that run ends, which a run ending in failure would otherwise not give.
+    if (m_busy) {
+        m_pushDeferred = true;
+        return;
+    }
+
+    m_pushDeferred = false;
     m_pendingUploads = withoutConflicts(m_store->dirtyTasks());
     if (m_pendingUploads.isEmpty())
         return;

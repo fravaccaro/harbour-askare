@@ -76,6 +76,9 @@ ListItem {
 
         Label {
             width: parent.width
+            // The row is a fixed height, so the title holds to one line: a
+            // summary carrying a line break would otherwise spill over.
+            maximumLineCount: 1
             truncationMode: TruncationMode.Fade
             color: root.highlighted ? Theme.highlightColor : (root.cancelled ? Theme.secondaryColor : Theme.primaryColor)
             font.pixelSize: Theme.fontSizeSmall

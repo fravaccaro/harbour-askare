@@ -48,6 +48,19 @@ Page {
         page.subtasks = page.uid === "" ? [] : Askare.subtasks(page.uid);
     }
 
+    // The page is a view of the stored task rather than a copy of it, so an
+    // edit, a toggle and a sync all reach it the same way. The properties are
+    // named after the keys taskFields() returns, which is what pushTask()
+    // builds the page from in the first place.
+    function reload() {
+        var fields = Askare.taskFields(page.href);
+        if (!fields.href)
+            return ;
+
+        for (var key in fields) page[key] = fields[key]
+        page.reloadSubtasks();
+    }
+
     function addSubtask() {
         pageStack.push(Qt.resolvedUrl("TaskEditPage.qml"), {
             "calendarHref": page.calendarHref,
@@ -55,49 +68,14 @@ Page {
         });
     }
 
-    function applyEdit(dialog) {
-        page.summary = dialog.summary;
-        page.description = dialog.description;
-        page.startDate = dialog.startDate;
-        page.startTime = dialog.startTime;
-        page.dueDate = dialog.dueDate;
-        page.dueTime = dialog.dueTime;
-        page.priority = dialog.priority;
-        page.percent = dialog.percent;
-        page.reminder = dialog.reminder;
-        page.status = dialog.status;
-        page.location = dialog.location;
-        page.url = dialog.url;
-        page.tags = dialog.tags;
-    }
-
+    // The editor reads the task from the store, the same as a list row's own
+    // Edit does, and reload() brings the answer back.
     function edit() {
-        var dialog = pageStack.push(Qt.resolvedUrl("TaskEditPage.qml"), {
-            "href": page.href,
-            "calendarHref": page.calendarHref,
-            "parentUid": page.parentUid,
-            "summary": page.summary,
-            "description": page.description,
-            "location": page.location,
-            "url": page.url,
-            "tags": page.tags,
-            "startDate": page.startDate,
-            "startTime": page.startTime,
-            "dueDate": page.dueDate,
-            "dueTime": page.dueTime,
-            "priority": page.priority,
-            "percent": page.percent,
-            "status": page.status,
-            "reminder": page.reminder
-        });
-        dialog.accepted.connect(function() {
-            page.applyEdit(dialog);
-        });
+        app.editTask(page.href);
     }
 
     function toggleDone() {
         Askare.toggleDone(page.href);
-        page.percent = page.isDone ? 0 : 100;
     }
 
     function remove() {
@@ -107,13 +85,11 @@ Page {
         });
     }
 
+    // A moved subtask is detached, so reload() is what makes the page forget
+    // the parent it left behind along with the list it came from.
     function followMove(newHref) {
-        var fields = Askare.taskFields(newHref);
         page.href = newHref;
-        page.calendarHref = fields.calendarHref;
-        // A moved subtask is detached, so the page must forget its old parent
-        // or a later edit would re-attach a link into the list it left.
-        page.parentUid = fields.parentUid;
+        page.reload();
     }
 
     allowedOrientations: Orientation.All
@@ -136,7 +112,7 @@ Page {
 
     Connections {
         target: Askare
-        onTasksChanged: page.reloadSubtasks()
+        onTasksChanged: page.reload()
         // A task carried to another list lives at a new href; without this the
         // page would keep acting on the one left behind.
         onTaskMoved: {
@@ -182,6 +158,9 @@ Page {
             PageHeader {
                 title: page.summary
                 description: Calendars.nameOfHref(page.calendarHref)
+                // A long title wraps rather than fading out; the header grows
+                // with it, and the page scrolls.
+                wrapMode: Text.WordWrap
             }
 
             IconMenuItem {

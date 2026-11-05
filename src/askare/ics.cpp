@@ -206,6 +206,27 @@ QString valueOrEmpty(const TodoFields &fields, const QString &name)
     return QString();
 }
 
+// A summary is a title: a line break inside one pushes the single-line rows
+// that show it past their height, so it reads as one paragraph.
+QString singleLine(const QString &value)
+{
+    QString out = value;
+    out.replace(QLatin1Char('\n'), QLatin1Char(' '));
+    return out.simplified();
+}
+
+// What a backslash followed by this letter stands for, or a null QChar when
+// the two are no escape any standard defines.
+QChar escapedValue(const QChar &letter)
+{
+    if (letter == QLatin1Char('n') || letter == QLatin1Char('N'))
+        return QLatin1Char('\n');
+    if (letter == QLatin1Char('\\') || letter == QLatin1Char(',')
+            || letter == QLatin1Char(';'))
+        return letter;
+    return QChar();
+}
+
 // Keeps the tags a task names only once, whichever line they arrived on.
 void appendTags(TodoFields *fields, const QStringList &tags)
 {
@@ -220,7 +241,7 @@ void applyLine(TodoFields *fields, const QString &name, const QString &value)
     if (name == QLatin1String("UID"))
         fields->uid = value;
     else if (name == QLatin1String("SUMMARY"))
-        fields->summary = Ics::unescape(value);
+        fields->summary = singleLine(Ics::unescape(value));
     else if (name == QLatin1String("DESCRIPTION"))
         fields->description = Ics::unescape(value);
     else if (name == QLatin1String("LOCATION"))
@@ -268,14 +289,26 @@ QString fold(const QString &text)
     return folded.join(QStringLiteral("\r\n")) + QStringLiteral("\r\n");
 }
 
+// One left-to-right pass: a run of replaces reads the first backslash of an
+// escaped backslash as the start of the next escape, so "\\n" came out as a
+// stray backslash and a line break instead of a backslash and an "n".
 QString unescape(const QString &value)
 {
-    QString out = value;
-    out.replace(QStringLiteral("\\n"), QStringLiteral("\n"));
-    out.replace(QStringLiteral("\\N"), QStringLiteral("\n"));
-    out.replace(QStringLiteral("\\,"), QStringLiteral(","));
-    out.replace(QStringLiteral("\\;"), QStringLiteral(";"));
-    out.replace(QStringLiteral("\\\\"), QStringLiteral("\\"));
+    QString out;
+    out.reserve(value.size());
+    for (int i = 0; i < value.size(); ++i) {
+        const QChar letter = value.at(i);
+        const QChar escaped = letter == QLatin1Char('\\') && i + 1 < value.size()
+                ? escapedValue(value.at(i + 1)) : QChar();
+        // A backslash that escapes nothing stands for itself, so a value some
+        // other client wrote unescaped loses nothing here.
+        if (escaped.isNull()) {
+            out += letter;
+            continue;
+        }
+        out += escaped;
+        ++i;
+    }
     return out;
 }
 

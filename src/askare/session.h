@@ -192,6 +192,8 @@ private:
     bool m_pushOnly;
     // A refused write earns the run a pull, which is what finds the conflict.
     bool m_pullAfterConflict;
+    // An edit made while a run was on the wire, owed a push once it ends.
+    bool m_pushDeferred;
     int m_uploaded;
     bool m_syncedOnStart;
 };
