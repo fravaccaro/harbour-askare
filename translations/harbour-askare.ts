@@ -904,10 +904,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>None</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Subtasks</source>
         <translation type="unfinished"></translation>
     </message>

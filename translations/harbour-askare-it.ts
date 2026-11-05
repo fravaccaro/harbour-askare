@@ -906,10 +906,6 @@
         <translation>Note</translation>
     </message>
     <message>
-        <source>None</source>
-        <translation>Nessuna</translation>
-    </message>
-    <message>
         <source>Subtasks</source>
         <translation>Sottoattività</translation>
     </message>

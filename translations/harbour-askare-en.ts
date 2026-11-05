@@ -904,10 +904,6 @@
         <translation>Notes</translation>
     </message>
     <message>
-        <source>None</source>
-        <translation>None</translation>
-    </message>
-    <message>
         <source>Subtasks</source>
         <translation>Subtasks</translation>
     </message>

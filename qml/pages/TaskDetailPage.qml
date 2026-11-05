@@ -224,6 +224,7 @@ Page {
                 id: tagsField
 
                 width: parent.width
+                visible: page.tags.length > 0
                 topPadding: Theme.paddingMedium
                 description: qsTr("Tags")
                 icon.source: "image://theme/icon-m-asterisk"
@@ -263,6 +264,7 @@ Page {
             }
 
             SectionHeader {
+                visible: page.location !== "" || page.url !== "" || page.description !== ""
                 text: qsTr("Details")
             }
 
@@ -299,6 +301,7 @@ Page {
                 id: notesField
 
                 width: parent.width
+                visible: page.description !== ""
                 description: qsTr("Notes")
                 icon.source: "image://theme/icon-m-note"
                 // A note sits at its natural height so the caption follows the
@@ -315,11 +318,11 @@ Page {
                     x: notesField.grooveLeftMargin
                     width: parent.width - x - notesField.grooveRightMargin
                     wrapMode: Text.WordWrap
-                    textFormat: page.description === "" ? Text.PlainText : Text.RichText
-                    color: page.description === "" ? Theme.secondaryColor : Theme.primaryColor
-                    font.pixelSize: page.description === "" ? Theme.fontSizeSmall : Theme.fontSizeMedium
+                    textFormat: Text.RichText
+                    color: Theme.primaryColor
+                    font.pixelSize: Theme.fontSizeMedium
                     linkColor: Theme.highlightColor
-                    text: page.description === "" ? qsTr("None") : Askare.renderNotes(page.description)
+                    text: Askare.renderNotes(page.description)
                     onLinkActivated: Qt.openUrlExternally(link)
                 }
 
