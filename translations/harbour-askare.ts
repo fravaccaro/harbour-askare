@@ -971,10 +971,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Start</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
@@ -988,14 +984,6 @@
     </message>
     <message>
         <source>Clear start date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Due</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1044,6 +1032,18 @@
     </message>
     <message>
         <source>Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Due date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Due time</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

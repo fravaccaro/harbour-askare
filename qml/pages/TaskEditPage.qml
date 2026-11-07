@@ -368,7 +368,7 @@ Dialog {
 
             ValueButton {
                 width: parent.width
-                label: qsTr("Start")
+                label: qsTr("Start date")
                 value: page.startDate === "" ? qsTr("None") : page.startDate
                 labelMargin: leftMargin + Theme.iconSizeMedium + Theme.paddingMedium
                 minimumContentHeight: Theme.itemSizeMedium + Theme.paddingSmall
@@ -418,7 +418,7 @@ Dialog {
 
             ValueButton {
                 width: parent.width
-                label: qsTr("Due")
+                label: qsTr("Due date")
                 value: page.dueDate === "" ? qsTr("None") : page.dueDate
                 labelMargin: leftMargin + Theme.iconSizeMedium + Theme.paddingMedium
                 minimumContentHeight: Theme.itemSizeMedium + Theme.paddingSmall
@@ -440,7 +440,7 @@ Dialog {
             ValueButton {
                 width: parent.width
                 enabled: page.dueDate !== ""
-                label: qsTr("Time")
+                label: qsTr("Due time")
                 value: page.dueTime === "" ? qsTr("All day") : page.dueTime
                 labelMargin: leftMargin + Theme.iconSizeMedium + Theme.paddingMedium
                 minimumContentHeight: Theme.itemSizeMedium + Theme.paddingSmall

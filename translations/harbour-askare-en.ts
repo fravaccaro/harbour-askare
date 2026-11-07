@@ -971,10 +971,6 @@
         <translation>Completion</translation>
     </message>
     <message>
-        <source>Start</source>
-        <translation>Start</translation>
-    </message>
-    <message>
         <source>None</source>
         <translation>None</translation>
     </message>
@@ -989,14 +985,6 @@
     <message>
         <source>Clear start date</source>
         <translation>Clear start date</translation>
-    </message>
-    <message>
-        <source>Due</source>
-        <translation>Due</translation>
-    </message>
-    <message>
-        <source>Time</source>
-        <translation>Time</translation>
     </message>
     <message>
         <source>The start must not be after the due date.</source>
@@ -1045,6 +1033,18 @@
     <message>
         <source>Details</source>
         <translation>Details</translation>
+    </message>
+    <message>
+        <source>Start date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Due date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Due time</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

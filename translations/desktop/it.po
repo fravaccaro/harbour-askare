@@ -20,7 +20,7 @@ msgstr ""
 #. Translators: the line under the app's name in the launcher.
 #: harbour-askare.desktop.in:8
 msgid "Nextcloud Tasks"
-msgstr "Attività Nextcloud"
+msgstr "Nextcloud Attività"
 
 #. Translators: what Askare is called in the system's sharing list, where
 #. choosing it opens a new task holding what was shared.

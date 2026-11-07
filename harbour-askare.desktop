@@ -6,7 +6,7 @@ X-Nemo-Application-Type=silica-qt5
 Icon=harbour-askare
 Exec=harbour-askare
 Name=Askare
-Comment[it]=Attività Nextcloud
+Comment[it]=Nextcloud Attività
 Comment=Nextcloud Tasks
 X-Share-Methods=task;
 

@@ -973,16 +973,12 @@
         <translation>Completamento</translation>
     </message>
     <message>
-        <source>Start</source>
-        <translation>Inizio</translation>
-    </message>
-    <message>
         <source>None</source>
         <translation>Nessuna</translation>
     </message>
     <message>
         <source>Start time</source>
-        <translation>Ora inizio</translation>
+        <translation>Ora di inizio</translation>
     </message>
     <message>
         <source>All day</source>
@@ -991,14 +987,6 @@
     <message>
         <source>Clear start date</source>
         <translation>Rimuovi data di inizio</translation>
-    </message>
-    <message>
-        <source>Due</source>
-        <translation>Scadenza</translation>
-    </message>
-    <message>
-        <source>Time</source>
-        <translation>Orario</translation>
     </message>
     <message>
         <source>The start must not be after the due date.</source>
@@ -1047,6 +1035,18 @@
     <message>
         <source>Details</source>
         <translation>Dettagli</translation>
+    </message>
+    <message>
+        <source>Start date</source>
+        <translation>Data di inizio</translation>
+    </message>
+    <message>
+        <source>Due date</source>
+        <translation>Data di scadenza</translation>
+    </message>
+    <message>
+        <source>Due time</source>
+        <translation>Ora di scadenza</translation>
     </message>
 </context>
 <context>
