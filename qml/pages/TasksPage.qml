@@ -41,16 +41,6 @@ Page {
             busy: Askare.busy
 
             MenuItem {
-                text: qsTr("About")
-                onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"))
-            }
-
-            MenuItem {
-                text: qsTr("Settings")
-                onClicked: pageStack.push(Qt.resolvedUrl("SettingsPage.qml"))
-            }
-
-            MenuItem {
                 text: qsTr("Refresh")
                 onClicked: Askare.sync()
             }
