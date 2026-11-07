@@ -4,6 +4,10 @@ import Sailfish.Silica 1.0
 Page {
     id: page
 
+    // Named with StartPage and WebLoginPage so a pending share waits until
+    // the tasks are on the stack: a dialog pushed here is thrown away by the
+    // navigation that follows a sign-in.
+    objectName: "loginPage"
     property string errorMessage
 
     function beginLogin() {

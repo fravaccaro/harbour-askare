@@ -7,8 +7,8 @@ Name:       harbour-askare
 %define __provides_exclude_from ^%{_datadir}/.*$
 
 Summary:    Nextcloud Tasks for Sailfish OS
-Version:    0.2.0
-Release:    6
+Version:    0.2.1
+Release:    1
 License:    GPLv3
 URL:        https://github.com/fravaccaro/harbour-askare
 Source0:    %{name}-%{version}.tar.bz2
@@ -17,10 +17,12 @@ Requires:   sailfish-components-webview-qt5
 Requires:   nemo-qml-plugin-notifications-qt5
 Requires:   libkeepalive
 Requires:   qt5-qtdeclarative-import-multimedia
+# A link shared to the app is read off the session bus through Nemo.DBus.
 Requires:   nemo-qml-plugin-dbus-qt5
 BuildRequires:  pkgconfig(sailfishapp) >= 1.0.2
 BuildRequires:  pkgconfig(sailfishsecrets)
 BuildRequires:  pkgconfig(Qt5Core)
+BuildRequires:  pkgconfig(Qt5DBus)
 BuildRequires:  pkgconfig(Qt5Network)
 BuildRequires:  pkgconfig(Qt5Qml)
 BuildRequires:  pkgconfig(Qt5Quick)

@@ -1203,7 +1203,15 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Mark done</source>
+        <source>There was nothing in that to write down.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sign in, and what you shared opens as a new task.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Done</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

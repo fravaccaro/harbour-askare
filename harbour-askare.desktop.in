@@ -1,0 +1,28 @@
+[Desktop Entry]
+Type=Application
+X-Nemo-Application-Type=silica-qt5
+Icon=harbour-askare
+Exec=harbour-askare
+Name=Askare
+# Translators: the line under the app's name in the launcher.
+Comment=Nextcloud Tasks
+X-Share-Methods=task;
+
+[X-Sailjail]
+OrganizationName=org.frapps
+ApplicationName=harbour-askare
+Permissions=Internet;Secrets;WebView
+ExecDBus=harbour-askare
+
+# One method for both kinds of share. A page shared from the browser is
+# offered as a link and as the same address in plain text, so two methods
+# would have the sharing dialog name Askare twice over.
+[X-Share Method task]
+# Translators: what Askare is called in the system's sharing list, where
+# choosing it opens a new task holding what was shared.
+Description=New task
+Capabilities=text/plain;text/x-url;
+SupportsMultipleFiles=no
+
+[X-HarbourBackup]
+BackupPathList=.config/org.frapps/harbour-askare/:.local/share/org.frapps/harbour-askare/

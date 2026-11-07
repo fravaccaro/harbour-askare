@@ -95,6 +95,7 @@ This document is a living contract. Keeping it accurate is part of the implement
 | `src/askare/davclient.*` | CalDAV PROPFIND, REPORT, PUT, DELETE |
 | `src/askare/davxml.*` | DAV XML readers |
 | `src/askare/ics.*` | VTODO unfold, parse, rewrite |
+| `src/askare/sharedtext.*` | Text and addresses shared from other apps, made fit for a task |
 | `src/askare/store.*` | SQLite copy of lists and tasks |
 | `src/askare/session.*` | QML-facing controller |
 | `src/askare/calendarmodel.*` | Task list model |
@@ -102,10 +103,15 @@ This document is a living contract. Keeping it accurate is part of the implement
 | `qml/pages/*` | Silica pages |
 | `qml/components/*` | Shared QML such as the SupportMe dialog |
 | `qml/modules/Opal/*` | Bundled Opal About, SupportMe, and LinkHandler modules |
+| `harbour-askare.desktop.in` | The template the desktop file is generated from, holding its English strings |
+| `translations/desktop/*` | The gettext resource of those strings: the `.pot`, a `.po` per language and `LINGUAS` |
+| `scripts/*` | Maintenance run by hand, not by the build |
 | `README.md`, `docs/*` | Documentation site: Jekyll with `just-the-docs`, configured in `_config.yml` |
 | `landing/index.html` | Marketing page, kept out of the Jekyll build; published copy lives in the portfolio site |
 
 Networking and ICS stay in C++. Pages bind to `Askare`, `Calendars`, and `Tasks`.
+
+The name the sharing list calls the app, `Description` in the `[X-Share Method task]` section, is a string of the desktop file like `Comment`, and is translated there with `Description[<code>]` lines. Neither can come from the `.ts` files: the catalog route of `MDesktopEntry` reads `/usr/share/translations`, where a Harbour package may install nothing. The two of them are a gettext resource of their own instead - `harbour-askare.desktop.in` and `translations/desktop/` - and `harbour-askare.desktop` is **generated from them by `scripts/desktop-translations.sh` and committed**, so that no build needs gettext. Edit the template, never the desktop file.
 
 User documentation lives under `docs/`, developer documentation under `docs/devel/`. A change to behaviour, settings, permissions or the build updates the matching page in the same commit.
 

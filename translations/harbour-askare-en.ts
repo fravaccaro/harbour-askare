@@ -1203,8 +1203,16 @@
         <translation>Open</translation>
     </message>
     <message>
-        <source>Mark done</source>
-        <translation>Mark done</translation>
+        <source>There was nothing in that to write down.</source>
+        <translation>There was nothing in that to write down.</translation>
+    </message>
+    <message>
+        <source>Sign in, and what you shared opens as a new task.</source>
+        <translation>Sign in, and what you shared opens as a new task.</translation>
+    </message>
+    <message>
+        <source>Done</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

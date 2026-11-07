@@ -1,7 +1,7 @@
 TARGET = harbour-askare
 
 CONFIG += sailfishapp sailfishapp_i18n c++11
-QT += network sql
+QT += dbus network sql
 
 # sailfishapp.prf pulls in link_pkgconfig and resolves PKGCONFIG afterwards, so
 # requesting link_pkgconfig here instead would drop -lsailfishapp from the link.
@@ -31,6 +31,7 @@ SOURCES += \
     src/askare/reminders.cpp \
     src/askare/secretsstore.cpp \
     src/askare/session.cpp \
+    src/askare/sharedtext.cpp \
     src/askare/store.cpp \
     src/askare/taskmodel.cpp \
     src/askare/url.cpp
@@ -47,6 +48,7 @@ HEADERS += \
     src/askare/reminders.h \
     src/askare/secretsstore.h \
     src/askare/session.h \
+    src/askare/sharedtext.h \
     src/askare/store.h \
     src/askare/taskmodel.h \
     src/askare/types.h \
@@ -64,11 +66,17 @@ TRANSLATIONS += \
 
 DISTFILES += \
     harbour-askare.desktop \
+    harbour-askare.desktop.in \
+    scripts/desktop-translations.sh \
+    translations/desktop/LINGUAS \
+    translations/desktop/harbour-askare.pot \
+    translations/desktop/it.po \
     icons/harbour-askare.svg \
     qml/harbour-askare.qml \
     qml/components/AskareNotification.qml \
     qml/components/AskareSupportDialog.qml \
     qml/components/ConflictField.qml \
+    qml/components/ShareReceiver.qml \
     qml/components/TaskListHeader.qml \
     qml/cover/CoverPage.qml \
     qml/cover/cover-check.png \

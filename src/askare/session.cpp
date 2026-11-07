@@ -3,6 +3,7 @@
 #include "calendarmodel.h"
 #include "ics.h"
 #include "markdown.h"
+#include "sharedtext.h"
 #include "taskmodel.h"
 #include "url.h"
 
@@ -986,6 +987,37 @@ QVariantMap Session::taskFields(const QString &href) const
     fields.insert(QStringLiteral("percent"),
                   Ics::percentFromStatus(task.status, parsed.percent));
     fields.insert(QStringLiteral("reminder"), task.reminder);
+    return fields;
+}
+
+QVariantMap Session::sharedTextFields(const QString &text) const
+{
+    const QString body = SharedText::body(text);
+    if (body.isEmpty())
+        return QVariantMap();
+
+    const QString name = SharedText::firstLine(body);
+    QVariantMap fields;
+    fields.insert(QStringLiteral("summary"), name);
+    // Text of one line is written down once: the name already holds all of it.
+    if (name != body)
+        fields.insert(QStringLiteral("description"), body);
+    return fields;
+}
+
+QVariantMap Session::sharedLinkFields(const QString &url, const QString &linkTitle) const
+{
+    const QString address = SharedText::address(url);
+    if (address.isEmpty())
+        return QVariantMap();
+
+    // Named by whatever the sender was showing it under, and by the address
+    // itself when the sender named nothing, since a task needs a name to be
+    // saved at all. The notes are left for the writer.
+    const QString name = Ics::singleLine(SharedText::body(linkTitle));
+    QVariantMap fields;
+    fields.insert(QStringLiteral("summary"), name.isEmpty() ? address : name);
+    fields.insert(QStringLiteral("url"), address);
     return fields;
 }
 

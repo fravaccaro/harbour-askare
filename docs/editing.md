@@ -31,6 +31,12 @@ The editor takes:
 
 A task may not start after it is due; the editor says so and refuses to save until one of the two dates moves. **Clear start date** and **Clear due date** remove a date again, and clearing the due date clears the reminder with it.
 
+## Sharing into Askare
+
+Text and links from other apps become tasks. Select a passage, or use the share button on a page in the browser, and pick **Askare**, listed as **New task**. The editor opens on a new task in the list you were last looking at, with what arrived already filled in: a link goes into **URL** under the name the sender was showing it under, and shared text becomes the **Name**, with the whole passage in the **Notes** when it runs past a single line.
+
+Nothing is saved on the way in. What another app sent is yours to read, change or abandon first, so the task exists once you save it, as one typed by hand does. Sharing works whether or not Askare is already open; if the app has yet to be signed in, it says so and the share is dropped.
+
 ## Tags
 
 A task carries as many tags as you like. The editor shows them as chips: tap one to take it off, or write a name in **New tag** and confirm to add it. Under the field stand the tags already used on other tasks that this one does not wear yet, and a tap adds one, so the same spelling comes back instead of a near miss. A name is kept once however it is capitalised, and a blank one is ignored.

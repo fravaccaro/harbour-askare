@@ -206,15 +206,6 @@ QString valueOrEmpty(const TodoFields &fields, const QString &name)
     return QString();
 }
 
-// A summary is a title: a line break inside one pushes the single-line rows
-// that show it past their height, so it reads as one paragraph.
-QString singleLine(const QString &value)
-{
-    QString out = value;
-    out.replace(QLatin1Char('\n'), QLatin1Char(' '));
-    return out.simplified();
-}
-
 // What a backslash followed by this letter stands for, or a null QChar when
 // the two are no escape any standard defines.
 QChar escapedValue(const QChar &letter)
@@ -241,7 +232,7 @@ void applyLine(TodoFields *fields, const QString &name, const QString &value)
     if (name == QLatin1String("UID"))
         fields->uid = value;
     else if (name == QLatin1String("SUMMARY"))
-        fields->summary = singleLine(Ics::unescape(value));
+        fields->summary = Ics::singleLine(Ics::unescape(value));
     else if (name == QLatin1String("DESCRIPTION"))
         fields->description = Ics::unescape(value);
     else if (name == QLatin1String("LOCATION"))
@@ -320,6 +311,13 @@ QString escape(const QString &value)
     out.replace(QLatin1Char(','), QStringLiteral("\\,"));
     out.replace(QLatin1Char('\n'), QStringLiteral("\\n"));
     return out;
+}
+
+QString singleLine(const QString &value)
+{
+    QString out = value;
+    out.replace(QLatin1Char('\n'), QLatin1Char(' '));
+    return out.simplified();
 }
 
 QString propertyName(const QString &line)

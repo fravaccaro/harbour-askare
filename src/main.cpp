@@ -2,6 +2,7 @@
 #include <QtQuick>
 #endif
 
+#include <QDBusConnection>
 #include <QGuiApplication>
 #include <QLocale>
 #include <QQmlContext>
@@ -54,5 +55,13 @@ int main(int argc, char *argv[])
 
     view->setSource(SailfishApp::pathTo(QStringLiteral("qml/harbour-askare.qml")));
     view->show();
+
+    // The name a share and a tapped reminder are delivered to, which is the
+    // organisation and application names of the desktop file joined by a dot.
+    // It is claimed here rather than from QML, and only once the window has
+    // loaded, so that the objects QML puts on the bus are in place before
+    // anything can call them. The Share documentation asks for exactly this.
+    QDBusConnection::sessionBus().registerService(QStringLiteral("org.frapps.harbour-askare"));
+
     return app->exec();
 }

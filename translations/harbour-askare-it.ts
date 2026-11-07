@@ -1205,8 +1205,16 @@
         <translation>Apri</translation>
     </message>
     <message>
-        <source>Mark done</source>
-        <translation>Segna come completata</translation>
+        <source>There was nothing in that to write down.</source>
+        <translation>Non c&apos;era nulla da annotare.</translation>
+    </message>
+    <message>
+        <source>Sign in, and what you shared opens as a new task.</source>
+        <translation>Accedi e ciò che hai condiviso si aprirà come nuova attività.</translation>
+    </message>
+    <message>
+        <source>Done</source>
+        <translation>Fatto</translation>
     </message>
 </context>
 </TS>

@@ -13,6 +13,9 @@ QString unfold(const QString &text);
 QString fold(const QString &text);
 QString unescape(const QString &value);
 QString escape(const QString &value);
+// A summary is a title: a line break inside one pushes the single-line rows
+// that show it past their height, so it reads as one paragraph.
+QString singleLine(const QString &value);
 QString propertyName(const QString &line);
 QString propertyValue(const QString &line);
 QStringList splitCategories(const QString &value);

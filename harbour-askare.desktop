@@ -1,16 +1,26 @@
+# Generated from harbour-askare.desktop.in by scripts/desktop-translations.sh.
+# Edit the template or the translations under translations/desktop, never this file.
 [Desktop Entry]
 Type=Application
 X-Nemo-Application-Type=silica-qt5
 Icon=harbour-askare
 Exec=harbour-askare
 Name=Askare
-Comment=Nextcloud Tasks
 Comment[it]=Attività Nextcloud
+Comment=Nextcloud Tasks
+X-Share-Methods=task;
 
 [X-Sailjail]
 OrganizationName=org.frapps
 ApplicationName=harbour-askare
 Permissions=Internet;Secrets;WebView
+ExecDBus=harbour-askare
+
+[X-Share Method task]
+Description[it]=Nuova attività
+Description=New task
+Capabilities=text/plain;text/x-url;
+SupportsMultipleFiles=no
 
 [X-HarbourBackup]
 BackupPathList=.config/org.frapps/harbour-askare/:.local/share/org.frapps/harbour-askare/

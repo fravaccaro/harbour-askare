@@ -89,6 +89,13 @@ public:
     Q_INVOKABLE void markDone(const QString &href);
     Q_INVOKABLE QString renderNotes(const QString &markdown) const;
     Q_INVOKABLE QVariantMap taskFields(const QString &href) const;
+    // The task another app's share makes, keyed as taskFields() is, so the
+    // editor is opened with it the way an existing task is. Neither writes
+    // anything: the task is the editor's to save, as one typed by hand is. An
+    // empty answer means the share held nothing worth writing down.
+    Q_INVOKABLE QVariantMap sharedTextFields(const QString &text) const;
+    Q_INVOKABLE QVariantMap sharedLinkFields(const QString &url,
+                                             const QString &linkTitle) const;
     Q_INVOKABLE QVariantList subtasks(const QString &parentUid) const;
     Q_INVOKABLE int subtreeSize(const QString &href) const;
     // One entry per task waiting to be settled, as { href, summary, differences },

@@ -20,6 +20,7 @@ nav_order: 1
 | `src/askare/ics.*` | VTODO unfold, parse, rewrite, and the date arithmetic reminders need |
 | `src/askare/markdown.*` | The notes, rendered to the subset of HTML a Silica `Label` draws |
 | `src/askare/url.*` | Server URL normalisation and href joining |
+| `src/askare/sharedtext.*` | Text and addresses another app shared, made fit to write into a task |
 | `src/askare/store.*` | SQLite copy of lists and tasks, in `askare.db` |
 | `src/askare/session.*` | QML-facing controller: login, sync, save, delete |
 | `src/askare/calendarmodel.*` | Task lists, with their colour and open count |
@@ -37,7 +38,13 @@ A passing message has one route: `app.showToast()` in `qml/harbour-askare.qml` h
 
 A failed sign-in is the exception: `loginFailed` reaches the sign-in pages, which say so in place, because the reason belongs to the form the user is looking at. That is why `onLoginFailed()` in `session.cpp` does not also set `errorMessage`.
 
-Reminders keep their own notifications, in `reminderNoticeComponent`: those persist, carry **Open** and **Mark done**, and are not toasts.
+Reminders keep their own notifications, published through `reminderNotice`: those persist, carry **Open** and **Mark done**, and are not toasts. The one notice object serves every reminder, since `publish()` asks the notification manager for a fresh id whenever it is given none, so a second reminder stands beside the first rather than replacing it.
+
+A reminder outlives the run that published it, and `Notification` delivers `clicked` and `actionInvoked` only to the object still holding the notice's id - the plugin says as much, and `checkActionInvoked()` compares the id it is given against `replacesId`. A notice tapped after a restart would therefore reach nobody. So each action instead carries a full D-Bus call, which `reminderAction()` builds and the notification manager places itself, and the `DBusAdaptor` in `qml/harbour-askare.qml` answers: `openTask` raises the window on the task, `markTaskDone` completes it where it stands. The call goes by name, so it arrives at whichever instance of the app is running. Nothing listens for the in-process signals any more, because the manager raises both - the remote call and `ActionInvoked` - and every tap would otherwise be served twice.
+
+The name is the `OrganizationName` and `ApplicationName` of the desktop file, `org.frapps.harbour-askare`, which is what Sailjail lets the app own; the path and the interface drop the hyphen, which a bus name allows and they do not. It is claimed in `main.cpp`, once `view->show()` has returned, rather than through the `service` property of an adaptor: the share receiver puts an object of its own on the bus, and every object has to be in place before the name starts answering calls. The manager closes a notice itself once an action is invoked, so neither adaptor method does.
+
+The package deliberately installs no `dbus-1/services` file - the `Paths` suite of `sfdk check` answers `Installation not allowed in this location` for `/usr/share/dbus-1/services`. What starts the app from cold instead is `ExecDBus=harbour-askare` in the `[X-Sailjail]` section of the desktop file, which Harbour accepts. The activation belongs to the bus name rather than to whoever calls it, so a reminder tapped while the app is gone arrives by the same route a share does.
 
 ## CalDAV rules
 
@@ -80,3 +87,17 @@ The permissions are `Internet`, `Secrets` and `WebView`; no document, picture or
 ## Reminders without a service
 
 `Reminders` checks the stored tasks every minute while the app runs, and each check notes the moment it announced, so a reminder fires once and an unchanged due date stays silent. That timer only ticks while the device is awake, so `qml/harbour-askare.qml` holds a `BackgroundJob` that wakes the app every five minutes for as long as a reminder is still ahead - `Reminders.armed` says whether one is.
+
+## Shares from other apps
+
+The desktop file declares a single share method, `task`, taking `text/plain` and `text/x-url` together. Two methods would have the sharing dialog name Askare twice over, because a page shared from the browser satisfies both.
+
+A share is received through the `DBusAdaptor` on `/share/task` in `qml/components/ShareReceiver.qml`, which reads the configuration it is handed into the resources of a `ShareAction`. There is deliberately no `ShareProvider`: it would own that same path, leaving the adaptor unreachable whenever the app was already running, and it hands on `ShareResource` objects, which carry only a `name` and `data` and so have nowhere to put the address and the page title a link is made of.
+
+`ShareAction.resources` is a plain `QVariantList`, so each resource is a map holding the keys the system's own share pages read - `type`, which is a mime type here rather than the `ShareResource` enum, beside `status` and `linkTitle`. The type is therefore what says whether a share is a link or a passage, and is believed over anything else: a passage shared from the browser arrives as `text/plain` with its text in `status` and no `data`, so guessing from the fields alone would take it for an address and throw it away as one no task could follow. Only a share naming no type at all is guessed at.
+
+`SharedText` makes what arrived fit to store - the line endings of wherever it was written, and no control characters - and `Session::sharedTextFields()` and `sharedLinkFields()` shape it into a map keyed the way `taskFields()` is, so the editor opens on it exactly as it opens on an existing task. Neither writes anything: the task is the editor's to save. An empty map says the share held nothing worth writing down, which is also what an address no task could have followed comes back as.
+
+The window holds the fields in `pendingShare` until it can push the editor over something that will still be there afterwards. `takePendingShare()` waits while the settings are still being read, while no list has been read yet - an editor with none to offer cannot be accepted - while the page stack is busy, and while the current page is the start page or either sign-in page, since the navigation that follows those throws a pushed page away. `shareAgain` tries again every tenth of a second, `showMain()` tries once the stack has been pointed at the tasks, and `Calendars.onCountChanged` tries once the lists arrive. The fields are cleared only when the push lands, so a wipe cannot drop the only copy of what was shared.
+
+A pending share, a new task asked for from the cover and a task a reminder asked to open all wait on the same things, so `takePending()` offers all three at once and every one of those wake-ups calls it rather than picking one out.

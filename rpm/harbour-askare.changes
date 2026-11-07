@@ -1,3 +1,6 @@
+* Sat Nov 7 2026 fravaccaro 0.2.1-1
+- Implement share from text/url 
+
 * Sat Oct 24 2026 fravaccaro 0.2.0-1
 - Added search
 - Added conflict resolution page
