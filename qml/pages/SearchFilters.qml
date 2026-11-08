@@ -4,7 +4,8 @@
 
     Each control writes the whole filter set to \c Tasks.filters as soon as it
     changes, so the results update while the drawer is open. \l reset() clears
-    every control and the model together.
+    every control and the model together. Icons and the completion field follow
+    the same IconComboBox / IconField / ValueButton pattern as the edit page.
 */
 import QtQuick 2.0
 import Sailfish.Silica 1.0
@@ -25,10 +26,10 @@ SilicaFlickable {
     readonly property var reminderModes: ["any", "yes", "no"]
 
     readonly property var priorityOptions: [
-        { "value": "none", "text": priorityHelper.labelFor(0) },
-        { "value": "high", "text": priorityHelper.labelFor(1) },
-        { "value": "medium", "text": priorityHelper.labelFor(5) },
-        { "value": "low", "text": priorityHelper.labelFor(6) }
+        { "value": "none", "text": priorityHelper.labelFor(0), "icon": "image://theme/icon-m-levels" },
+        { "value": "high", "text": priorityHelper.labelFor(1), "icon": priorityHelper.iconFor(1) },
+        { "value": "medium", "text": priorityHelper.labelFor(5), "icon": priorityHelper.iconFor(5) },
+        { "value": "low", "text": priorityHelper.labelFor(6), "icon": priorityHelper.iconFor(6) }
     ]
     property var statusOptions: statusOptionsOf(statusHelper.values)
     property var listOptions: listOptionsOf(Calendars.count)
@@ -36,8 +37,13 @@ SilicaFlickable {
 
     function statusOptionsOf(values) {
         var out = []
-        for (var i = 0; i < values.length; i++)
-            out.push({ "value": values[i], "text": statusHelper.labelFor(values[i]) })
+        for (var i = 0; i < values.length; i++) {
+            out.push({
+                "value": values[i],
+                "text": statusHelper.labelFor(values[i]),
+                "icon": statusHelper.iconFor(values[i])
+            })
+        }
         return out
     }
 
@@ -135,6 +141,7 @@ SilicaFlickable {
             id: statusBox
 
             title: qsTr("Status")
+            defaultIcon: "image://theme/icon-m-diagnostic"
             options: form.statusOptions
             onSelectionChanged: if (!form.resetting) form.apply()
         }
@@ -143,6 +150,7 @@ SilicaFlickable {
             id: listBox
 
             title: qsTr("List")
+            defaultIcon: "image://theme/icon-m-events"
             options: form.listOptions
             onSelectionChanged: if (!form.resetting) form.apply()
         }
@@ -151,6 +159,7 @@ SilicaFlickable {
             id: priorityBox
 
             title: qsTr("Priority")
+            defaultIcon: "image://theme/icon-m-levels"
             options: form.priorityOptions
             onSelectionChanged: if (!form.resetting) form.apply()
         }
@@ -160,27 +169,102 @@ SilicaFlickable {
 
             title: qsTr("Tags")
             visible: form.tagOptions.length > 0
+            defaultIcon: Qt.resolvedUrl("../icons/icon-m-tag.svg")
+            icon.color: Theme.primaryColor
             options: form.tagOptions
             onSelectionChanged: if (!form.resetting) form.apply()
         }
 
-        Slider {
-            id: completionSlider
+        IconField {
+            id: completionField
 
             width: parent.width
-            minimumValue: 0
-            maximumValue: 100
-            stepSize: 5
-            label: qsTr("Completion")
-            valueText: value === 0 ? qsTr("Any") : value + "%"
-            onValueChanged: if (!form.resetting) form.apply()
+            description: qsTr("Completion")
+            icon.source: "image://theme/icon-m-acknowledge"
+            lineCenterY: completionSlider.height - Theme.itemSizeSmall / 2
+            lineBottomY: lineCenterY
+
+            Slider {
+                id: completionSlider
+
+                width: parent.width
+                leftMargin: completionField.grooveLeftMargin
+                rightMargin: completionField.grooveRightMargin
+                minimumValue: 0
+                maximumValue: 100
+                stepSize: 5
+                valueText: value === 0 ? qsTr("Any") : value + "%"
+                onValueChanged: if (!form.resetting) form.apply()
+            }
+
         }
 
-        TextSwitch {
-            id: dueTodaySwitch
+        // IconTextSwitch parks its icon on the right. Here the date icon joins
+        // the left column used by the rows above, and the toggle sits on the
+        // right so a tap on the label still flips it.
+        Item {
+            id: dueTodayRow
 
-            text: qsTr("Tasks due today")
-            onCheckedChanged: if (!form.resetting) form.apply()
+            width: parent.width
+            height: Theme.itemSizeSmall
+
+            HighlightImage {
+                id: dueTodayIcon
+
+                source: "image://theme/icon-m-date"
+                sourceSize.width: Theme.iconSizeMedium
+                sourceSize.height: Theme.iconSizeMedium
+                highlighted: dueTodayArea.pressed
+
+                anchors {
+                    left: parent.left
+                    leftMargin: Theme.horizontalPageMargin
+                    verticalCenter: parent.verticalCenter
+                }
+
+            }
+
+            Label {
+                text: qsTr("Tasks due today")
+                color: dueTodayArea.pressed ? Theme.highlightColor : Theme.primaryColor
+                truncationMode: TruncationMode.Fade
+
+                anchors {
+                    left: dueTodayIcon.right
+                    leftMargin: Theme.paddingMedium
+                    right: dueTodaySwitch.left
+                    rightMargin: Theme.paddingMedium
+                    verticalCenter: parent.verticalCenter
+                }
+
+            }
+
+            MouseArea {
+                id: dueTodayArea
+
+                anchors {
+                    left: parent.left
+                    right: dueTodaySwitch.left
+                    top: parent.top
+                    bottom: parent.bottom
+                }
+                onClicked: dueTodaySwitch.checked = !dueTodaySwitch.checked
+            }
+
+            Switch {
+                id: dueTodaySwitch
+
+                automaticCheck: true
+                onCheckedChanged: if (!form.resetting) form.apply()
+
+                anchors {
+                    right: parent.right
+                    rightMargin: Theme.horizontalPageMargin - Theme.paddingLarge
+                    verticalCenter: parent.verticalCenter
+                }
+
+            }
+
         }
 
         SectionHeader {
@@ -191,10 +275,24 @@ SilicaFlickable {
             width: parent.width
             label: qsTr("Start date")
             value: form.startDate === "" ? qsTr("Any") : form.startDate
+            labelMargin: leftMargin + Theme.iconSizeMedium + Theme.paddingMedium
+            minimumContentHeight: Theme.itemSizeMedium + Theme.paddingSmall
             onClicked: form.pickDate(form.startDate, function(iso) {
                 form.startDate = iso
                 form.apply()
             })
+
+            Icon {
+                source: "image://theme/icon-m-date"
+
+                anchors {
+                    left: parent.left
+                    leftMargin: Theme.horizontalPageMargin
+                    verticalCenter: parent.verticalCenter
+                }
+
+            }
+
         }
 
         ComboBox {
@@ -240,10 +338,24 @@ SilicaFlickable {
             width: parent.width
             label: qsTr("Due date")
             value: form.dueDate === "" ? qsTr("Any") : form.dueDate
+            labelMargin: leftMargin + Theme.iconSizeMedium + Theme.paddingMedium
+            minimumContentHeight: Theme.itemSizeMedium + Theme.paddingSmall
             onClicked: form.pickDate(form.dueDate, function(iso) {
                 form.dueDate = iso
                 form.apply()
             })
+
+            Icon {
+                source: "image://theme/icon-m-date"
+
+                anchors {
+                    left: parent.left
+                    leftMargin: Theme.horizontalPageMargin
+                    verticalCenter: parent.verticalCenter
+                }
+
+            }
+
         }
 
         ComboBox {
@@ -289,11 +401,12 @@ SilicaFlickable {
             text: qsTr("Reminder")
         }
 
-        ComboBox {
+        IconComboBox {
             id: reminderBox
 
             width: parent.width
             label: qsTr("Reminder set")
+            icon.source: "image://theme/icon-m-alarm"
             currentIndex: 0
             onCurrentIndexChanged: if (!form.resetting) form.apply()
 
