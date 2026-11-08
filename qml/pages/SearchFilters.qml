@@ -21,8 +21,10 @@ SilicaFlickable {
     property string startMode: "on"
     property string dueDate
     property string dueMode: "on"
+    property string completionMode: "atLeast"
 
     readonly property var dateModes: ["on", "before", "after"]
+    readonly property var completionModes: ["atLeast", "atMost"]
     readonly property var reminderModes: ["any", "yes", "no"]
 
     readonly property var priorityOptions: [
@@ -90,6 +92,7 @@ SilicaFlickable {
             "priority": priorityBox.selected,
             "tags": tagBox.selected,
             "completion": completionSlider.value,
+            "completionMode": form.completionMode,
             "dueToday": dueTodaySwitch.checked,
             "startDate": form.startDate,
             "startMode": form.startMode,
@@ -106,6 +109,7 @@ SilicaFlickable {
         priorityBox.clear()
         tagBox.clear()
         completionSlider.value = 0
+        form.completionMode = "atLeast"
         dueTodaySwitch.checked = false
         form.startDate = ""
         form.startMode = "on"
@@ -195,6 +199,31 @@ SilicaFlickable {
                 stepSize: 5
                 valueText: value === 0 ? qsTr("Any") : value + "%"
                 onValueChanged: if (!form.resetting) form.apply()
+            }
+
+        }
+
+        ComboBox {
+            width: parent.width
+            visible: completionSlider.value > 0
+            label: qsTr("Completion is")
+            currentIndex: form.completionModes.indexOf(form.completionMode)
+            onCurrentIndexChanged: {
+                if (form.resetting || currentIndex < 0)
+                    return
+                form.completionMode = form.completionModes[currentIndex]
+                form.apply()
+            }
+
+            menu: ContextMenu {
+                MenuItem {
+                    text: qsTr("At least")
+                }
+
+                MenuItem {
+                    text: qsTr("At most")
+                }
+
             }
 
         }

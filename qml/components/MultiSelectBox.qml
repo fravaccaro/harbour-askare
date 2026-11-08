@@ -3,12 +3,13 @@
     \brief An IconComboBox whose menu lets several options be on at once.
 
     The box never collapses to a single choice: its menu is a ContextMenu of
-    Opal.MenuSwitch toggles, and \c currentIndex is held at -1. The description
-    reads \c placeholder until one or more options are on, then names those.
+    left-ranged rows with a Switch on the right, and \c currentIndex is held at
+    -1. The description reads \c placeholder until one or more options are on,
+    then names those.
 
     \c defaultIcon is the leading icon while nothing (or more than one option)
     is selected. Each entry of \c options may carry an optional \c icon; that
-    icon is shown beside the switch in the menu, and replaces \c defaultIcon on
+    icon is shown beside the label in the menu, and replaces \c defaultIcon on
     the closed box when that option is the only one selected.
 
     \c options is a list of \c {{ value, text, icon? }}. \c selected is the list
@@ -29,7 +30,6 @@
 */
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import Opal.MenuSwitch 1.0
 
 IconComboBox {
     id: root
@@ -104,26 +104,32 @@ IconComboBox {
         Repeater {
             model: root.options
 
-            MenuSwitch {
+            MenuItem {
                 text: modelData.text
-                automaticCheck: false
-                checked: root.isSelected(modelData.value)
-                // Switch, then the option icon when one is set, then the label.
-                // The vendored switch centres its label; a multi-select list
-                // reads better with the switch and text ranged left.
                 horizontalAlignment: Text.AlignLeft
-                leftPadding: switchItem.width + Theme.paddingLarge
-                             + (modelData.icon ? Theme.iconSizeMedium + Theme.paddingMedium : 0)
+                // Icon on the left when the option has one; switch on the right.
+                leftPadding: modelData.icon ? Theme.iconSizeMedium + Theme.paddingMedium : 0
+                rightPadding: Theme.itemSizeExtraSmall
                 onClicked: root.toggle(modelData.value)
 
                 HighlightImage {
                     visible: modelData.icon !== undefined && modelData.icon !== ""
-                    x: parent.switchItem.width + Theme.paddingSmall
                     anchors.verticalCenter: parent.verticalCenter
                     sourceSize.width: Theme.iconSizeMedium
                     sourceSize.height: Theme.iconSizeMedium
                     highlighted: parent.highlighted
                     source: modelData.icon ? modelData.icon : ""
+                }
+
+                Switch {
+                    width: Theme.itemSizeExtraSmall
+                    height: Theme.itemSizeSmall
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    automaticCheck: false
+                    checked: root.isSelected(modelData.value)
+                    // Display only: ContextMenu fires MenuItem.clicked for the
+                    // whole row, including taps on the switch.
                 }
 
             }

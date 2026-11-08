@@ -225,8 +225,14 @@ bool tagsPass(const LocalTask &task, const QVariantMap &f)
 
 bool completionPasses(const LocalTask &task, const QVariantMap &f)
 {
-    const int least = f.value(QStringLiteral("completion")).toInt();
-    return least <= 0 || completionOf(task) >= least;
+    const int threshold = f.value(QStringLiteral("completion")).toInt();
+    if (threshold <= 0)
+        return true;
+
+    const int percent = completionOf(task);
+    if (f.value(QStringLiteral("completionMode")).toString() == QLatin1String("atMost"))
+        return percent <= threshold;
+    return percent >= threshold;
 }
 
 bool dueTodayPasses(const LocalTask &task, const QVariantMap &f)
