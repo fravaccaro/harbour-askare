@@ -61,8 +61,8 @@ public:
     Q_INVOKABLE void showCompleted();
     Q_INVOKABLE void showCalendar(const QString &href, const QString &name);
     Q_INVOKABLE void showTag(const QString &tag);
-    // Narrows whichever view is shown to the tasks whose text carries the
-    // query; an empty query shows the view in full.
+    // Looks through every task in every list. An empty query shows the view
+    // in full again.
     void setSearch(const QString &text);
     // Whether the mixed views keep completed tasks; the dedicated completed
     // view ignores this.
@@ -85,7 +85,7 @@ private:
     void apply(const QString &filter, const QString &href, const QString &name);
     bool isMixedView() const;
     QVector<LocalTask> filtered() const;
-    QVector<LocalTask> searched(const QVector<LocalTask> &tasks) const;
+    QVector<LocalTask> searched() const;
     // Drops completed and cancelled tasks the mixed-view settings hide.
     QVector<LocalTask> withSettings(const QVector<LocalTask> &tasks) const;
     ChildTally tallyOf(const QString &uid) const;

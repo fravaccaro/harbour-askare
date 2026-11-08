@@ -577,6 +577,41 @@
     </message>
 </context>
 <context>
+    <name>SearchPage</name>
+    <message>
+        <source>Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search tasks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No matches</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No tasks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Try another search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancelled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Completed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To do</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Session</name>
     <message>
         <source>Choose a list for the task.</source>
@@ -1053,10 +1088,6 @@
 </context>
 <context>
     <name>TaskListHeader</name>
-    <message>
-        <source>Search tasks</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message numerus="yes">
         <source>%n task(s) changed on the server as well</source>
         <translation type="unfinished">
@@ -1089,6 +1120,40 @@
     </message>
 </context>
 <context>
+    <name>TaskRow</name>
+    <message numerus="yes">
+        <source>Deleting %n tasks</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Deleting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subtasks %1/%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mark to-do</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mark done</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>TasksPage</name>
     <message>
         <source>Cancelled</source>
@@ -1116,49 +1181,6 @@
     </message>
     <message>
         <source>New task</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mark to-do</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mark done</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Deleting</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message numerus="yes">
-        <source>Deleting %n tasks</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Subtasks %1/%2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No matches</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Try another search</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hide search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

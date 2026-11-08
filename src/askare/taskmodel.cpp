@@ -378,15 +378,12 @@ QVector<LocalTask> TaskModel::filtered() const
     return m_store->topLevelTasks();
 }
 
-// A tag or a smart list already lays every task out flat, so searching them
-// narrows what is there. All and a single list show parents only, so a search
-// widens to every task in scope, or a matching subtask would hide behind a
-// parent that does not match.
-QVector<LocalTask> TaskModel::searched(const QVector<LocalTask> &tasks) const
+// Every list, at every depth, finished and cancelled included. The view the
+// search was opened from plays no part, or a matching subtask would stay
+// hidden behind a parent, a due date, or a list the user was not looking at.
+QVector<LocalTask> TaskModel::searched() const
 {
-    if (m_filter == QLatin1String("all") || m_filter == QLatin1String("calendar"))
-        return withSettings(matchingOf(m_store->tasks(m_calendarHref), m_search));
-    return matchingOf(tasks, m_search);
+    return matchingOf(m_store->tasks(), m_search);
 }
 
 void TaskModel::reload()
@@ -398,7 +395,7 @@ void TaskModel::reload()
     if (isMixedView())
         m_items = withSettings(m_items);
     if (!m_search.isEmpty())
-        m_items = searched(m_items);
+        m_items = searched();
     m_tallies = talliesOf(m_store->tasks());
     m_colors = colorsOf(m_store->calendars());
     endResetModel();
