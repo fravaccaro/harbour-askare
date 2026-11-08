@@ -1,3 +1,4 @@
+import "../components"
 /*!
     \qmltype TagEditor
     \brief Edits the tags of a task as removable chips.
@@ -18,7 +19,6 @@
 */
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import "../components"
 
 Column {
     id: root

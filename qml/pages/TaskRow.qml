@@ -42,7 +42,9 @@ ListItem {
     property int childCount: 0
     property int childDoneCount: 0
     // Read when Delete is chosen. Defaults to this task alone.
-    property var subtreeSize: function() { return 1 }
+    property var subtreeSize: function() {
+        return 1;
+    }
 
     signal toggled()
     signal editRequested()
@@ -50,18 +52,20 @@ ListItem {
 
     function dueLine() {
         if (root.dueDate === "")
-            return ""
+            return "";
+
         if (root.dueTime === "")
-            return root.dueDate
-        return root.dueDate + " " + root.dueTime
+            return root.dueDate;
+
+        return root.dueDate + " " + root.dueTime;
     }
 
     function confirmDelete() {
-        var total = root.subtreeSize()
-        var label = total > 1 ? qsTr("Deleting %n tasks", "", total) : qsTr("Deleting")
+        var total = root.subtreeSize();
+        var label = total > 1 ? qsTr("Deleting %n tasks", "", total) : qsTr("Deleting");
         root.remorseAction(label, function() {
-            root.deleteConfirmed()
-        })
+            root.deleteConfirmed();
+        });
     }
 
     contentHeight: Theme.itemSizeMedium

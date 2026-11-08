@@ -1,3 +1,4 @@
+import "../components"
 /*!
     \qmltype SearchFilters
     \brief The search page's filter form, shown in a drawer.
@@ -9,7 +10,6 @@
 */
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import "../components"
 
 SilicaFlickable {
     id: form
@@ -22,67 +22,82 @@ SilicaFlickable {
     property string dueDate
     property string dueMode: "on"
     property string completionMode: "atLeast"
-
     readonly property var dateModes: ["on", "before", "after"]
     readonly property var completionModes: ["atLeast", "atMost"]
     readonly property var reminderModes: ["any", "yes", "no"]
-
-    readonly property var priorityOptions: [
-        { "value": "none", "text": priorityHelper.labelFor(0), "icon": "image://theme/icon-m-levels" },
-        { "value": "high", "text": priorityHelper.labelFor(1), "icon": priorityHelper.iconFor(1) },
-        { "value": "medium", "text": priorityHelper.labelFor(5), "icon": priorityHelper.iconFor(5) },
-        { "value": "low", "text": priorityHelper.labelFor(6), "icon": priorityHelper.iconFor(6) }
-    ]
+    readonly property var priorityOptions: [{
+        "value": "none",
+        "text": priorityHelper.labelFor(0),
+        "icon": "image://theme/icon-m-levels"
+    }, {
+        "value": "high",
+        "text": priorityHelper.labelFor(1),
+        "icon": priorityHelper.iconFor(1)
+    }, {
+        "value": "medium",
+        "text": priorityHelper.labelFor(5),
+        "icon": priorityHelper.iconFor(5)
+    }, {
+        "value": "low",
+        "text": priorityHelper.labelFor(6),
+        "icon": priorityHelper.iconFor(6)
+    }]
     property var statusOptions: statusOptionsOf(statusHelper.values)
     property var listOptions: listOptionsOf(Calendars.count)
     property var tagOptions: tagOptionsOf(Askare.tags)
 
     function statusOptionsOf(values) {
-        var out = []
+        var out = [];
         for (var i = 0; i < values.length; i++) {
             out.push({
                 "value": values[i],
                 "text": statusHelper.labelFor(values[i]),
                 "icon": statusHelper.iconFor(values[i])
-            })
+            });
         }
-        return out
+        return out;
     }
 
     function listOptionsOf(count) {
-        var out = []
+        var out = [];
         for (var i = 0; i < count; i++) {
-            var href = Calendars.hrefAt(i)
-            out.push({ "value": href, "text": Calendars.nameOfHref(href) })
+            var href = Calendars.hrefAt(i);
+            out.push({
+                "value": href,
+                "text": Calendars.nameOfHref(href)
+            });
         }
-        return out
+        return out;
     }
 
     function tagOptionsOf(tags) {
-        var out = []
-        for (var i = 0; i < tags.length; i++)
-            out.push({ "value": tags[i].name, "text": tags[i].name })
-        return out
+        var out = [];
+        for (var i = 0; i < tags.length; i++) out.push({
+            "value": tags[i].name,
+            "text": tags[i].name
+        })
+        return out;
     }
 
     function pad(value) {
-        return value < 10 ? "0" + value : "" + value
+        return value < 10 ? "0" + value : "" + value;
     }
 
     function asDate(iso) {
         if (iso === "")
-            return new Date()
-        var parts = iso.split("-")
-        return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]))
+            return new Date();
+
+        var parts = iso.split("-");
+        return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
     }
 
     function pickDate(iso, apply) {
         var dialog = pageStack.push("Sailfish.Silica.DatePickerDialog", {
             "date": form.asDate(iso)
-        })
+        });
         dialog.accepted.connect(function() {
-            apply(dialog.year + "-" + form.pad(dialog.month) + "-" + form.pad(dialog.day))
-        })
+            apply(dialog.year + "-" + form.pad(dialog.month) + "-" + form.pad(dialog.day));
+        });
     }
 
     function apply() {
@@ -99,25 +114,26 @@ SilicaFlickable {
             "dueDate": form.dueDate,
             "dueMode": form.dueMode,
             "reminder": form.reminderModes[reminderBox.currentIndex]
-        }
+        };
     }
 
     function reset() {
-        form.resetting = true
-        statusBox.clear()
-        listBox.clear()
-        priorityBox.clear()
-        tagChips.clear()
-        completionSlider.value = 0
-        form.completionMode = "atLeast"
-        dueTodaySwitch.checked = false
-        form.startDate = ""
-        form.startMode = "on"
-        form.dueDate = ""
-        form.dueMode = "on"
-        reminderBox.currentIndex = 0
-        form.resetting = false
-        Tasks.filters = {}
+        form.resetting = true;
+        statusBox.clear();
+        listBox.clear();
+        priorityBox.clear();
+        tagChips.clear();
+        completionSlider.value = 0;
+        form.completionMode = "atLeast";
+        dueTodaySwitch.checked = false;
+        form.startDate = "";
+        form.startMode = "on";
+        form.dueDate = "";
+        form.dueMode = "on";
+        reminderBox.currentIndex = 0;
+        form.resetting = false;
+        Tasks.filters = {
+        };
     }
 
     contentHeight: column.height + Theme.paddingLarge
@@ -147,17 +163,25 @@ SilicaFlickable {
             title: qsTr("List")
             defaultIcon: "image://theme/icon-m-events"
             options: form.listOptions
-            onSelectionChanged: if (!form.resetting) form.apply()
+            onSelectionChanged: {
+                if (!form.resetting) {
+                    form.apply();
+                }
+            }
         }
+
         MultiSelectBox {
             id: statusBox
 
             title: qsTr("Status")
             defaultIcon: "image://theme/icon-m-diagnostic"
             options: form.statusOptions
-            onSelectionChanged: if (!form.resetting) form.apply()
+            onSelectionChanged: {
+                if (!form.resetting) {
+                    form.apply();
+                }
+            }
         }
-
 
         MultiSelectBox {
             id: priorityBox
@@ -165,9 +189,12 @@ SilicaFlickable {
             title: qsTr("Priority")
             defaultIcon: "image://theme/icon-m-levels"
             options: form.priorityOptions
-            onSelectionChanged: if (!form.resetting) form.apply()
+            onSelectionChanged: {
+                if (!form.resetting) {
+                    form.apply();
+                }
+            }
         }
-
 
         IconField {
             id: completionField
@@ -188,7 +215,11 @@ SilicaFlickable {
                 maximumValue: 100
                 stepSize: 5
                 valueText: value === 0 ? qsTr("Any") : value + "%"
-                onValueChanged: if (!form.resetting) form.apply()
+                onValueChanged: {
+                    if (!form.resetting) {
+                        form.apply();
+                    }
+                }
             }
 
         }
@@ -200,9 +231,10 @@ SilicaFlickable {
             currentIndex: form.completionModes.indexOf(form.completionMode)
             onCurrentIndexChanged: {
                 if (form.resetting || currentIndex < 0)
-                    return
-                form.completionMode = form.completionModes[currentIndex]
-                form.apply()
+                    return ;
+
+                form.completionMode = form.completionModes[currentIndex];
+                form.apply();
             }
 
             menu: ContextMenu {
@@ -217,8 +249,6 @@ SilicaFlickable {
             }
 
         }
-
-
 
         // The tags on offer are the ones already in use, so they read as the
         // chips the task editor offers rather than as a menu of their own.
@@ -238,7 +268,11 @@ SilicaFlickable {
                 x: tagField.grooveLeftMargin
                 width: parent.width - x - tagField.grooveRightMargin
                 options: form.tagOptions
-                onSelectionChanged: if (!form.resetting) form.apply()
+                onSelectionChanged: {
+                    if (!form.resetting) {
+                        form.apply();
+                    }
+                }
             }
 
         }
@@ -290,20 +324,26 @@ SilicaFlickable {
             MouseArea {
                 id: dueTodayArea
 
+                onClicked: dueTodaySwitch.checked = !dueTodaySwitch.checked
+
                 anchors {
                     left: parent.left
                     right: dueTodaySwitch.left
                     top: parent.top
                     bottom: parent.bottom
                 }
-                onClicked: dueTodaySwitch.checked = !dueTodaySwitch.checked
+
             }
 
             Switch {
                 id: dueTodaySwitch
 
                 automaticCheck: true
-                onCheckedChanged: if (!form.resetting) form.apply()
+                onCheckedChanged: {
+                    if (!form.resetting) {
+                        form.apply();
+                    }
+                }
 
                 anchors {
                     right: parent.right
@@ -315,7 +355,6 @@ SilicaFlickable {
 
         }
 
-
         ValueButton {
             width: parent.width
             label: qsTr("Start date")
@@ -323,8 +362,8 @@ SilicaFlickable {
             labelMargin: leftMargin + Theme.iconSizeMedium + Theme.paddingMedium
             minimumContentHeight: Theme.itemSizeMedium + Theme.paddingSmall
             onClicked: form.pickDate(form.startDate, function(iso) {
-                form.startDate = iso
-                form.apply()
+                form.startDate = iso;
+                form.apply();
             })
 
             Icon {
@@ -347,9 +386,10 @@ SilicaFlickable {
             currentIndex: form.dateModes.indexOf(form.startMode)
             onCurrentIndexChanged: {
                 if (form.resetting || currentIndex < 0)
-                    return
-                form.startMode = form.dateModes[currentIndex]
-                form.apply()
+                    return ;
+
+                form.startMode = form.dateModes[currentIndex];
+                form.apply();
             }
 
             menu: ContextMenu {
@@ -374,8 +414,8 @@ SilicaFlickable {
             visible: form.startDate !== ""
             text: qsTr("Clear start date")
             onClicked: {
-                form.startDate = ""
-                form.apply()
+                form.startDate = "";
+                form.apply();
             }
         }
 
@@ -386,8 +426,8 @@ SilicaFlickable {
             labelMargin: leftMargin + Theme.iconSizeMedium + Theme.paddingMedium
             minimumContentHeight: Theme.itemSizeMedium + Theme.paddingSmall
             onClicked: form.pickDate(form.dueDate, function(iso) {
-                form.dueDate = iso
-                form.apply()
+                form.dueDate = iso;
+                form.apply();
             })
 
             Icon {
@@ -410,9 +450,10 @@ SilicaFlickable {
             currentIndex: form.dateModes.indexOf(form.dueMode)
             onCurrentIndexChanged: {
                 if (form.resetting || currentIndex < 0)
-                    return
-                form.dueMode = form.dateModes[currentIndex]
-                form.apply()
+                    return ;
+
+                form.dueMode = form.dateModes[currentIndex];
+                form.apply();
             }
 
             menu: ContextMenu {
@@ -437,8 +478,8 @@ SilicaFlickable {
             visible: form.dueDate !== ""
             text: qsTr("Clear due date")
             onClicked: {
-                form.dueDate = ""
-                form.apply()
+                form.dueDate = "";
+                form.apply();
             }
         }
 
@@ -453,7 +494,11 @@ SilicaFlickable {
             label: qsTr("Reminder set")
             icon.source: "image://theme/icon-m-alarm"
             currentIndex: 0
-            onCurrentIndexChanged: if (!form.resetting) form.apply()
+            onCurrentIndexChanged: {
+                if (!form.resetting) {
+                    form.apply();
+                }
+            }
 
             menu: ContextMenu {
                 MenuItem {

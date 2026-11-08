@@ -215,11 +215,11 @@
     <name>FilterItem</name>
     <message>
         <source>Deleting</source>
-        <translation type="unfinished">Eliminazione</translation>
+        <translation>Eliminazione</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Elimina</translation>
+        <translation>Elimina</translation>
     </message>
 </context>
 <context>
@@ -696,15 +696,15 @@
     </message>
     <message>
         <source>Completion is</source>
-        <translation type="unfinished"></translation>
+        <translation>Completamento è</translation>
     </message>
     <message>
         <source>At least</source>
-        <translation type="unfinished"></translation>
+        <translation>Almeno</translation>
     </message>
     <message>
         <source>At most</source>
-        <translation type="unfinished"></translation>
+        <translation>Al massimo</translation>
     </message>
 </context>
 <context>
@@ -743,7 +743,7 @@
     </message>
     <message>
         <source>Filters</source>
-        <translation type="unfinished">Filtri</translation>
+        <translation>Filtri</translation>
     </message>
     <message>
         <source>Save as smart list</source>
@@ -910,7 +910,7 @@
     <name>SmartListDialog</name>
     <message>
         <source>Save</source>
-        <translation type="unfinished">Salva</translation>
+        <translation>Salva</translation>
     </message>
     <message>
         <source>New smart list</source>
@@ -918,7 +918,7 @@
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <source>Smart lists save what you searched for and the filters you set, to automatically group matching tasks.</source>

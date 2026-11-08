@@ -36,8 +36,7 @@ MouseArea {
         radius: height / 2
         border.width: root.filled ? 0 : 1
         border.color: Theme.rgba(Theme.highlightColor, 0.4)
-        color: root.filled ? Theme.rgba(Theme.highlightColor, root.pressed ? 0.4 : 0.2)
-                           : root.pressed ? Theme.rgba(Theme.highlightColor, 0.2) : "transparent"
+        color: root.filled ? Theme.rgba(Theme.highlightColor, root.pressed ? 0.4 : 0.2) : root.pressed ? Theme.rgba(Theme.highlightColor, 0.2) : "transparent"
     }
 
     Row {

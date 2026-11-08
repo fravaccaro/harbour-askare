@@ -44,47 +44,52 @@ IconComboBox {
     signal selectionChanged(var values)
 
     function isSelected(value) {
-        return Selection.has(root.selected, value)
+        return Selection.has(root.selected, value);
     }
 
     function toggle(value) {
-        root.selected = Selection.toggled(root.selected, value)
-        root.selectionChanged(root.selected)
+        root.selected = Selection.toggled(root.selected, value);
+        root.selectionChanged(root.selected);
     }
 
     function clear() {
         if (root.selected.length === 0)
-            return
-        root.selected = []
-        root.selectionChanged([])
+            return ;
+
+        root.selected = [];
+        root.selectionChanged([]);
     }
 
     function summary() {
         if (root.selected.length === 0)
-            return root.placeholder
-        var names = []
+            return root.placeholder;
+
+        var names = [];
         for (var i = 0; i < root.options.length; i++) {
             if (root.isSelected(root.options[i].value))
-                names.push(root.options[i].text)
+                names.push(root.options[i].text);
+
         }
-        return names.join(", ")
+        return names.join(", ");
     }
 
     function optionIcon(value) {
         for (var i = 0; i < root.options.length; i++) {
             if (root.options[i].value === value && root.options[i].icon)
-                return root.options[i].icon
+                return root.options[i].icon;
+
         }
-        return ""
+        return "";
     }
 
     function activeIcon() {
         if (root.selected.length === 1) {
-            var chosen = root.optionIcon(root.selected[0])
+            var chosen = root.optionIcon(root.selected[0]);
             if (chosen !== "")
-                return chosen
+                return chosen;
+
         }
-        return root.defaultIcon
+        return root.defaultIcon;
     }
 
     width: parent.width
@@ -92,7 +97,11 @@ IconComboBox {
     currentIndex: -1
     description: root.summary()
     icon.source: root.activeIcon()
-    onCurrentIndexChanged: if (currentIndex >= 0) currentIndex = -1
+    onCurrentIndexChanged: {
+        if (currentIndex >= 0) {
+            currentIndex = -1;
+        }
+    }
 
     menu: ContextMenu {
         Repeater {
@@ -116,14 +125,15 @@ IconComboBox {
                 }
 
                 Switch {
+                    // Display only: ContextMenu fires MenuItem.clicked for the
+                    // whole row, including taps on the switch.
+
                     width: Theme.itemSizeExtraSmall
                     height: Theme.itemSizeSmall
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     automaticCheck: false
                     checked: root.isSelected(modelData.value)
-                    // Display only: ContextMenu fires MenuItem.clicked for the
-                    // whole row, including taps on the switch.
                 }
 
             }

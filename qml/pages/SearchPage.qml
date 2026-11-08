@@ -5,26 +5,28 @@ Page {
     id: page
 
     function clearQuery() {
-        Tasks.search = ""
-        Tasks.filters = {}
-        drawer.open = false
+        Tasks.search = "";
+        Tasks.filters = {
+        };
+        drawer.open = false;
     }
 
     function openFilters() {
-        searchField.focus = false
-        drawer.open = true
+        searchField.focus = false;
+        drawer.open = true;
     }
 
     // The search becomes a view of its own, words and filters together. The set
     // is read before the dialog opens, so what is saved is what was on screen.
     function saveSmartList() {
-        searchField.focus = false
-        var set = Tasks.searchSet()
-        var dialog = pageStack.push(Qt.resolvedUrl("SmartListDialog.qml"),
-                                    { "suggestion": Tasks.search })
+        searchField.focus = false;
+        var set = Tasks.searchSet();
+        var dialog = pageStack.push(Qt.resolvedUrl("SmartListDialog.qml"), {
+            "suggestion": Tasks.search
+        });
         dialog.accepted.connect(function() {
-            Askare.saveSmartList(dialog.name, set)
-        })
+            Askare.saveSmartList(dialog.name, set);
+        });
     }
 
     allowedOrientations: Orientation.All
@@ -33,7 +35,8 @@ Page {
     // it shows. A task opened from a result leaves the query in place.
     onStatusChanged: {
         if (status === PageStatus.Deactivating && page._navigation === PageNavigation.Back)
-            page.clearQuery()
+            page.clearQuery();
+
     }
     Component.onDestruction: page.clearQuery()
 
@@ -44,10 +47,6 @@ Page {
         // The filter form docks like the component gallery's panel: across the
         // top held upright, down the side when the phone is turned.
         dock: page.isPortrait ? Dock.Top : Dock.Left
-
-        background: SearchFilters {
-            anchors.fill: parent
-        }
 
         Item {
             anchors.fill: parent
@@ -66,6 +65,10 @@ Page {
                 onClicked: drawer.open = false
             }
 
+        }
+
+        background: SearchFilters {
+            anchors.fill: parent
         }
 
     }
@@ -119,18 +122,6 @@ Page {
             // While the drawer is out, a tap on a row closes it rather than
             // opening the task behind it.
             enabled: !drawer.opened
-
-            // Empty slot sized to the already-laid-out column; the column moves
-            // in on completion so the pulley still opens from the page top.
-            header: Item {
-                id: headerSlot
-
-                width: headerContainer.width
-                height: headerContainer.height
-
-                Component.onCompleted: headerContainer.parent = headerSlot
-            }
-
             // The gallery fills its model after the view exists. Ours is already
             // full, so pin content to origin once the header height is known.
             Component.onCompleted: contentY = originY
@@ -158,6 +149,16 @@ Page {
             }
 
             VerticalScrollDecorator {
+            }
+
+            // Empty slot sized to the already-laid-out column; the column moves
+            // in on completion so the pulley still opens from the page top.
+            header: Item {
+                id: headerSlot
+
+                width: headerContainer.width
+                height: headerContainer.height
+                Component.onCompleted: headerContainer.parent = headerSlot
             }
 
             section.delegate: SectionHeader {

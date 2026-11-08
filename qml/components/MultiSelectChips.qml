@@ -30,19 +30,20 @@ Flow {
     signal selectionChanged(var values)
 
     function isSelected(value) {
-        return Selection.has(root.selected, value)
+        return Selection.has(root.selected, value);
     }
 
     function toggle(value) {
-        root.selected = Selection.toggled(root.selected, value)
-        root.selectionChanged(root.selected)
+        root.selected = Selection.toggled(root.selected, value);
+        root.selectionChanged(root.selected);
     }
 
     function clear() {
         if (root.selected.length === 0)
-            return
-        root.selected = []
-        root.selectionChanged([])
+            return ;
+
+        root.selected = [];
+        root.selectionChanged([]);
     }
 
     spacing: Theme.paddingSmall

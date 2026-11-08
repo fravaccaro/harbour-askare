@@ -1,3 +1,4 @@
+import "../components"
 /*!
     \qmltype TagChips
     \brief Shows the tags of a task as a row of rounded chips.
@@ -13,7 +14,6 @@
 */
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import "../components"
 
 Flow {
     id: root

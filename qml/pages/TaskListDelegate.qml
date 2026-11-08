@@ -26,7 +26,9 @@ TaskRow {
     listColor: model.calendarColor
     childCount: model.childCount
     childDoneCount: model.childDoneCount
-    subtreeSize: function() { return Askare.subtreeSize(model.href) }
+    subtreeSize: function() {
+        return Askare.subtreeSize(model.href);
+    }
     onClicked: app.pushTask(model.href)
     onToggled: Askare.toggleDone(model.href)
     onEditRequested: app.editTask(model.href)

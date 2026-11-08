@@ -34,8 +34,8 @@ ListItem {
 
     function confirmDelete() {
         root.remorseAction(qsTr("Deleting"), function() {
-            root.deleteConfirmed()
-        })
+            root.deleteConfirmed();
+        });
     }
 
     contentHeight: Theme.itemSizeSmall
