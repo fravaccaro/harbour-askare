@@ -31,13 +31,12 @@ QUrl join(const QUrl &base, const QString &href)
     return base.resolved(relative);
 }
 
-QString origin(const QUrl &url)
+// Scheme, host, port and path. The path stays, because a Nextcloud under a
+// directory is only found by appending /remote.php/dav/ to that base.
+QString serverBase(const QUrl &url)
 {
-    QUrl root;
-    root.setScheme(url.scheme());
-    root.setHost(url.host());
-    root.setPort(url.port());
-    return root.toString();
+    return url.toString(QUrl::FullyEncoded | QUrl::StripTrailingSlash
+                        | QUrl::RemoveQuery | QUrl::RemoveFragment);
 }
 
 QString pathWithSlash(const QString &path)

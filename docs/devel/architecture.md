@@ -50,6 +50,8 @@ The package deliberately installs no `dbus-1/services` file - the `Paths` suite 
 
 A sync walks the server in a fixed order: PROPFIND for the current user principal, PROPFIND for its calendar home set, PROPFIND for the calendars under it, then one REPORT per calendar for its VTODOs. Only afterwards does it upload what the device changed, with PUT and DELETE.
 
+The principal request goes to the stored server address with `/remote.php/dav/` appended, through `Url::serverBase()`. The path is kept, so a Nextcloud that lives under a directory is asked for there. Asking the host root for that path is what a server in a subdirectory answers with 404, and the lists then stay empty.
+
 Collection hrefs keep their **trailing slash**, through `Url::pathWithSlash()`, so a task href built from a calendar href matches what the server returns.
 
 A change is uploaded with `If-Match` carrying the ETag the task was last read at, and a new task with `If-None-Match: *`, so neither a task changed on both sides nor a name already taken is overwritten. A task the server refuses stays marked dirty and is offered again on the next run; only a run that uploaded something may pull afterwards, so a rejected task cannot drive an endless loop.
