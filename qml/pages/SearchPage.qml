@@ -80,14 +80,13 @@ Page {
 
         BackgroundItem {
             width: parent.width
-            visible: Tasks.filtersActive
             onClicked: page.openFilters()
 
             Label {
                 x: Theme.horizontalPageMargin
                 anchors.verticalCenter: parent.verticalCenter
-                color: Theme.highlightColor
-                text: qsTr("Filters active")
+                color: Tasks.filtersActive ? Theme.highlightColor : Theme.primaryColor
+                text: Tasks.filtersActive ? qsTr("Filters active") : qsTr("Filters")
             }
 
         }
@@ -123,14 +122,6 @@ Page {
             // The gallery fills its model after the view exists. Ours is already
             // full, so pin content to origin once the header height is known.
             Component.onCompleted: contentY = originY
-
-            PullDownMenu {
-                MenuItem {
-                    text: qsTr("Filters")
-                    onClicked: page.openFilters()
-                }
-
-            }
 
             ViewPlaceholder {
                 enabled: listView.count === 0 && !Askare.busy

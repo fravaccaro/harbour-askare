@@ -53,7 +53,7 @@ The pulley menu offers **Refresh**, **Search** and **New task**. A new task star
 
 ### Filters
 
-**Filters** in the pulley menu, or the line that appears under the field once a filter is on, slides out a panel of filters. Each one is optional, and the results narrow as soon as a filter is set, even with the field empty. Where a filter offers several choices, a task matches any one of them; across filters, every filter that is set must match.
+**Filters** under the search field slides out a panel of filters. The line reads **Filters active** once any filter is on. Each one is optional, and the results narrow as soon as a filter is set, even with the field empty. Where a filter offers several choices, a task matches any one of them; across filters, every filter that is set must match.
 
 - **Status, List, Priority** and **Tags** each open a list of toggles, so more than one choice can be on at once.
 - **Completion** sets a percentage, then **At least** or **At most** keeps tasks at or above, or at or below, that mark.

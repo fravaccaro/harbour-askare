@@ -677,6 +677,18 @@
         <source>Clear filters</source>
         <translation>Clear filters</translation>
     </message>
+    <message>
+        <source>Completion is</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>At least</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>At most</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SearchPage</name>
