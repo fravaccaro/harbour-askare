@@ -285,7 +285,7 @@
     </message>
     <message>
         <source>Smart lists</source>
-        <translation>Liste intelligenti</translation>
+        <translation>Elenchi intelligenti</translation>
     </message>
 </context>
 <context>
@@ -747,12 +747,12 @@
     </message>
     <message>
         <source>Save as smart list</source>
-        <translation>Salva come lista intelligente</translation>
+        <translation>Salva come elenco intelligente</translation>
     </message>
     <message numerus="yes">
         <source>Filters (%n)</source>
         <translation>
-            <numerusform>Filtri (%n)</numerusform>
+            <numerusform>Filtro (%n)</numerusform>
             <numerusform>Filtri (%n)</numerusform>
         </translation>
     </message>
@@ -914,7 +914,7 @@
     </message>
     <message>
         <source>New smart list</source>
-        <translation>Nuova lista intelligente</translation>
+        <translation>Nuovo elenco intelligente</translation>
     </message>
     <message>
         <source>Name</source>
