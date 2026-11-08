@@ -212,6 +212,17 @@
     </message>
 </context>
 <context>
+    <name>FilterItem</name>
+    <message>
+        <source>Deleting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>LicenseListPart</name>
     <message>
         <source>License text</source>
@@ -270,6 +281,10 @@
     </message>
     <message>
         <source>Important</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Smart lists</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -725,12 +740,19 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Filters active</source>
+        <source>Filters</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Filters</source>
+        <source>Save as smart list</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>Filters (%n)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -879,6 +901,25 @@
     </message>
     <message>
         <source>Signed in as %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SmartListDialog</name>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New smart list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Smart lists save your active filters to automatically group matching tasks.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

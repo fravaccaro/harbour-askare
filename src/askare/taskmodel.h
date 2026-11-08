@@ -17,10 +17,12 @@ class TaskModel : public QAbstractListModel
     Q_OBJECT
     Q_PROPERTY(QString calendarHref READ calendarHref NOTIFY calendarHrefChanged)
     Q_PROPERTY(QString filter READ filter NOTIFY filterChanged)
+    Q_PROPERTY(int smartListId READ smartListId NOTIFY smartListIdChanged)
     Q_PROPERTY(QString tag READ tag NOTIFY tagChanged)
     Q_PROPERTY(QString search READ search WRITE setSearch NOTIFY searchChanged)
     Q_PROPERTY(QVariantMap filters READ filters WRITE setFilters NOTIFY filtersChanged)
     Q_PROPERTY(bool filtersActive READ filtersActive NOTIFY filtersChanged)
+    Q_PROPERTY(int filterCount READ filterCount NOTIFY filtersChanged)
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
 
 public:
@@ -49,12 +51,17 @@ public:
 
     QString calendarHref() const { return m_calendarHref; }
     QString filter() const { return m_filter; }
+    // The saved set the smart view is showing, or -1 in any other view.
+    int smartListId() const { return m_smartListId; }
     QString tag() const { return m_tag; }
     QString search() const { return m_search; }
     QVariantMap filters() const { return m_filters; }
     // Whether any filter narrows the search, so an empty query still pulls from
     // every list once a filter is on.
     bool filtersActive() const;
+    // How many of the filters are set, which the search page shows beside its
+    // Filters row.
+    int filterCount() const;
     QString title() const;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -68,6 +75,11 @@ public:
     Q_INVOKABLE void showCompleted();
     Q_INVOKABLE void showCalendar(const QString &href, const QString &name);
     Q_INVOKABLE void showTag(const QString &tag);
+    // A saved filter set as a view of its own. It reads like a search carrying
+    // those filters, so any query typed before it is dropped.
+    Q_INVOKABLE void showSmart(int id, const QString &name, const QVariantMap &filters);
+    // How many tasks a filter set keeps, for the row that offers it.
+    Q_INVOKABLE int countMatching(const QVariantMap &filters) const;
     // Looks through every task in every list. An empty query shows the view
     // in full again, unless a filter still narrows it.
     void setSearch(const QString &text);
@@ -84,6 +96,7 @@ public:
 signals:
     void calendarHrefChanged();
     void filterChanged();
+    void smartListIdChanged();
     void tagChanged();
     void searchChanged();
     void filtersChanged();
@@ -94,9 +107,11 @@ private:
     typedef QPair<int, int> ChildTally;
 
     void apply(const QString &filter, const QString &href, const QString &name);
+    void forgetSmartList();
     bool isMixedView() const;
     QVector<LocalTask> filtered() const;
     QVector<LocalTask> searched() const;
+    QVector<LocalTask> smartFiltered() const;
     // Drops completed and cancelled tasks the mixed-view settings hide.
     QVector<LocalTask> withSettings(const QVector<LocalTask> &tasks) const;
     ChildTally tallyOf(const QString &uid) const;
@@ -108,6 +123,10 @@ private:
     QString m_tag;
     QString m_search;
     QVariantMap m_filters;
+    // The smart view's own filters, kept apart from the search's so leaving a
+    // search does not empty the view underneath it.
+    QVariantMap m_viewFilters;
+    int m_smartListId;
     bool m_showCompleted;
     bool m_showCancelled;
     QVector<LocalTask> m_items;

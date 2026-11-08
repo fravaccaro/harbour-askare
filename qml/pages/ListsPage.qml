@@ -39,6 +39,11 @@ Page {
         pageStack.navigateBack();
     }
 
+    function selectSmart(id, name, filters) {
+        Tasks.showSmart(id, name, filters);
+        pageStack.navigateBack();
+    }
+
     allowedOrientations: Orientation.All
 
     SilicaListView {
@@ -124,6 +129,28 @@ Page {
                 count: Askare.completedCount
                 selected: Tasks.filter === "completed"
                 onClicked: page.selectCompleted()
+            }
+
+            // The searches kept by name, between the built-in views they read
+            // like and the lists of the server.
+            SectionHeader {
+                visible: Askare.smartLists.length > 0
+                text: qsTr("Smart lists")
+            }
+
+            Repeater {
+                model: Askare.smartLists
+
+                FilterItem {
+                    width: parent.width
+                    name: modelData.name
+                    count: modelData.count
+                    selected: Tasks.filter === "smart" && Tasks.smartListId === modelData.id
+                    deletable: true
+                    onClicked: page.selectSmart(modelData.id, modelData.name, modelData.filters)
+                    onDeleteConfirmed: Askare.deleteSmartList(modelData.id)
+                }
+
             }
 
             SectionHeader {

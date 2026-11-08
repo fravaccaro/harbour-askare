@@ -1,5 +1,7 @@
 #include "taskmodel.h"
 
+#include <algorithm>
+
 #include <QDate>
 
 #include "ics.h"
@@ -199,6 +201,24 @@ bool reminderWanted(const QVariantMap &f)
     return want == QLatin1String("yes") || want == QLatin1String("no");
 }
 
+// How many of the form's rows are set. One being set is what makes the filters
+// active at all, so the two answers come from this one list.
+int activeFilterCount(const QVariantMap &f)
+{
+    const bool set[] = {
+        !f.value(QStringLiteral("status")).toList().isEmpty(),
+        !f.value(QStringLiteral("lists")).toList().isEmpty(),
+        !f.value(QStringLiteral("priority")).toList().isEmpty(),
+        !f.value(QStringLiteral("tags")).toList().isEmpty(),
+        f.value(QStringLiteral("completion")).toInt() > 0,
+        f.value(QStringLiteral("dueToday")).toBool(),
+        !f.value(QStringLiteral("startDate")).toString().isEmpty(),
+        !f.value(QStringLiteral("dueDate")).toString().isEmpty(),
+        reminderWanted(f)
+    };
+    return std::count(set, set + (sizeof(set) / sizeof(set[0])), true);
+}
+
 bool statusPasses(const LocalTask &task, const QVariantMap &f)
 {
     const QVariantList chosen = f.value(QStringLiteral("status")).toList();
@@ -319,6 +339,7 @@ TaskModel::TaskModel(Store *store, QObject *parent)
     : QAbstractListModel(parent)
     , m_store(store)
     , m_filter(QStringLiteral("all"))
+    , m_smartListId(-1)
     , m_showCompleted(true)
     , m_showCancelled(false)
 {
@@ -363,6 +384,9 @@ QString TaskModel::title() const
         return m_calendarName;
     if (m_filter == QLatin1String("tag"))
         return m_tag;
+    // A smart view carries its own name, as a calendar does.
+    if (m_filter == QLatin1String("smart"))
+        return m_calendarName;
     return tr("All");
 }
 
@@ -407,6 +431,41 @@ void TaskModel::showTag(const QString &tag)
     apply(QStringLiteral("tag"), QString(), tag);
 }
 
+void TaskModel::showSmart(int id, const QString &name, const QVariantMap &filters)
+{
+    if (id != m_smartListId) {
+        m_smartListId = id;
+        emit smartListIdChanged();
+    }
+    m_viewFilters = filters;
+    // A query left over from the search would otherwise narrow the view the
+    // search just saved.
+    if (!m_search.isEmpty()) {
+        m_search.clear();
+        emit searchChanged();
+    }
+    if (!m_filters.isEmpty()) {
+        m_filters.clear();
+        emit filtersChanged();
+    }
+    apply(QStringLiteral("smart"), QString(), name);
+}
+
+void TaskModel::forgetSmartList()
+{
+    m_viewFilters.clear();
+    if (m_smartListId < 0)
+        return;
+
+    m_smartListId = -1;
+    emit smartListIdChanged();
+}
+
+int TaskModel::countMatching(const QVariantMap &filters) const
+{
+    return filteredBy(m_store->tasks(), filters).size();
+}
+
 void TaskModel::setSearch(const QString &text)
 {
     const QString next = text.trimmed();
@@ -428,21 +487,23 @@ void TaskModel::setFilters(const QVariantMap &filters)
     reload();
 }
 
+int TaskModel::filterCount() const
+{
+    return activeFilterCount(m_filters);
+}
+
 bool TaskModel::filtersActive() const
 {
-    return !m_filters.value(QStringLiteral("status")).toList().isEmpty()
-            || !m_filters.value(QStringLiteral("lists")).toList().isEmpty()
-            || !m_filters.value(QStringLiteral("priority")).toList().isEmpty()
-            || !m_filters.value(QStringLiteral("tags")).toList().isEmpty()
-            || m_filters.value(QStringLiteral("completion")).toInt() > 0
-            || m_filters.value(QStringLiteral("dueToday")).toBool()
-            || !m_filters.value(QStringLiteral("startDate")).toString().isEmpty()
-            || !m_filters.value(QStringLiteral("dueDate")).toString().isEmpty()
-            || reminderWanted(m_filters);
+    return filterCount() > 0;
 }
 
 void TaskModel::apply(const QString &filter, const QString &href, const QString &name)
 {
+    // Every other view leaves the smart one behind; showSmart() sets its own
+    // state before calling here, so only the others clear it.
+    if (filter != QLatin1String("smart"))
+        forgetSmartList();
+
     const bool same = filter == m_filter && href == m_calendarHref && name == m_calendarName;
     m_filter = filter;
     m_calendarHref = href;
@@ -580,6 +641,13 @@ QVector<LocalTask> TaskModel::searched() const
     return out;
 }
 
+// A smart view is its saved filters read the way a search reads them: across
+// every list, at every depth, finished and cancelled tasks included.
+QVector<LocalTask> TaskModel::smartFiltered() const
+{
+    return filteredBy(m_store->tasks(), m_viewFilters);
+}
+
 void TaskModel::reload()
 {
     beginResetModel();
@@ -587,6 +655,8 @@ void TaskModel::reload()
     // only the mixed views answer the completed and cancelled settings.
     if (!m_search.isEmpty() || filtersActive()) {
         m_items = searched();
+    } else if (m_filter == QLatin1String("smart")) {
+        m_items = smartFiltered();
     } else {
         m_items = filtered();
         if (isMixedView())

@@ -212,6 +212,17 @@
     </message>
 </context>
 <context>
+    <name>FilterItem</name>
+    <message>
+        <source>Deleting</source>
+        <translation type="unfinished">Deleting</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished">Delete</translation>
+    </message>
+</context>
+<context>
     <name>LicenseListPart</name>
     <message>
         <source>License text</source>
@@ -271,6 +282,10 @@
     <message>
         <source>Important</source>
         <translation>Important</translation>
+    </message>
+    <message>
+        <source>Smart lists</source>
+        <translation>Smart lists</translation>
     </message>
 </context>
 <context>
@@ -725,12 +740,19 @@
         <translation>To do</translation>
     </message>
     <message>
-        <source>Filters active</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Filters</source>
         <translation type="unfinished">Filters</translation>
+    </message>
+    <message>
+        <source>Save as smart list</source>
+        <translation>Save as smart list</translation>
+    </message>
+    <message numerus="yes">
+        <source>Filters (%n)</source>
+        <translation>
+            <numerusform>Filters (%n)</numerusform>
+            <numerusform>Filters (%n)</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -880,6 +902,25 @@
     <message>
         <source>Signed in as %1</source>
         <translation>Signed in as %1</translation>
+    </message>
+</context>
+<context>
+    <name>SmartListDialog</name>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Save</translation>
+    </message>
+    <message>
+        <source>New smart list</source>
+        <translation>New smart list</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Name</translation>
+    </message>
+    <message>
+        <source>Smart lists save your active filters to automatically group matching tasks.</source>
+        <translation>Smart lists save your active filters to automatically group matching tasks.</translation>
     </message>
 </context>
 <context>

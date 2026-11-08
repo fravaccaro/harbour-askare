@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QSettings>
 #include <QString>
+#include <QVariantList>
+#include <QVariantMap>
 
 #include "secretsstore.h"
 
@@ -60,6 +62,16 @@ public:
     bool showCancelled() const { return m_showCancelled; }
     void setShowCancelled(bool show);
 
+    // The saved search filter sets, each as { id, name, filters }, in the order
+    // they were saved. They are a preference of this device, not server data,
+    // so they outlive a sign-out the way the list settings above do.
+    QVariantList smartLists() const { return m_smartLists; }
+    // Answers the id the new set was filed under.
+    int addSmartList(const QString &name, const QVariantMap &filters);
+    void removeSmartList(int id);
+    QVariantMap smartListFilters(int id) const;
+    QString smartListName(int id) const;
+
     bool isConfigured() const;
     bool isReady() const { return m_ready; }
     QString secretsError() const { return m_secretsError; }
@@ -78,6 +90,7 @@ signals:
     void syncAfterPushChanged();
     void showCompletedChanged();
     void showCancelledChanged();
+    void smartListsChanged();
     void configuredChanged();
     void readyChanged();
     void secretsErrorChanged();
@@ -85,6 +98,10 @@ signals:
 private:
     void store(const QString &key, const QVariant &value);
     void applyStoredPassword(const QString &password);
+    void loadSmartLists();
+    void storeSmartLists();
+    int indexOfSmartList(int id) const;
+    int unusedSmartListId() const;
 
     QSettings m_settings;
     SecretsStore m_secrets;
@@ -92,6 +109,7 @@ private:
     QString m_username;
     QString m_password;
     QString m_secretsError;
+    QVariantList m_smartLists;
     bool m_ignoreSslErrors;
     bool m_syncOnStart;
     int m_syncInterval;

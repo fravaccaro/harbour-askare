@@ -15,6 +15,16 @@ Page {
         drawer.open = true
     }
 
+    // The filters become a view of their own; the query stays behind, so the
+    // saved set reads the same whatever was typed when it was saved.
+    function saveSmartList() {
+        searchField.focus = false
+        var dialog = pageStack.push(Qt.resolvedUrl("SmartListDialog.qml"))
+        dialog.accepted.connect(function() {
+            Askare.saveSmartList(dialog.name, Tasks.filters)
+        })
+    }
+
     allowedOrientations: Orientation.All
     // A page pushed on top deactivates this one too. Back is what says the
     // search itself is leaving, so the list underneath is whole again before
@@ -86,7 +96,7 @@ Page {
                 x: Theme.horizontalPageMargin
                 anchors.verticalCenter: parent.verticalCenter
                 color: Tasks.filtersActive ? Theme.highlightColor : Theme.primaryColor
-                text: Tasks.filtersActive ? qsTr("Filters active") : qsTr("Filters")
+                text: Tasks.filtersActive ? qsTr("Filters (%n)", "", Tasks.filterCount) : qsTr("Filters")
             }
 
         }
@@ -123,8 +133,24 @@ Page {
             // full, so pin content to origin once the header height is known.
             Component.onCompleted: contentY = originY
 
+            PullDownMenu {
+                MenuItem {
+                    // Shown always, so the way to keep a search is never
+                    // hidden; it only waits for a filter to be set.
+                    enabled: Tasks.filtersActive
+                    text: qsTr("Save as smart list")
+                    onClicked: page.saveSmartList()
+                }
+
+            }
+
             ViewPlaceholder {
                 enabled: listView.count === 0 && !Askare.busy
+                // Silica puts the text a third of the way down the screen,
+                // which a header carrying the field and the filters as well as
+                // the title reaches all the way to. Two thirds of that header
+                // moves it to a third of the way down what is left of the view.
+                verticalOffset: headerContainer.height * 2 / 3
                 text: Tasks.search !== "" || Tasks.filtersActive ? qsTr("No matches") : qsTr("No tasks")
                 hintText: Tasks.search !== "" || Tasks.filtersActive ? qsTr("Try another search") : ""
             }

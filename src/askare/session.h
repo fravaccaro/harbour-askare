@@ -49,6 +49,8 @@ class Session : public QObject
     Q_PROPERTY(QString nextDueSummary READ nextDueSummary NOTIFY coverChanged)
     // One entry per tag in use, as { name, count }, for the lists page.
     Q_PROPERTY(QVariantList tags READ tags NOTIFY coverChanged)
+    // One entry per saved filter set, as { id, name, filters, count }.
+    Q_PROPERTY(QVariantList smartLists READ smartLists NOTIFY smartListsChanged)
     Q_PROPERTY(int conflictCount READ conflictCount NOTIFY conflictsChanged)
 
 public:
@@ -76,6 +78,7 @@ public:
     int completedCount() const;
     QString nextDueSummary() const;
     QVariantList tags() const;
+    QVariantList smartLists() const;
     int conflictCount() const { return m_conflicts.size(); }
 
     Q_INVOKABLE void startLogin(const QString &serverUrl);
@@ -105,6 +108,10 @@ public:
     Q_INVOKABLE QVariantList conflicts() const;
     Q_INVOKABLE void resolveKeepMine(const QString &href);
     Q_INVOKABLE void resolveKeepTheirs(const QString &href);
+    // Files the filters as a view of its own, under the name given.
+    Q_INVOKABLE int saveSmartList(const QString &name, const QVariantMap &filters);
+    // Deleting the set now on show leaves the task list on All.
+    Q_INVOKABLE void deleteSmartList(int id);
 
 signals:
     void readyChanged();
@@ -121,6 +128,7 @@ signals:
     void syncAfterPushChanged();
     void showCompletedTasksChanged();
     void showCancelledTasksChanged();
+    void smartListsChanged();
     void coverChanged();
     void tasksChanged();
     void conflictsChanged();

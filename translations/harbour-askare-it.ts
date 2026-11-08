@@ -212,6 +212,17 @@
     </message>
 </context>
 <context>
+    <name>FilterItem</name>
+    <message>
+        <source>Deleting</source>
+        <translation type="unfinished">Eliminazione</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished">Elimina</translation>
+    </message>
+</context>
+<context>
     <name>LicenseListPart</name>
     <message>
         <source>License text</source>
@@ -271,6 +282,10 @@
     <message>
         <source>Important</source>
         <translation>Importanti</translation>
+    </message>
+    <message>
+        <source>Smart lists</source>
+        <translation>Liste intelligenti</translation>
     </message>
 </context>
 <context>
@@ -727,12 +742,19 @@
         <translation>Da fare</translation>
     </message>
     <message>
-        <source>Filters active</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Filters</source>
         <translation type="unfinished">Filtri</translation>
+    </message>
+    <message>
+        <source>Save as smart list</source>
+        <translation>Salva come lista intelligente</translation>
+    </message>
+    <message numerus="yes">
+        <source>Filters (%n)</source>
+        <translation>
+            <numerusform>Filtri (%n)</numerusform>
+            <numerusform>Filtri (%n)</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -882,6 +904,25 @@
     <message>
         <source>Signed in as %1</source>
         <translation>Accesso eseguito come %1</translation>
+    </message>
+</context>
+<context>
+    <name>SmartListDialog</name>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Salva</translation>
+    </message>
+    <message>
+        <source>New smart list</source>
+        <translation>Nuova lista intelligente</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nome</translation>
+    </message>
+    <message>
+        <source>Smart lists save your active filters to automatically group matching tasks.</source>
+        <translation>Gli elenchi intelligenti salvano i filtri attivi per raggruppare automaticamente le attività.</translation>
     </message>
 </context>
 <context>

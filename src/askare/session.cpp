@@ -136,6 +136,10 @@ Session::Session(Config *config, Store *store, CalendarModel *calendars,
     connect(m_config, &Config::showCancelledChanged, this,
             &Session::showCancelledTasksChanged);
     connect(m_config, &Config::showCancelledChanged, this, &Session::applyShowCancelled);
+    connect(m_config, &Config::smartListsChanged, this, &Session::smartListsChanged);
+    // The counts beside the saved sets are read from the store, so they follow
+    // the same beat as the counts beside the built-in views.
+    connect(this, &Session::coverChanged, this, &Session::smartListsChanged);
     connect(m_config, &Config::readyChanged, this, &Session::syncIfStartupWanted);
     m_store->open();
     applyShowCompleted();
@@ -282,6 +286,34 @@ int Session::todayCount() const
 int Session::importantCount() const
 {
     return m_store->isOpen() ? m_store->importantCount() : 0;
+}
+
+// The saved sets with the number of tasks each keeps, worked out against the
+// store as it stands rather than stored beside the filters.
+QVariantList Session::smartLists() const
+{
+    QVariantList out = m_config->smartLists();
+    for (int i = 0; i < out.size(); ++i) {
+        QVariantMap entry = out.at(i).toMap();
+        const QVariantMap filters = entry.value(QStringLiteral("filters")).toMap();
+        entry.insert(QStringLiteral("count"),
+                     m_store->isOpen() ? m_tasks->countMatching(filters) : 0);
+        out[i] = entry;
+    }
+    return out;
+}
+
+int Session::saveSmartList(const QString &name, const QVariantMap &filters)
+{
+    return m_config->addSmartList(name, filters);
+}
+
+void Session::deleteSmartList(int id)
+{
+    // The view would otherwise go on showing a set that no longer exists.
+    if (m_tasks->smartListId() == id)
+        m_tasks->showAll();
+    m_config->removeSmartList(id);
 }
 
 QVariantList Session::tags() const

@@ -93,6 +93,7 @@ DISTFILES += \
     qml/pages/SearchFilters.qml \
     qml/pages/SearchPage.qml \
     qml/pages/SettingsPage.qml \
+    qml/pages/SmartListDialog.qml \
     qml/pages/StatusOptions.qml \
     qml/pages/SubtaskRow.qml \
     qml/pages/StartPage.qml \
