@@ -11,9 +11,7 @@ Page {
     }
 
     function openFilters() {
-        if (listView.headerItem)
-            listView.headerItem.field.focus = false
-
+        searchField.focus = false
         drawer.open = true
     }
 
@@ -42,92 +40,112 @@ Page {
         Item {
             anchors.fill: parent
 
-            SilicaListView {
-                id: listView
-
-                model: Tasks
-                // Nothing here is picked out. A current row would take the focus
-                // the field just gained, and every keystroke rebuilds the model.
-                currentIndex: -1
-                section.property: "group"
-                // While the drawer is out, a tap on a row closes it rather than
-                // opening the task behind it.
-                enabled: !drawer.opened
-
+            // Loader first, column second — same order as the gallery. The
+            // Loader defers the list until the column has its final height, so
+            // a page opened on an already-filled model still shows the title.
+            Loader {
                 anchors.fill: parent
+                sourceComponent: listViewComponent
+            }
 
-                // Header, field and filter notice ride at the top of the list so
-                // the pull-down menu opens from the very top of the page. The
-                // field is left unfocused on open so the title stays in view;
-                // headerItem.field reaches it from the page.
-                header: Column {
-                    id: heading
+            MouseArea {
+                anchors.fill: parent
+                enabled: drawer.open
+                onClicked: drawer.open = false
+            }
 
-                    property alias field: searchField
+        }
 
-                    width: listView.width
+    }
 
-                    PageHeader {
-                        title: qsTr("Search")
-                    }
+    Column {
+        id: headerContainer
 
-                    SearchField {
-                        id: searchField
+        width: page.width
 
-                        width: parent.width
-                        placeholderText: qsTr("Search tasks")
-                        inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText
-                        EnterKey.iconSource: "image://theme/icon-m-enter-close"
-                        EnterKey.onClicked: focus = false
-                        onTextChanged: Tasks.search = text
-                    }
+        PageHeader {
+            title: qsTr("Search")
+        }
 
-                    BackgroundItem {
-                        width: parent.width
-                        visible: Tasks.filtersActive
-                        onClicked: page.openFilters()
+        SearchField {
+            id: searchField
 
-                        Label {
-                            x: Theme.horizontalPageMargin
-                            anchors.verticalCenter: parent.verticalCenter
-                            color: Theme.highlightColor
-                            text: qsTr("Filters active")
-                        }
+            width: parent.width
+            placeholderText: qsTr("Search tasks")
+            inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText
+            EnterKey.iconSource: "image://theme/icon-m-enter-close"
+            EnterKey.onClicked: focus = false
+            onTextChanged: Tasks.search = text
+        }
 
-                    }
+        BackgroundItem {
+            width: parent.width
+            visible: Tasks.filtersActive
+            onClicked: page.openFilters()
 
-                }
+            Label {
+                x: Theme.horizontalPageMargin
+                anchors.verticalCenter: parent.verticalCenter
+                color: Theme.highlightColor
+                text: qsTr("Filters active")
+            }
 
-                PullDownMenu {
-                    MenuItem {
-                        text: qsTr("Filters")
-                        onClicked: page.openFilters()
-                    }
+        }
 
-                }
+    }
 
-                ViewPlaceholder {
-                    enabled: listView.count === 0 && !Askare.busy
-                    text: Tasks.search !== "" || Tasks.filtersActive ? qsTr("No matches") : qsTr("No tasks")
-                    hintText: Tasks.search !== "" || Tasks.filtersActive ? qsTr("Try another search") : ""
-                }
+    Component {
+        id: listViewComponent
 
-                VerticalScrollDecorator {
-                }
+        SilicaListView {
+            id: listView
 
-                section.delegate: SectionHeader {
-                    text: section === "cancelled" ? qsTr("Cancelled") : (section === "completed" ? qsTr("Completed") : qsTr("To do"))
-                }
+            model: Tasks
+            // Nothing here is picked out. A current row would take the focus
+            // the field just gained, and every keystroke rebuilds the model.
+            currentIndex: -1
+            section.property: "group"
+            // While the drawer is out, a tap on a row closes it rather than
+            // opening the task behind it.
+            enabled: !drawer.opened
 
-                delegate: TaskListDelegate {
+            // Empty slot sized to the already-laid-out column; the column moves
+            // in on completion so the pulley still opens from the page top.
+            header: Item {
+                id: headerSlot
+
+                width: headerContainer.width
+                height: headerContainer.height
+
+                Component.onCompleted: headerContainer.parent = headerSlot
+            }
+
+            // The gallery fills its model after the view exists. Ours is already
+            // full, so pin content to origin once the header height is known.
+            Component.onCompleted: contentY = originY
+
+            PullDownMenu {
+                MenuItem {
+                    text: qsTr("Filters")
+                    onClicked: page.openFilters()
                 }
 
             }
 
-            MouseArea {
-                anchors.fill: listView
-                enabled: drawer.open
-                onClicked: drawer.open = false
+            ViewPlaceholder {
+                enabled: listView.count === 0 && !Askare.busy
+                text: Tasks.search !== "" || Tasks.filtersActive ? qsTr("No matches") : qsTr("No tasks")
+                hintText: Tasks.search !== "" || Tasks.filtersActive ? qsTr("Try another search") : ""
+            }
+
+            VerticalScrollDecorator {
+            }
+
+            section.delegate: SectionHeader {
+                text: section === "cancelled" ? qsTr("Cancelled") : (section === "completed" ? qsTr("Completed") : qsTr("To do"))
+            }
+
+            delegate: TaskListDelegate {
             }
 
         }

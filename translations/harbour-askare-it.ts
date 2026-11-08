@@ -716,11 +716,11 @@
     </message>
     <message>
         <source>Filters active</source>
-        <translation>Filtri attivi</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Filters</source>
-        <translation>Filtri</translation>
+        <translation type="unfinished">Filtri</translation>
     </message>
 </context>
 <context>
