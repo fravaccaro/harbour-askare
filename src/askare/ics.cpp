@@ -650,6 +650,16 @@ bool isCurrent(const QString &status, const QString &due)
     return due.left(8) <= today;
 }
 
+// Open work whose due day is today. Overdue and undated tasks stay in Current.
+bool isToday(const QString &status, const QString &due)
+{
+    if (isCompleted(status) || isCancelled(status) || due.size() < 8)
+        return false;
+
+    const QString today = QDate::currentDate().toString(QStringLiteral("yyyyMMdd"));
+    return due.left(8) == today;
+}
+
 // Nextcloud's Important list: an incomplete task in the high band (1-4).
 // Priority 5 is medium and 6-9 low, so neither counts.
 bool isImportant(const QString &status, int priority)

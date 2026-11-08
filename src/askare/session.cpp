@@ -274,6 +274,11 @@ int Session::currentCount() const
     return m_store->isOpen() ? m_store->currentCount() : 0;
 }
 
+int Session::todayCount() const
+{
+    return m_store->isOpen() ? m_store->todayCount() : 0;
+}
+
 int Session::importantCount() const
 {
     return m_store->isOpen() ? m_store->importantCount() : 0;

@@ -56,6 +56,7 @@ public:
 
     Q_INVOKABLE void showAll();
     Q_INVOKABLE void showCurrent();
+    Q_INVOKABLE void showToday();
     Q_INVOKABLE void showImportant();
     Q_INVOKABLE void showCompleted();
     Q_INVOKABLE void showCalendar(const QString &href, const QString &name);
@@ -83,6 +84,8 @@ private:
 
     void apply(const QString &filter, const QString &href, const QString &name);
     bool isMixedView() const;
+    QVector<LocalTask> filtered() const;
+    QVector<LocalTask> searched(const QVector<LocalTask> &tasks) const;
     // Drops completed and cancelled tasks the mixed-view settings hide.
     QVector<LocalTask> withSettings(const QVector<LocalTask> &tasks) const;
     ChildTally tallyOf(const QString &uid) const;

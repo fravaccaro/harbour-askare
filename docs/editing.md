@@ -49,7 +49,7 @@ Notes are written as plain text and shown with their Markdown applied: headings,
 
 ## Subtasks
 
-**Add subtask** creates a task under the one being read, in the list of its parent, because a server resolves the relation between the two by an identifier that is unique only within one list. The task list counts the subtasks of a task on its row, and the Current and Completed views show subtasks in their own right rather than behind their parent.
+**Add subtask** creates a task under the one being read, in the list of its parent, because a server resolves the relation between the two by an identifier that is unique only within one list. The task list counts the subtasks of a task on its row, and the Current, Today and Completed views show subtasks in their own right rather than behind their parent.
 
 Deleting a task deletes its subtasks with it; the confirmation says how many tasks that is.
 

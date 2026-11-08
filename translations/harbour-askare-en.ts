@@ -237,6 +237,10 @@
         <translation>Current</translation>
     </message>
     <message>
+        <source>Today</source>
+        <translation>Today</translation>
+    </message>
+    <message>
         <source>No task lists</source>
         <translation>No task lists</translation>
     </message>
@@ -1068,6 +1072,10 @@
         <translation>Current</translation>
     </message>
     <message>
+        <source>Today</source>
+        <translation>Today</translation>
+    </message>
+    <message>
         <source>All</source>
         <translation>All</translation>
     </message>
@@ -1136,14 +1144,6 @@
     <message>
         <source>Subtasks %1/%2</source>
         <translation>Subtasks %1/%2</translation>
-    </message>
-    <message>
-        <source>About</source>
-        <translation>About</translation>
-    </message>
-    <message>
-        <source>Settings</source>
-        <translation>Settings</translation>
     </message>
     <message>
         <source>Edit</source>

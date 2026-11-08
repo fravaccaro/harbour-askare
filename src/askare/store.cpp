@@ -412,6 +412,20 @@ int Store::currentCount() const
     return count;
 }
 
+int Store::todayCount() const
+{
+    if (!isOpen())
+        return 0;
+
+    int count = 0;
+    const QVector<LocalTask> items = tasks();
+    for (const LocalTask &task : items) {
+        if (Ics::isToday(task.status, task.due))
+            ++count;
+    }
+    return count;
+}
+
 int Store::importantCount() const
 {
     if (!isOpen())

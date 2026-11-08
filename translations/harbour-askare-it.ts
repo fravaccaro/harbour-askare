@@ -237,6 +237,10 @@
         <translation>Correnti</translation>
     </message>
     <message>
+        <source>Today</source>
+        <translation>Oggi</translation>
+    </message>
+    <message>
         <source>No task lists</source>
         <translation>Nessun elenco attività</translation>
     </message>
@@ -1070,6 +1074,10 @@
         <translation>Correnti</translation>
     </message>
     <message>
+        <source>Today</source>
+        <translation>Oggi</translation>
+    </message>
+    <message>
         <source>All</source>
         <translation>Tutte</translation>
     </message>
@@ -1138,14 +1146,6 @@
     <message>
         <source>Subtasks %1/%2</source>
         <translation>Sottoattività %1/%2</translation>
-    </message>
-    <message>
-        <source>About</source>
-        <translation>Informazioni</translation>
-    </message>
-    <message>
-        <source>Settings</source>
-        <translation>Impostazioni</translation>
     </message>
     <message>
         <source>Edit</source>

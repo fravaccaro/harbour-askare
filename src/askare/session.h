@@ -43,6 +43,7 @@ class Session : public QObject
                NOTIFY showCancelledTasksChanged)
     Q_PROPERTY(int openCount READ openCount NOTIFY coverChanged)
     Q_PROPERTY(int currentCount READ currentCount NOTIFY coverChanged)
+    Q_PROPERTY(int todayCount READ todayCount NOTIFY coverChanged)
     Q_PROPERTY(int importantCount READ importantCount NOTIFY coverChanged)
     Q_PROPERTY(int completedCount READ completedCount NOTIFY coverChanged)
     Q_PROPERTY(QString nextDueSummary READ nextDueSummary NOTIFY coverChanged)
@@ -70,6 +71,7 @@ public:
     bool showCancelledTasks() const;
     int openCount() const;
     int currentCount() const;
+    int todayCount() const;
     int importantCount() const;
     int completedCount() const;
     QString nextDueSummary() const;

@@ -39,6 +39,7 @@ public:
     QVector<TagInfo> tagInfos() const;
     int openCount() const;
     int currentCount() const;
+    int todayCount() const;
     int importantCount() const;
     int completedCount() const;
     LocalTask nextOpen() const;

@@ -16,6 +16,16 @@ QVector<LocalTask> currentOf(const QVector<LocalTask> &tasks)
     return out;
 }
 
+QVector<LocalTask> todayOf(const QVector<LocalTask> &tasks)
+{
+    QVector<LocalTask> out;
+    for (const LocalTask &task : tasks) {
+        if (Ics::isToday(task.status, task.due))
+            out.append(task);
+    }
+    return out;
+}
+
 // Drops only completed tasks, so an open task due later still shows. This is
 // what currentOf() does not do, since that view also hides what is not due yet.
 QVector<LocalTask> openOf(const QVector<LocalTask> &tasks)
@@ -178,6 +188,8 @@ QString TaskModel::title() const
 {
     if (m_filter == QLatin1String("current"))
         return tr("Current");
+    if (m_filter == QLatin1String("today"))
+        return tr("Today");
     if (m_filter == QLatin1String("important"))
         return tr("Important");
     if (m_filter == QLatin1String("completed"))
@@ -197,6 +209,11 @@ void TaskModel::showAll()
 void TaskModel::showCurrent()
 {
     apply(QStringLiteral("current"), QString(), QString());
+}
+
+void TaskModel::showToday()
+{
+    apply(QStringLiteral("today"), QString(), QString());
 }
 
 void TaskModel::showImportant()
@@ -342,37 +359,46 @@ QVector<LocalTask> TaskModel::withSettings(const QVector<LocalTask> &tasks) cons
     return out;
 }
 
+// Current, Today and Completed stay flat: a subtask due today must not hide
+// behind its parent in the views that answer "what now" and "what is done".
+QVector<LocalTask> TaskModel::filtered() const
+{
+    if (m_filter == QLatin1String("current"))
+        return currentOf(m_store->tasks());
+    if (m_filter == QLatin1String("today"))
+        return todayOf(m_store->tasks());
+    if (m_filter == QLatin1String("important"))
+        return importantOf(m_store->tasks());
+    if (m_filter == QLatin1String("completed"))
+        return completedOf(m_store->tasks());
+    if (m_filter == QLatin1String("tag"))
+        return taggedOf(m_store->tasks(), m_tag);
+    if (m_filter == QLatin1String("calendar"))
+        return m_store->topLevelTasks(m_calendarHref);
+    return m_store->topLevelTasks();
+}
+
+// A tag or a smart list already lays every task out flat, so searching them
+// narrows what is there. All and a single list show parents only, so a search
+// widens to every task in scope, or a matching subtask would hide behind a
+// parent that does not match.
+QVector<LocalTask> TaskModel::searched(const QVector<LocalTask> &tasks) const
+{
+    if (m_filter == QLatin1String("all") || m_filter == QLatin1String("calendar"))
+        return withSettings(matchingOf(m_store->tasks(m_calendarHref), m_search));
+    return matchingOf(tasks, m_search);
+}
+
 void TaskModel::reload()
 {
     beginResetModel();
-    // Current and completed stay flat: a subtask due today must not hide
-    // behind its parent in the views that answer "what now" and "what is done".
-    if (m_filter == QLatin1String("current"))
-        m_items = currentOf(m_store->tasks());
-    else if (m_filter == QLatin1String("important"))
-        m_items = importantOf(m_store->tasks());
-    else if (m_filter == QLatin1String("completed"))
-        m_items = completedOf(m_store->tasks());
-    else if (m_filter == QLatin1String("tag"))
-        m_items = taggedOf(m_store->tasks(), m_tag);
-    else if (m_filter == QLatin1String("calendar"))
-        m_items = m_store->topLevelTasks(m_calendarHref);
-    else
-        m_items = m_store->topLevelTasks();
+    m_items = filtered();
     // Only the mixed views answer the two settings; the actionable views and
     // the completed one already decide membership by status.
     if (isMixedView())
         m_items = withSettings(m_items);
-    // A tag or a smart list already lays every task out flat, so searching
-    // them narrows what is there. All and a single list show parents only, so
-    // a search widens to every task in scope, or a matching subtask would hide
-    // behind a parent that does not match.
-    if (!m_search.isEmpty()) {
-        if (m_filter == QLatin1String("all") || m_filter == QLatin1String("calendar"))
-            m_items = withSettings(matchingOf(m_store->tasks(m_calendarHref), m_search));
-        else
-            m_items = matchingOf(m_items, m_search);
-    }
+    if (!m_search.isEmpty())
+        m_items = searched(m_items);
     m_tallies = talliesOf(m_store->tasks());
     m_colors = colorsOf(m_store->calendars());
     endResetModel();

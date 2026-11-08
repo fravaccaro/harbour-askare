@@ -14,6 +14,11 @@ Page {
         pageStack.navigateBack();
     }
 
+    function selectToday() {
+        Tasks.showToday();
+        pageStack.navigateBack();
+    }
+
     function selectImportant() {
         Tasks.showImportant();
         pageStack.navigateBack();
@@ -103,6 +108,14 @@ Page {
                 count: Askare.currentCount
                 selected: Tasks.filter === "current"
                 onClicked: page.selectCurrent()
+            }
+
+            FilterItem {
+                width: parent.width
+                name: qsTr("Today")
+                count: Askare.todayCount
+                selected: Tasks.filter === "today"
+                onClicked: page.selectToday()
             }
 
             FilterItem {

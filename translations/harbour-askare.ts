@@ -237,6 +237,10 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Today</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>No task lists</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1068,6 +1072,10 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Today</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>All</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1135,14 +1143,6 @@
     </message>
     <message>
         <source>Subtasks %1/%2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>About</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

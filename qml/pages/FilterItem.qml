@@ -2,7 +2,7 @@
     \qmltype FilterItem
     \brief A list row showing a named view and how many tasks it holds.
 
-    Used for the All, Current and Completed entries of the lists page. The row
+    Used for the All, Current, Today and Completed entries of the lists page. The row
     carries no model knowledge: the caller supplies the name, the count and
     whether the view is the selected one, and reacts to \c clicked.
 
