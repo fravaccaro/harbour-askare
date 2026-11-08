@@ -328,6 +328,13 @@
     </message>
 </context>
 <context>
+    <name>MultiSelectBox</name>
+    <message>
+        <source>Any</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Opal.About</name>
     <message>
         <source>About</source>
@@ -577,6 +584,101 @@
     </message>
 </context>
 <context>
+    <name>SearchFilters</name>
+    <message>
+        <source>Filters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>List</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Priority</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Completion</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Any</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tasks due today</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Schedule</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start is</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Before</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>After</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear start date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Due date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Due is</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear due date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reminder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reminder set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear filters</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SearchPage</name>
     <message>
         <source>Search</source>
@@ -608,6 +710,14 @@
     </message>
     <message>
         <source>To do</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filters active</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filters</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

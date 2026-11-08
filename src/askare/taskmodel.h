@@ -5,6 +5,7 @@
 #include <QHash>
 #include <QPair>
 #include <QString>
+#include <QVariantMap>
 #include <QVector>
 
 #include "types.h"
@@ -18,6 +19,8 @@ class TaskModel : public QAbstractListModel
     Q_PROPERTY(QString filter READ filter NOTIFY filterChanged)
     Q_PROPERTY(QString tag READ tag NOTIFY tagChanged)
     Q_PROPERTY(QString search READ search WRITE setSearch NOTIFY searchChanged)
+    Q_PROPERTY(QVariantMap filters READ filters WRITE setFilters NOTIFY filtersChanged)
+    Q_PROPERTY(bool filtersActive READ filtersActive NOTIFY filtersChanged)
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
 
 public:
@@ -48,6 +51,10 @@ public:
     QString filter() const { return m_filter; }
     QString tag() const { return m_tag; }
     QString search() const { return m_search; }
+    QVariantMap filters() const { return m_filters; }
+    // Whether any filter narrows the search, so an empty query still pulls from
+    // every list once a filter is on.
+    bool filtersActive() const;
     QString title() const;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -62,8 +69,11 @@ public:
     Q_INVOKABLE void showCalendar(const QString &href, const QString &name);
     Q_INVOKABLE void showTag(const QString &tag);
     // Looks through every task in every list. An empty query shows the view
-    // in full again.
+    // in full again, unless a filter still narrows it.
     void setSearch(const QString &text);
+    // Narrows the search to the tasks every active filter accepts. An empty map
+    // clears them. The filters hold whether or not a query is typed.
+    void setFilters(const QVariantMap &filters);
     // Whether the mixed views keep completed tasks; the dedicated completed
     // view ignores this.
     void setShowCompleted(bool show);
@@ -76,6 +86,7 @@ signals:
     void filterChanged();
     void tagChanged();
     void searchChanged();
+    void filtersChanged();
     void titleChanged();
 
 private:
@@ -96,6 +107,7 @@ private:
     QString m_filter;
     QString m_tag;
     QString m_search;
+    QVariantMap m_filters;
     bool m_showCompleted;
     bool m_showCancelled;
     QVector<LocalTask> m_items;

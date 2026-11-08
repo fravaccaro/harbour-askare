@@ -328,6 +328,13 @@
     </message>
 </context>
 <context>
+    <name>MultiSelectBox</name>
+    <message>
+        <source>Any</source>
+        <translation>Qualsiasi</translation>
+    </message>
+</context>
+<context>
     <name>Opal.About</name>
     <message>
         <source>About</source>
@@ -579,6 +586,101 @@
     </message>
 </context>
 <context>
+    <name>SearchFilters</name>
+    <message>
+        <source>Filters</source>
+        <translation>Filtri</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>Stato</translation>
+    </message>
+    <message>
+        <source>List</source>
+        <translation>Elenco</translation>
+    </message>
+    <message>
+        <source>Priority</source>
+        <translation>Priorità</translation>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation>Etichette</translation>
+    </message>
+    <message>
+        <source>Completion</source>
+        <translation>Completamento</translation>
+    </message>
+    <message>
+        <source>Any</source>
+        <translation>Qualsiasi</translation>
+    </message>
+    <message>
+        <source>Tasks due today</source>
+        <translation>Attività in scadenza oggi</translation>
+    </message>
+    <message>
+        <source>Schedule</source>
+        <translation>Pianificazione</translation>
+    </message>
+    <message>
+        <source>Start date</source>
+        <translation>Data di inizio</translation>
+    </message>
+    <message>
+        <source>Start is</source>
+        <translation>L&apos;inizio è</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>Il giorno</translation>
+    </message>
+    <message>
+        <source>Before</source>
+        <translation>Prima</translation>
+    </message>
+    <message>
+        <source>After</source>
+        <translation>Dopo</translation>
+    </message>
+    <message>
+        <source>Clear start date</source>
+        <translation>Rimuovi data di inizio</translation>
+    </message>
+    <message>
+        <source>Due date</source>
+        <translation>Data di scadenza</translation>
+    </message>
+    <message>
+        <source>Due is</source>
+        <translation>La scadenza è</translation>
+    </message>
+    <message>
+        <source>Clear due date</source>
+        <translation>Rimuovi data di scadenza</translation>
+    </message>
+    <message>
+        <source>Reminder</source>
+        <translation>Promemoria</translation>
+    </message>
+    <message>
+        <source>Reminder set</source>
+        <translation>Promemoria impostato</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation>Sì</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation>No</translation>
+    </message>
+    <message>
+        <source>Clear filters</source>
+        <translation>Rimuovi filtri</translation>
+    </message>
+</context>
+<context>
     <name>SearchPage</name>
     <message>
         <source>Search</source>
@@ -611,6 +713,14 @@
     <message>
         <source>To do</source>
         <translation>Da fare</translation>
+    </message>
+    <message>
+        <source>Filters active</source>
+        <translation>Filtri attivi</translation>
+    </message>
+    <message>
+        <source>Filters</source>
+        <translation>Filtri</translation>
     </message>
 </context>
 <context>

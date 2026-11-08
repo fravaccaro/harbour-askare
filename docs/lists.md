@@ -51,6 +51,18 @@ The pulley menu offers **Refresh**, **Search** and **New task**. A new task star
 
 **Search** in the pulley menu opens its own page, with the field ready to type in. Typing looks through every task in every list, including subtasks and tasks that are finished or cancelled, matched without regard to case against the title, the notes, the location and the tags. A matching subtask shows on its own. The view you came from plays no part. When nothing matches, the page says so. Going back clears the search, and the list is as it was. A task opened from a result keeps the search underneath, so coming back to it finds the same matches.
 
+### Filters
+
+**Filters** in the pulley menu, or the line that appears under the field once a filter is on, slides out a panel of filters. Each one is optional, and the results narrow as soon as a filter is set, even with the field empty. Where a filter offers several choices, a task matches any one of them; across filters, every filter that is set must match.
+
+- **Status, List, Priority** and **Tags** each open a list of toggles, so more than one choice can be on at once.
+- **Completion** keeps tasks at least that far along.
+- **Tasks due today** keeps tasks due today, finished and cancelled ones included.
+- **Start date** and **Due date** are set apart from each other, each matching on, before or after the day you pick.
+- **Reminder set** keeps tasks that do, or do not, carry a reminder.
+
+**Clear filters** empties the panel. Leaving the search page clears the filters along with the text.
+
 On the Lists page the pulley menu leads to **About**, **Settings** and **Refresh**. About shows the version, donations, translations, and the licence.
 
 ## The cover

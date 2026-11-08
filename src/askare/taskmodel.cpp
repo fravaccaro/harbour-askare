@@ -1,5 +1,7 @@
 #include "taskmodel.h"
 
+#include <QDate>
+
 #include "ics.h"
 #include "store.h"
 #include "url.h"
@@ -118,6 +120,163 @@ QVector<LocalTask> matchingOf(const QVector<LocalTask> &tasks, const QString &ne
     QVector<LocalTask> out;
     for (const LocalTask &task : tasks) {
         if (taskMatches(task, needle))
+            out.append(task);
+    }
+    return out;
+}
+
+// Whether a list of chosen values names this token, ignoring case, so a filter
+// matches whichever of its choices a task carries.
+bool chosenHas(const QVariantList &values, const QString &token)
+{
+    for (const QVariant &value : values) {
+        if (value.toString().compare(token, Qt::CaseInsensitive) == 0)
+            return true;
+    }
+    return false;
+}
+
+// The same for a calendar, compared on the slash-normalised path the colour
+// bar already uses, so the href a task stores and the one a filter holds meet.
+bool chosenHasHref(const QVariantList &values, const QString &href)
+{
+    const QString wanted = Url::pathWithSlash(href);
+    for (const QVariant &value : values) {
+        if (Url::pathWithSlash(value.toString()) == wanted)
+            return true;
+    }
+    return false;
+}
+
+bool chosenHasTag(const QStringList &tags, const QVariantList &values)
+{
+    for (const QVariant &value : values) {
+        if (tags.contains(value.toString(), Qt::CaseInsensitive))
+            return true;
+    }
+    return false;
+}
+
+// The priority band a value falls in, the four the editor shows.
+QString priorityBand(int priority)
+{
+    if (priority >= 1 && priority <= 4)
+        return QStringLiteral("high");
+    if (priority == 5)
+        return QStringLiteral("medium");
+    if (priority >= 6 && priority <= 9)
+        return QStringLiteral("low");
+    return QStringLiteral("none");
+}
+
+// A task's completion the way the row reads it: a completed task is whole.
+int completionOf(const LocalTask &task)
+{
+    return Ics::percentFromStatus(task.status, Ics::parse(task.ics).percent);
+}
+
+// Whether a task's day answers a date filter. A task with no such day fails:
+// an empty day can neither fall on, before nor after the one that was chosen.
+bool dayMatches(const QString &day, const QString &chosen, const QString &mode)
+{
+    if (day.isEmpty())
+        return false;
+    if (mode == QLatin1String("before"))
+        return day < chosen;
+    if (mode == QLatin1String("after"))
+        return day > chosen;
+    return day == chosen;
+}
+
+QString today()
+{
+    return QDate::currentDate().toString(QStringLiteral("yyyy-MM-dd"));
+}
+
+bool reminderWanted(const QVariantMap &f)
+{
+    const QString want = f.value(QStringLiteral("reminder")).toString();
+    return want == QLatin1String("yes") || want == QLatin1String("no");
+}
+
+bool statusPasses(const LocalTask &task, const QVariantMap &f)
+{
+    const QVariantList chosen = f.value(QStringLiteral("status")).toList();
+    return chosen.isEmpty() || chosenHas(chosen, task.status);
+}
+
+bool listPasses(const LocalTask &task, const QVariantMap &f)
+{
+    const QVariantList chosen = f.value(QStringLiteral("lists")).toList();
+    return chosen.isEmpty() || chosenHasHref(chosen, task.calendarHref);
+}
+
+bool priorityPasses(const LocalTask &task, const QVariantMap &f)
+{
+    const QVariantList chosen = f.value(QStringLiteral("priority")).toList();
+    return chosen.isEmpty() || chosenHas(chosen, priorityBand(task.priority));
+}
+
+bool tagsPass(const LocalTask &task, const QVariantMap &f)
+{
+    const QVariantList chosen = f.value(QStringLiteral("tags")).toList();
+    return chosen.isEmpty() || chosenHasTag(task.tags, chosen);
+}
+
+bool completionPasses(const LocalTask &task, const QVariantMap &f)
+{
+    const int least = f.value(QStringLiteral("completion")).toInt();
+    return least <= 0 || completionOf(task) >= least;
+}
+
+bool dueTodayPasses(const LocalTask &task, const QVariantMap &f)
+{
+    if (!f.value(QStringLiteral("dueToday")).toBool())
+        return true;
+    return Ics::dateFromDue(task.due) == today();
+}
+
+bool startPasses(const LocalTask &task, const QVariantMap &f)
+{
+    const QString chosen = f.value(QStringLiteral("startDate")).toString();
+    if (chosen.isEmpty())
+        return true;
+    const QString day = Ics::dateFromDue(Ics::parse(task.ics).start);
+    return dayMatches(day, chosen, f.value(QStringLiteral("startMode")).toString());
+}
+
+bool duePasses(const LocalTask &task, const QVariantMap &f)
+{
+    const QString chosen = f.value(QStringLiteral("dueDate")).toString();
+    if (chosen.isEmpty())
+        return true;
+    return dayMatches(Ics::dateFromDue(task.due), chosen,
+                      f.value(QStringLiteral("dueMode")).toString());
+}
+
+bool reminderPasses(const LocalTask &task, const QVariantMap &f)
+{
+    const QString want = f.value(QStringLiteral("reminder")).toString();
+    if (want == QLatin1String("yes"))
+        return task.reminder >= 0;
+    if (want == QLatin1String("no"))
+        return task.reminder < 0;
+    return true;
+}
+
+// A task is kept only when every filter that is set accepts it.
+bool passesFilters(const LocalTask &task, const QVariantMap &f)
+{
+    return statusPasses(task, f) && listPasses(task, f) && priorityPasses(task, f)
+            && tagsPass(task, f) && completionPasses(task, f) && dueTodayPasses(task, f)
+            && startPasses(task, f) && duePasses(task, f) && reminderPasses(task, f);
+}
+
+QVector<LocalTask> filteredBy(const QVector<LocalTask> &tasks, const QVariantMap &f)
+{
+    QVector<LocalTask> out;
+    for (const LocalTask &task : tasks) {
+        if (passesFilters(task, f))
             out.append(task);
     }
     return out;
@@ -253,6 +412,29 @@ void TaskModel::setSearch(const QString &text)
     reload();
 }
 
+void TaskModel::setFilters(const QVariantMap &filters)
+{
+    if (filters == m_filters)
+        return;
+
+    m_filters = filters;
+    emit filtersChanged();
+    reload();
+}
+
+bool TaskModel::filtersActive() const
+{
+    return !m_filters.value(QStringLiteral("status")).toList().isEmpty()
+            || !m_filters.value(QStringLiteral("lists")).toList().isEmpty()
+            || !m_filters.value(QStringLiteral("priority")).toList().isEmpty()
+            || !m_filters.value(QStringLiteral("tags")).toList().isEmpty()
+            || m_filters.value(QStringLiteral("completion")).toInt() > 0
+            || m_filters.value(QStringLiteral("dueToday")).toBool()
+            || !m_filters.value(QStringLiteral("startDate")).toString().isEmpty()
+            || !m_filters.value(QStringLiteral("dueDate")).toString().isEmpty()
+            || reminderWanted(m_filters);
+}
+
 void TaskModel::apply(const QString &filter, const QString &href, const QString &name)
 {
     const bool same = filter == m_filter && href == m_calendarHref && name == m_calendarName;
@@ -381,21 +563,29 @@ QVector<LocalTask> TaskModel::filtered() const
 // Every list, at every depth, finished and cancelled included. The view the
 // search was opened from plays no part, or a matching subtask would stay
 // hidden behind a parent, a due date, or a list the user was not looking at.
+// The query and the filters each narrow the set and are applied together.
 QVector<LocalTask> TaskModel::searched() const
 {
-    return matchingOf(m_store->tasks(), m_search);
+    QVector<LocalTask> out = m_store->tasks();
+    if (!m_search.isEmpty())
+        out = matchingOf(out, m_search);
+    if (filtersActive())
+        out = filteredBy(out, m_filters);
+    return out;
 }
 
 void TaskModel::reload()
 {
     beginResetModel();
-    m_items = filtered();
-    // Only the mixed views answer the two settings; the actionable views and
-    // the completed one already decide membership by status.
-    if (isMixedView())
-        m_items = withSettings(m_items);
-    if (!m_search.isEmpty())
+    // A query or a filter searches every list; otherwise the view holds, and
+    // only the mixed views answer the completed and cancelled settings.
+    if (!m_search.isEmpty() || filtersActive()) {
         m_items = searched();
+    } else {
+        m_items = filtered();
+        if (isMixedView())
+            m_items = withSettings(m_items);
+    }
     m_tallies = talliesOf(m_store->tasks());
     m_colors = colorsOf(m_store->calendars());
     endResetModel();

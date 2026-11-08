@@ -77,6 +77,7 @@ DISTFILES += \
     qml/components/AskareNotification.qml \
     qml/components/AskareSupportDialog.qml \
     qml/components/ConflictField.qml \
+    qml/components/MultiSelectBox.qml \
     qml/components/ShareReceiver.qml \
     qml/components/TaskListHeader.qml \
     qml/cover/CoverPage.qml \
@@ -89,6 +90,7 @@ DISTFILES += \
     qml/pages/LoginPage.qml \
     qml/pages/PriorityTag.qml \
     qml/pages/ReminderOptions.qml \
+    qml/pages/SearchFilters.qml \
     qml/pages/SearchPage.qml \
     qml/pages/SettingsPage.qml \
     qml/pages/StatusOptions.qml \
