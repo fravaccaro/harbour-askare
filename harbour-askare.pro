@@ -73,6 +73,7 @@ DISTFILES += \
     translations/desktop/it.po \
     icons/harbour-askare.svg \
     qml/harbour-askare.qml \
+    qml/icons/icon-m-tag.svg \
     qml/components/AskareNotification.qml \
     qml/components/AskareSupportDialog.qml \
     qml/components/ConflictField.qml \
