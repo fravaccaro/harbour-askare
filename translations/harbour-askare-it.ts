@@ -921,8 +921,8 @@
         <translation type="unfinished">Nome</translation>
     </message>
     <message>
-        <source>Smart lists save your active filters to automatically group matching tasks.</source>
-        <translation>Gli elenchi intelligenti salvano i filtri attivi per raggruppare automaticamente le attività.</translation>
+        <source>Smart lists save what you searched for and the filters you set, to automatically group matching tasks.</source>
+        <translation>Gli elenchi intelligenti salvano le parole cercate e i filtri impostati, per raggruppare automaticamente le attività.</translation>
     </message>
 </context>
 <context>
@@ -1039,10 +1039,6 @@
     <message>
         <source>New tag</source>
         <translation>Nuova etichetta</translation>
-    </message>
-    <message>
-        <source>Tags already in use</source>
-        <translation>Etichette già in uso</translation>
     </message>
     <message>
         <source>Add a tag...</source>

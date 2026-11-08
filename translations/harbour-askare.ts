@@ -919,7 +919,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Smart lists save your active filters to automatically group matching tasks.</source>
+        <source>Smart lists save what you searched for and the filters you set, to automatically group matching tasks.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1036,10 +1036,6 @@
     </message>
     <message>
         <source>New tag</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tags already in use</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

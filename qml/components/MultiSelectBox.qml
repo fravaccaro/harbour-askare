@@ -30,6 +30,7 @@
 */
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import "Selection.js" as Selection
 
 IconComboBox {
     id: root
@@ -43,19 +44,12 @@ IconComboBox {
     signal selectionChanged(var values)
 
     function isSelected(value) {
-        return root.selected.indexOf(value) >= 0
+        return Selection.has(root.selected, value)
     }
 
     function toggle(value) {
-        var out = []
-        for (var i = 0; i < root.selected.length; i++) {
-            if (root.selected[i] !== value)
-                out.push(root.selected[i])
-        }
-        if (!root.isSelected(value))
-            out.push(value)
-        root.selected = out
-        root.selectionChanged(out)
+        root.selected = Selection.toggled(root.selected, value)
+        root.selectionChanged(root.selected)
     }
 
     function clear() {

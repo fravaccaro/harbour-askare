@@ -75,11 +75,14 @@ public:
     Q_INVOKABLE void showCompleted();
     Q_INVOKABLE void showCalendar(const QString &href, const QString &name);
     Q_INVOKABLE void showTag(const QString &tag);
-    // A saved filter set as a view of its own. It reads like a search carrying
-    // those filters, so any query typed before it is dropped.
+    // A saved search as a view of its own. It reads like the search it was
+    // saved from, so the query being typed now is dropped.
     Q_INVOKABLE void showSmart(int id, const QString &name, const QVariantMap &filters);
-    // How many tasks a filter set keeps, for the row that offers it.
+    // How many tasks a saved search keeps, for the row that offers it.
     Q_INVOKABLE int countMatching(const QVariantMap &filters) const;
+    // The query and the filters as one set, which is what a smart list saves.
+    // The query rides along under a key of its own.
+    Q_INVOKABLE QVariantMap searchSet() const;
     // Looks through every task in every list. An empty query shows the view
     // in full again, unless a filter still narrows it.
     void setSearch(const QString &text);
@@ -110,6 +113,7 @@ private:
     void forgetSmartList();
     bool isMixedView() const;
     QVector<LocalTask> filtered() const;
+    QVector<LocalTask> matchedBy(const QString &query, const QVariantMap &filters) const;
     QVector<LocalTask> searched() const;
     QVector<LocalTask> smartFiltered() const;
     // Drops completed and cancelled tasks the mixed-view settings hide.
@@ -123,8 +127,8 @@ private:
     QString m_tag;
     QString m_search;
     QVariantMap m_filters;
-    // The smart view's own filters, kept apart from the search's so leaving a
-    // search does not empty the view underneath it.
+    // The smart view's own saved search, query and all, kept apart from the
+    // live one so leaving a search does not empty the view underneath it.
     QVariantMap m_viewFilters;
     int m_smartListId;
     bool m_showCompleted;

@@ -201,6 +201,13 @@ bool reminderWanted(const QVariantMap &f)
     return want == QLatin1String("yes") || want == QLatin1String("no");
 }
 
+// A saved search keeps its query inside the filter set, under a key of its own
+// that no filter reads.
+QString searchOf(const QVariantMap &f)
+{
+    return f.value(QStringLiteral("search")).toString();
+}
+
 // How many of the form's rows are set. One being set is what makes the filters
 // active at all, so the two answers come from this one list.
 int activeFilterCount(const QVariantMap &f)
@@ -438,8 +445,8 @@ void TaskModel::showSmart(int id, const QString &name, const QVariantMap &filter
         emit smartListIdChanged();
     }
     m_viewFilters = filters;
-    // A query left over from the search would otherwise narrow the view the
-    // search just saved.
+    // The saved search carries its own query. One left over from the live
+    // search would otherwise narrow it further.
     if (!m_search.isEmpty()) {
         m_search.clear();
         emit searchChanged();
@@ -463,7 +470,17 @@ void TaskModel::forgetSmartList()
 
 int TaskModel::countMatching(const QVariantMap &filters) const
 {
-    return filteredBy(m_store->tasks(), filters).size();
+    return matchedBy(searchOf(filters), filters).size();
+}
+
+QVariantMap TaskModel::searchSet() const
+{
+    QVariantMap out = m_filters;
+    // Left out when nothing is typed, so a set of filters alone is saved as
+    // plainly as it reads.
+    if (!m_search.isEmpty())
+        out.insert(QStringLiteral("search"), m_search);
+    return out;
 }
 
 void TaskModel::setSearch(const QString &text)
@@ -630,22 +647,26 @@ QVector<LocalTask> TaskModel::filtered() const
 // Every list, at every depth, finished and cancelled included. The view the
 // search was opened from plays no part, or a matching subtask would stay
 // hidden behind a parent, a due date, or a list the user was not looking at.
-// The query and the filters each narrow the set and are applied together.
-QVector<LocalTask> TaskModel::searched() const
+// The query and the filters each narrow the set and are applied together, and
+// either of them may be empty.
+QVector<LocalTask> TaskModel::matchedBy(const QString &query, const QVariantMap &filters) const
 {
     QVector<LocalTask> out = m_store->tasks();
-    if (!m_search.isEmpty())
-        out = matchingOf(out, m_search);
-    if (filtersActive())
-        out = filteredBy(out, m_filters);
-    return out;
+    if (!query.isEmpty())
+        out = matchingOf(out, query);
+    return filteredBy(out, filters);
 }
 
-// A smart view is its saved filters read the way a search reads them: across
-// every list, at every depth, finished and cancelled tasks included.
+QVector<LocalTask> TaskModel::searched() const
+{
+    return matchedBy(m_search, m_filters);
+}
+
+// A smart view is a search that was saved, so it is read the same way: the
+// query it kept and the filters it kept, together.
 QVector<LocalTask> TaskModel::smartFiltered() const
 {
-    return filteredBy(m_store->tasks(), m_viewFilters);
+    return matchedBy(searchOf(m_viewFilters), m_viewFilters);
 }
 
 void TaskModel::reload()

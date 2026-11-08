@@ -919,8 +919,8 @@
         <translation type="unfinished">Name</translation>
     </message>
     <message>
-        <source>Smart lists save your active filters to automatically group matching tasks.</source>
-        <translation>Smart lists save your active filters to automatically group matching tasks.</translation>
+        <source>Smart lists save what you searched for and the filters you set, to automatically group matching tasks.</source>
+        <translation>Smart lists save what you searched for and the filters you set, to automatically group matching tasks.</translation>
     </message>
 </context>
 <context>
@@ -1037,10 +1037,6 @@
     <message>
         <source>New tag</source>
         <translation>New tag</translation>
-    </message>
-    <message>
-        <source>Tags already in use</source>
-        <translation>Tags already in use</translation>
     </message>
     <message>
         <source>Add a tag...</source>

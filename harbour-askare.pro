@@ -78,7 +78,10 @@ DISTFILES += \
     qml/components/AskareSupportDialog.qml \
     qml/components/ConflictField.qml \
     qml/components/MultiSelectBox.qml \
+    qml/components/MultiSelectChips.qml \
+    qml/components/Selection.js \
     qml/components/ShareReceiver.qml \
+    qml/components/TagChip.qml \
     qml/components/TaskListHeader.qml \
     qml/cover/CoverPage.qml \
     qml/cover/cover-check.png \

@@ -90,7 +90,7 @@ SilicaFlickable {
             "status": statusBox.selected,
             "lists": listBox.selected,
             "priority": priorityBox.selected,
-            "tags": tagBox.selected,
+            "tags": tagChips.selected,
             "completion": completionSlider.value,
             "completionMode": form.completionMode,
             "dueToday": dueTodaySwitch.checked,
@@ -107,7 +107,7 @@ SilicaFlickable {
         statusBox.clear()
         listBox.clear()
         priorityBox.clear()
-        tagBox.clear()
+        tagChips.clear()
         completionSlider.value = 0
         form.completionMode = "atLeast"
         dueTodaySwitch.checked = false
@@ -142,6 +142,14 @@ SilicaFlickable {
         }
 
         MultiSelectBox {
+            id: listBox
+
+            title: qsTr("List")
+            defaultIcon: "image://theme/icon-m-events"
+            options: form.listOptions
+            onSelectionChanged: if (!form.resetting) form.apply()
+        }
+        MultiSelectBox {
             id: statusBox
 
             title: qsTr("Status")
@@ -150,14 +158,6 @@ SilicaFlickable {
             onSelectionChanged: if (!form.resetting) form.apply()
         }
 
-        MultiSelectBox {
-            id: listBox
-
-            title: qsTr("List")
-            defaultIcon: "image://theme/icon-m-events"
-            options: form.listOptions
-            onSelectionChanged: if (!form.resetting) form.apply()
-        }
 
         MultiSelectBox {
             id: priorityBox
@@ -168,16 +168,6 @@ SilicaFlickable {
             onSelectionChanged: if (!form.resetting) form.apply()
         }
 
-        MultiSelectBox {
-            id: tagBox
-
-            title: qsTr("Tags")
-            visible: form.tagOptions.length > 0
-            defaultIcon: Qt.resolvedUrl("../icons/icon-m-tag.svg")
-            icon.color: Theme.primaryColor
-            options: form.tagOptions
-            onSelectionChanged: if (!form.resetting) form.apply()
-        }
 
         IconField {
             id: completionField
@@ -226,6 +216,35 @@ SilicaFlickable {
 
             }
 
+        }
+
+
+
+        // The tags on offer are the ones already in use, so they read as the
+        // chips the task editor offers rather than as a menu of their own.
+        IconField {
+            id: tagField
+
+            width: parent.width
+            topPadding: Theme.paddingMedium
+            visible: form.tagOptions.length > 0
+            description: qsTr("Tags")
+            icon.source: Qt.resolvedUrl("../icons/icon-m-tag.svg")
+            icon.color: Theme.primaryColor
+
+            MultiSelectChips {
+                id: tagChips
+
+                x: tagField.grooveLeftMargin
+                width: parent.width - x - tagField.grooveRightMargin
+                options: form.tagOptions
+                onSelectionChanged: if (!form.resetting) form.apply()
+            }
+
+        }
+
+        SectionHeader {
+            text: qsTr("Schedule")
         }
 
         // IconTextSwitch parks its icon on the right. Here the date icon joins
@@ -296,9 +315,6 @@ SilicaFlickable {
 
         }
 
-        SectionHeader {
-            text: qsTr("Schedule")
-        }
 
         ValueButton {
             width: parent.width

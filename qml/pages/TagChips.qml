@@ -13,6 +13,7 @@
 */
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import "../components"
 
 Flow {
     id: root
@@ -32,21 +33,10 @@ Flow {
     Repeater {
         model: root.tags
 
-        Rectangle {
-            width: chipLabel.width + 2 * Theme.paddingMedium
-            height: chipLabel.height + Theme.paddingSmall
-            radius: height / 2
-            color: Theme.rgba(Theme.highlightColor, 0.2)
-
-            Label {
-                id: chipLabel
-
-                anchors.centerIn: parent
-                color: Theme.highlightColor
-                font.pixelSize: Theme.fontSizeSmall
-                text: modelData
-            }
-
+        TagChip {
+            text: modelData
+            // Nothing to tap here, so a press reaches the page underneath.
+            enabled: false
         }
 
     }

@@ -21,9 +21,9 @@ Above the task lists of the server sit views that read across all of them:
 
 ## Smart lists
 
-A set of filters worth returning to can be kept by name. With at least one filter on, **Save as smart list** in the search page's pulley menu asks for a name and files the filters under it. Only the filters are saved, never the words typed in the field, so the list reads the same whatever was being searched for at the time.
+A search worth returning to can be kept by name. Once there is something to keep - words in the field, a filter, or both - **Save as smart list** in the search page's pulley menu asks for a name, offering the words searched for as one, and files the search under it. What is saved is the whole search: the words and the filters that were on, together.
 
-Saved sets stand in a **Smart lists** section of their own on the Lists page, between the views above and the task lists of the server, each with the number of tasks it keeps. Choosing one shows what the search showed: every list, at every depth, finished and cancelled tasks included, narrowed by the filters it holds. The section only appears once something has been saved.
+Saved searches stand in a **Smart lists** section of their own on the Lists page, between the views above and the task lists of the server, each with the number of tasks it keeps. Choosing one shows what the search showed: every list, at every depth, finished and cancelled tasks included, narrowed by the words and the filters it holds. The section only appears once something has been saved.
 
 Press and hold a smart list for **Delete**, which waits behind a remorse timer. Deleting the one on show leaves the task list on All. Smart lists are kept on the device rather than on the server, so they are yours alone and they outlive a sign-out.
 
@@ -63,13 +63,14 @@ The pulley menu offers **Refresh**, **Search** and **New task**. A new task star
 
 **Filters** under the search field slides out a panel of filters. The line turns highlighted and counts them, **Filters (2)**, once any filter is on. Each one is optional, and the results narrow as soon as a filter is set, even with the field empty. Where a filter offers several choices, a task matches any one of them; across filters, every filter that is set must match.
 
-- **Status, List, Priority** and **Tags** each open a list of toggles, so more than one choice can be on at once.
+- **Status**, **List** and **Priority** each open a list of toggles, so more than one choice can be on at once.
+- **Tags** lays the tags already in use out as chips, the ones the task editor offers. A tap puts a tag in the filter and another takes it out, and several can be on at once.
 - **Completion** sets a percentage, then **At least** or **At most** keeps tasks at or above, or at or below, that mark.
 - **Tasks due today** keeps tasks due today, finished and cancelled ones included.
 - **Start date** and **Due date** are set apart from each other, each matching on, before or after the day you pick.
 - **Reminder set** keeps tasks that do, or do not, carry a reminder.
 
-**Clear filters** empties the panel. Leaving the search page clears the filters along with the text; a set worth keeping is saved as a [smart list](#smart-lists) first.
+**Clear filters** empties the panel. Leaving the search page clears the filters along with the text; a search worth keeping is saved as a [smart list](#smart-lists) first.
 
 On the Lists page the pulley menu leads to **About**, **Settings** and **Refresh**. About shows the version, donations, translations, and the licence.
 

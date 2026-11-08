@@ -15,13 +15,15 @@ Page {
         drawer.open = true
     }
 
-    // The filters become a view of their own; the query stays behind, so the
-    // saved set reads the same whatever was typed when it was saved.
+    // The search becomes a view of its own, words and filters together. The set
+    // is read before the dialog opens, so what is saved is what was on screen.
     function saveSmartList() {
         searchField.focus = false
-        var dialog = pageStack.push(Qt.resolvedUrl("SmartListDialog.qml"))
+        var set = Tasks.searchSet()
+        var dialog = pageStack.push(Qt.resolvedUrl("SmartListDialog.qml"),
+                                    { "suggestion": Tasks.search })
         dialog.accepted.connect(function() {
-            Askare.saveSmartList(dialog.name, Tasks.filters)
+            Askare.saveSmartList(dialog.name, set)
         })
     }
 
@@ -136,8 +138,8 @@ Page {
             PullDownMenu {
                 MenuItem {
                     // Shown always, so the way to keep a search is never
-                    // hidden; it only waits for a filter to be set.
-                    enabled: Tasks.filtersActive
+                    // hidden; it only waits for something to save.
+                    enabled: Tasks.filtersActive || Tasks.search !== ""
                     text: qsTr("Save as smart list")
                     onClicked: page.saveSmartList()
                 }
