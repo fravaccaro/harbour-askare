@@ -717,22 +717,75 @@ QVector<LocalTask> TaskModel::smartFiltered() const
     return matchedBy(searchOf(m_viewFilters), m_viewFilters);
 }
 
+// The search view draws from every list, and a query or a filter does the
+// same from any view; otherwise the view holds, and only the mixed views
+// answer the completed and cancelled settings.
+QVector<LocalTask> TaskModel::computeItems() const
+{
+    if (m_searching || !m_search.isEmpty() || filtersActive())
+        return searched();
+    if (m_filter == QLatin1String("smart"))
+        return smartFiltered();
+
+    QVector<LocalTask> items = filtered();
+    if (isMixedView())
+        items = withSettings(items);
+    return items;
+}
+
 void TaskModel::reload()
 {
-    beginResetModel();
-    // The search view draws from every list, and a query or a filter does the
-    // same from any view; otherwise the view holds, and only the mixed views
-    // answer the completed and cancelled settings.
-    if (m_searching || !m_search.isEmpty() || filtersActive()) {
-        m_items = searched();
-    } else if (m_filter == QLatin1String("smart")) {
-        m_items = smartFiltered();
-    } else {
-        m_items = filtered();
-        if (isMixedView())
-            m_items = withSettings(m_items);
-    }
+    const QVector<LocalTask> next = computeItems();
+    // Read before the rows change, so a dataChanged below reflects the fresh
+    // tallies and colours.
     m_tallies = talliesOf(m_store->tasks());
     m_colors = colorsOf(m_store->calendars());
-    endResetModel();
+    syncItems(next);
+}
+
+// The existing row carrying this href at or after \a from, or -1. Hrefs are
+// unique, and every row before \a from is already settled, so a match can only
+// lie ahead.
+int TaskModel::indexOfHref(const QString &href, int from) const
+{
+    for (int i = from; i < m_items.size(); ++i) {
+        if (m_items.at(i).href == href)
+            return i;
+    }
+    return -1;
+}
+
+// Rows are matched by href and edited in place, never cleared: a row the user
+// is deleting carries its remorse inside its delegate, and a model reset would
+// destroy that countdown before it could run. Deleting one task reloads the
+// list, so a reset would silently drop a delete already begun on another row -
+// which is what left that row stuck dimmed.
+void TaskModel::syncItems(const QVector<LocalTask> &next)
+{
+    for (int i = 0; i < next.size(); ++i) {
+        const int at = indexOfHref(next.at(i).href, i);
+        if (at < 0) {
+            beginInsertRows(QModelIndex(), i, i);
+            m_items.insert(i, next.at(i));
+            endInsertRows();
+            continue;
+        }
+
+        // A match always lies ahead of i, so this only ever moves a row up.
+        if (at != i) {
+            beginMoveRows(QModelIndex(), at, at, QModelIndex(), i);
+            const LocalTask moved = m_items.at(at);
+            m_items.remove(at);
+            m_items.insert(i, moved);
+            endMoveRows();
+        }
+        m_items[i] = next.at(i);
+        emit dataChanged(index(i), index(i));
+    }
+
+    if (m_items.size() > next.size()) {
+        beginRemoveRows(QModelIndex(), next.size(), m_items.size() - 1);
+        m_items.remove(next.size(), m_items.size() - next.size());
+        endRemoveRows();
+    }
 }

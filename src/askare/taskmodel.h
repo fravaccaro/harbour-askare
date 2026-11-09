@@ -124,6 +124,13 @@ private:
     QVector<LocalTask> matchedBy(const QString &query, const QVariantMap &filters) const;
     QVector<LocalTask> searched() const;
     QVector<LocalTask> smartFiltered() const;
+    // The rows the current view holds, before the model takes them on.
+    QVector<LocalTask> computeItems() const;
+    // Brings m_items to \a next in place, by insert, move and remove, so a
+    // delegate - and the remorse a row being deleted keeps inside it - is not
+    // destroyed by a reset on every reload.
+    void syncItems(const QVector<LocalTask> &next);
+    int indexOfHref(const QString &href, int from) const;
     // Drops completed and cancelled tasks the mixed-view settings hide.
     QVector<LocalTask> withSettings(const QVector<LocalTask> &tasks) const;
     ChildTally tallyOf(const QString &uid) const;
