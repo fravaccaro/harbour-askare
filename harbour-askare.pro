@@ -32,6 +32,7 @@ SOURCES += \
     src/askare/secretsstore.cpp \
     src/askare/session.cpp \
     src/askare/sharedtext.cpp \
+    src/askare/smartlistmodel.cpp \
     src/askare/store.cpp \
     src/askare/taskmodel.cpp \
     src/askare/url.cpp
@@ -49,6 +50,7 @@ HEADERS += \
     src/askare/secretsstore.h \
     src/askare/session.h \
     src/askare/sharedtext.h \
+    src/askare/smartlistmodel.h \
     src/askare/store.h \
     src/askare/taskmodel.h \
     src/askare/types.h \
@@ -73,10 +75,15 @@ DISTFILES += \
     translations/desktop/it.po \
     icons/harbour-askare.svg \
     qml/harbour-askare.qml \
+    qml/icons/icon-m-tag.svg \
     qml/components/AskareNotification.qml \
     qml/components/AskareSupportDialog.qml \
     qml/components/ConflictField.qml \
+    qml/components/MultiSelectBox.qml \
+    qml/components/MultiSelectChips.qml \
+    qml/components/Selection.js \
     qml/components/ShareReceiver.qml \
+    qml/components/TagChip.qml \
     qml/components/TaskListHeader.qml \
     qml/cover/CoverPage.qml \
     qml/cover/cover-check.png \
@@ -88,13 +95,18 @@ DISTFILES += \
     qml/pages/LoginPage.qml \
     qml/pages/PriorityTag.qml \
     qml/pages/ReminderOptions.qml \
+    qml/pages/SearchFilters.qml \
+    qml/pages/SearchPage.qml \
     qml/pages/SettingsPage.qml \
+    qml/pages/SmartListDialog.qml \
     qml/pages/StatusOptions.qml \
     qml/pages/SubtaskRow.qml \
     qml/pages/StartPage.qml \
     qml/pages/TagChips.qml \
+    qml/pages/TaskListDelegate.qml \
     qml/pages/TagEditor.qml \
     qml/pages/TaskDetailPage.qml \
+    qml/pages/TaskRow.qml \
     qml/pages/TaskEditPage.qml \
     qml/pages/TasksPage.qml \
     qml/pages/TranslationsPage.qml \

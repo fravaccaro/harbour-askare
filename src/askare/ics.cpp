@@ -64,6 +64,37 @@ void appendLine(QStringList *lines, const QString &line)
         lines->append(line);
 }
 
+// RFC 5545 asks a VTODO to give DUE and DTSTART the same value type, so a
+// server rejects a pair where one names a time of day and the other a bare
+// day. True when both are set and at least one carries a time.
+bool datePairNeedsTime(const QStringList &lines)
+{
+    bool haveStart = false;
+    bool haveDue = false;
+    bool anyTime = false;
+    for (const QString &line : lines) {
+        const QString name = Ics::propertyName(line);
+        if (!isDateOrTime(name))
+            continue;
+        const QString value = Ics::propertyValue(line);
+        if (value.isEmpty())
+            continue;
+        haveStart = haveStart || name == QLatin1String("DTSTART");
+        haveDue = haveDue || name == QLatin1String("DUE");
+        anyTime = anyTime || value.contains(QLatin1Char('T'));
+    }
+    return haveStart && haveDue && anyTime;
+}
+
+// A date-only moment lifted to the start of its day, so it can share a
+// value type with a partner that names a time. Anything else is left as is.
+QString alignedMoment(const QString &value, bool needsTime)
+{
+    if (!needsTime || value.isEmpty() || value.contains(QLatin1Char('T')))
+        return value;
+    return value.left(8) + QStringLiteral("T000000");
+}
+
 // Minutes before the due time, or -1 when the trigger is absolute, points
 // after the due time, or cannot be read. Such alarms are left untouched.
 int durationToMinutes(const QString &value)
@@ -489,11 +520,12 @@ QString rewrite(const QString &ics, const TodoFields &fields)
 QString normalize(const QString &ics)
 {
     const QStringList lines = unfold(ics).split(QLatin1Char('\n'), QString::SkipEmptyParts);
+    const bool needsTime = datePairNeedsTime(lines);
     QStringList out;
     for (const QString &line : lines) {
         const QString name = propertyName(line);
         if (isDateOrTime(name))
-            out.append(fieldLine(name, propertyValue(line)));
+            out.append(fieldLine(name, alignedMoment(propertyValue(line), needsTime)));
         else
             out.append(line);
     }

@@ -1,7 +1,10 @@
 #include "config.h"
 
 #include <QDir>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QStandardPaths>
+#include <QStringList>
 
 #include "url.h"
 
@@ -12,6 +15,24 @@ QString settingsFilePath()
     const QString dir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
     QDir().mkpath(dir);
     return dir + QStringLiteral("/settings.conf");
+}
+
+// A filter set is written as one JSON line, which an ini file carries whole
+// where a nested QVariantMap would arrive back as an unreadable blob.
+QString filtersToText(const QVariantMap &filters)
+{
+    const QJsonDocument document(QJsonObject::fromVariantMap(filters));
+    return QString::fromUtf8(document.toJson(QJsonDocument::Compact));
+}
+
+QVariantMap filtersFromText(const QString &text)
+{
+    return QJsonDocument::fromJson(text.toUtf8()).object().toVariantMap();
+}
+
+QString smartListGroup(int id)
+{
+    return QStringLiteral("smartLists/") + QString::number(id);
 }
 
 }
@@ -35,6 +56,7 @@ Config::Config(QObject *parent)
     m_syncAfterPush = m_settings.value(QStringLiteral("sync/afterPush"), true).toBool();
     m_showCompleted = m_settings.value(QStringLiteral("lists/showCompleted"), true).toBool();
     m_showCancelled = m_settings.value(QStringLiteral("lists/showCancelled"), false).toBool();
+    loadSmartLists();
     connect(&m_secrets, &SecretsStore::loaded, this, &Config::applyStoredPassword);
     connect(&m_secrets, &SecretsStore::failed, this, [this](const QString &error) {
         m_secretsError = error;
@@ -176,6 +198,101 @@ void Config::setShowCancelled(bool show)
     m_showCancelled = show;
     store(QStringLiteral("lists/showCancelled"), m_showCancelled);
     emit showCancelledChanged();
+}
+
+void Config::loadSmartLists()
+{
+    m_smartLists.clear();
+    const QStringList ids = m_settings.value(QStringLiteral("smartLists/ids")).toStringList();
+    for (int i = 0; i < ids.size(); ++i) {
+        const QString group = smartListGroup(ids.at(i).toInt()) + QLatin1Char('/');
+        QVariantMap entry;
+        entry.insert(QStringLiteral("id"), ids.at(i).toInt());
+        entry.insert(QStringLiteral("name"),
+                     m_settings.value(group + QStringLiteral("name")).toString());
+        entry.insert(QStringLiteral("filters"),
+                     filtersFromText(m_settings.value(group + QStringLiteral("filters")).toString()));
+        m_smartLists.append(entry);
+    }
+}
+
+void Config::storeSmartLists()
+{
+    QStringList ids;
+    for (int i = 0; i < m_smartLists.size(); ++i) {
+        const QVariantMap entry = m_smartLists.at(i).toMap();
+        const int id = entry.value(QStringLiteral("id")).toInt();
+        const QString group = smartListGroup(id) + QLatin1Char('/');
+        ids.append(QString::number(id));
+        m_settings.setValue(group + QStringLiteral("name"),
+                            entry.value(QStringLiteral("name")).toString());
+        m_settings.setValue(group + QStringLiteral("filters"),
+                            filtersToText(entry.value(QStringLiteral("filters")).toMap()));
+    }
+    m_settings.setValue(QStringLiteral("smartLists/ids"), ids);
+    m_settings.sync();
+}
+
+int Config::indexOfSmartList(int id) const
+{
+    for (int i = 0; i < m_smartLists.size(); ++i) {
+        if (m_smartLists.at(i).toMap().value(QStringLiteral("id")).toInt() == id)
+            return i;
+    }
+    return -1;
+}
+
+// Ids are never reused, so a page still holding a deleted one finds nothing
+// rather than the set that took its place.
+int Config::unusedSmartListId() const
+{
+    int highest = 0;
+    for (int i = 0; i < m_smartLists.size(); ++i)
+        highest = qMax(highest, m_smartLists.at(i).toMap().value(QStringLiteral("id")).toInt());
+    return highest + 1;
+}
+
+int Config::addSmartList(const QString &name, const QVariantMap &filters)
+{
+    const int id = unusedSmartListId();
+    QVariantMap entry;
+    entry.insert(QStringLiteral("id"), id);
+    entry.insert(QStringLiteral("name"), name);
+    entry.insert(QStringLiteral("filters"), filters);
+    m_smartLists.append(entry);
+    storeSmartLists();
+    emit smartListsChanged();
+    return id;
+}
+
+void Config::removeSmartList(int id)
+{
+    const int index = indexOfSmartList(id);
+    if (index < 0)
+        return;
+
+    m_smartLists.removeAt(index);
+    // The group goes as well, or its name and filters would be read back the
+    // next time an id climbed to the same number.
+    m_settings.remove(smartListGroup(id));
+    storeSmartLists();
+    emit smartListsChanged();
+}
+
+QVariantMap Config::smartListFilters(int id) const
+{
+    const int index = indexOfSmartList(id);
+    if (index < 0)
+        return QVariantMap();
+    return m_smartLists.at(index).toMap().value(QStringLiteral("filters")).toMap();
+}
+
+QString Config::smartListName(int id) const
+{
+    const int index = indexOfSmartList(id);
+    if (index < 0)
+        return QString();
+    return m_smartLists.at(index).toMap().value(QStringLiteral("name")).toString();
 }
 
 void Config::clearCredentials()

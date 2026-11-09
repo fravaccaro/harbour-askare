@@ -39,6 +39,11 @@ Page {
         pageStack.navigateBack();
     }
 
+    function selectSmart(id, name, filters) {
+        Tasks.showSmart(id, name, filters);
+        pageStack.navigateBack();
+    }
+
     allowedOrientations: Orientation.All
 
     SilicaListView {
@@ -124,6 +129,32 @@ Page {
                 count: Askare.completedCount
                 selected: Tasks.filter === "completed"
                 onClicked: page.selectCompleted()
+            }
+
+            // The searches kept by name, between the built-in views they read
+            // like and the lists of the server.
+            SectionHeader {
+                visible: SmartLists.count > 0
+                text: qsTr("Smart lists")
+            }
+
+            // The rows are kept by the model rather than rebuilt, so a delete
+            // waiting on its remorse is not thrown away when another lands.
+            // The roles are read through model, since the row declares name
+            // and count of its own.
+            Repeater {
+                model: SmartLists
+
+                FilterItem {
+                    width: parent.width
+                    name: model.name
+                    count: model.count
+                    selected: Tasks.filter === "smart" && Tasks.smartListId === model.id
+                    deletable: true
+                    onClicked: page.selectSmart(model.id, model.name, model.filters)
+                    onDeleteConfirmed: Askare.deleteSmartList(model.id)
+                }
+
             }
 
             SectionHeader {

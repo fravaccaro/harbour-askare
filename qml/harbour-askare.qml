@@ -9,6 +9,9 @@ import "components"
 import "pages"
 
 ApplicationWindow {
+    // Where a tapped reminder arrives. The notification manager closes the
+    // notice itself once an action is invoked, so neither of these does.
+
     id: app
 
     // The three things that can be waiting on the app being ready: a task a
@@ -17,7 +20,8 @@ ApplicationWindow {
     // is what says one is still waiting.
     property string pendingTaskHref: ""
     property bool newTaskWanted: false
-    property var pendingShare: ({})
+    property var pendingShare: ({
+    })
     readonly property bool shareWanted: app.pendingShare.summary !== undefined
     // Sailjail grants the app the name its desktop file gives it, so the
     // service is the OrganizationName and ApplicationName of that file. A bus
@@ -161,7 +165,8 @@ ApplicationWindow {
     // shared.
     function pushSharedTask() {
         var fields = app.pendingShare;
-        app.pendingShare = {};
+        app.pendingShare = {
+        };
         fields.calendarHref = Tasks.calendarHref;
         pageStack.push(Qt.resolvedUrl("pages/TaskEditPage.qml"), fields);
     }
@@ -364,9 +369,6 @@ ApplicationWindow {
         urgency: Notification.Normal
     }
 
-    // Where a tapped reminder arrives. The notification manager closes the
-    // notice itself once an action is invoked, so neither of these does.
-    //
     // The bus name is not asked for here: main.cpp claims it once the window
     // has loaded, so that this object and the share receiver's are both on the
     // bus before anything can call either of them.

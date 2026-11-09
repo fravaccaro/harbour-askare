@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A medium field icon on the 112 canvas the theme's icon-m bitmaps use, so
+     it lines up with icon-m-date, icon-m-note and icon-m-location. The stroke
+     is 4, their weight. The hole is held at 60%, the same as the hole in the
+     location pin, so it reads as a punch rather than a second outline. The
+     glyph is white: HighlightImage tints it with the ambience. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="112" height="112" viewBox="0 0 112 112">
+  <path d="M25 24 H68 L92 56 L68 88 H25 A5 5 0 0 1 20 83 V29 A5 5 0 0 1 25 24 Z"
+        fill="none" stroke="#ffffff" stroke-width="4" stroke-linejoin="round"/>
+  <circle cx="40" cy="56" r="7" fill="none" stroke="#ffffff" stroke-width="4" stroke-opacity="0.6"/>
+</svg>

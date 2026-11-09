@@ -1,5 +1,10 @@
 #include "taskmodel.h"
 
+#include <algorithm>
+
+#include <QDate>
+#include <QLocale>
+
 #include "ics.h"
 #include "store.h"
 #include "url.h"
@@ -123,6 +128,230 @@ QVector<LocalTask> matchingOf(const QVector<LocalTask> &tasks, const QString &ne
     return out;
 }
 
+// Whether a list of chosen values names this token, ignoring case, so a filter
+// matches whichever of its choices a task carries.
+bool chosenHas(const QVariantList &values, const QString &token)
+{
+    for (const QVariant &value : values) {
+        if (value.toString().compare(token, Qt::CaseInsensitive) == 0)
+            return true;
+    }
+    return false;
+}
+
+// The same for a calendar, compared on the slash-normalised path the colour
+// bar already uses, so the href a task stores and the one a filter holds meet.
+bool chosenHasHref(const QVariantList &values, const QString &href)
+{
+    const QString wanted = Url::pathWithSlash(href);
+    for (const QVariant &value : values) {
+        if (Url::pathWithSlash(value.toString()) == wanted)
+            return true;
+    }
+    return false;
+}
+
+bool chosenHasTag(const QStringList &tags, const QVariantList &values)
+{
+    for (const QVariant &value : values) {
+        if (tags.contains(value.toString(), Qt::CaseInsensitive))
+            return true;
+    }
+    return false;
+}
+
+// The priority band a value falls in, the four the editor shows.
+QString priorityBand(int priority)
+{
+    if (priority >= 1 && priority <= 4)
+        return QStringLiteral("high");
+    if (priority == 5)
+        return QStringLiteral("medium");
+    if (priority >= 6 && priority <= 9)
+        return QStringLiteral("low");
+    return QStringLiteral("none");
+}
+
+// A task's completion the way the row reads it: a completed task is whole.
+int completionOf(const LocalTask &task)
+{
+    return Ics::percentFromStatus(task.status, Ics::parse(task.ics).percent);
+}
+
+// Whether a task's day answers a date filter. A task with no such day fails:
+// an empty day can neither fall on, before nor after the one that was chosen.
+bool dayMatches(const QString &day, const QString &chosen, const QString &mode)
+{
+    if (day.isEmpty())
+        return false;
+    if (mode == QLatin1String("before"))
+        return day < chosen;
+    if (mode == QLatin1String("after"))
+        return day > chosen;
+    return day == chosen;
+}
+
+bool reminderWanted(const QVariantMap &f)
+{
+    const QString want = f.value(QStringLiteral("reminder")).toString();
+    return want == QLatin1String("yes") || want == QLatin1String("no");
+}
+
+// A saved search keeps its query inside the filter set, under a key of its own
+// that no filter reads.
+QString searchOf(const QVariantMap &f)
+{
+    return f.value(QStringLiteral("search")).toString();
+}
+
+// The span that was chosen, honouring a set saved before this filter, which
+// named today with a boolean of its own.
+QString dueWithinKey(const QVariantMap &f)
+{
+    const QString within = f.value(QStringLiteral("dueWithin")).toString();
+    if (!within.isEmpty())
+        return within;
+
+    return f.value(QStringLiteral("dueToday")).toBool() ? QStringLiteral("today")
+                                                        : QString();
+}
+
+// How many of the form's rows are set. One being set is what makes the filters
+// active at all, so the two answers come from this one list.
+int activeFilterCount(const QVariantMap &f)
+{
+    const bool set[] = {
+        !f.value(QStringLiteral("status")).toList().isEmpty(),
+        !f.value(QStringLiteral("lists")).toList().isEmpty(),
+        !f.value(QStringLiteral("priority")).toList().isEmpty(),
+        !f.value(QStringLiteral("tags")).toList().isEmpty(),
+        f.value(QStringLiteral("completion")).toInt() > 0,
+        !dueWithinKey(f).isEmpty(),
+        !f.value(QStringLiteral("startDate")).toString().isEmpty(),
+        !f.value(QStringLiteral("dueDate")).toString().isEmpty(),
+        reminderWanted(f)
+    };
+    return std::count(set, set + (sizeof(set) / sizeof(set[0])), true);
+}
+
+bool statusPasses(const LocalTask &task, const QVariantMap &f)
+{
+    const QVariantList chosen = f.value(QStringLiteral("status")).toList();
+    return chosen.isEmpty() || chosenHas(chosen, task.status);
+}
+
+bool listPasses(const LocalTask &task, const QVariantMap &f)
+{
+    const QVariantList chosen = f.value(QStringLiteral("lists")).toList();
+    return chosen.isEmpty() || chosenHasHref(chosen, task.calendarHref);
+}
+
+bool priorityPasses(const LocalTask &task, const QVariantMap &f)
+{
+    const QVariantList chosen = f.value(QStringLiteral("priority")).toList();
+    return chosen.isEmpty() || chosenHas(chosen, priorityBand(task.priority));
+}
+
+bool tagsPass(const LocalTask &task, const QVariantMap &f)
+{
+    const QVariantList chosen = f.value(QStringLiteral("tags")).toList();
+    return chosen.isEmpty() || chosenHasTag(task.tags, chosen);
+}
+
+bool completionPasses(const LocalTask &task, const QVariantMap &f)
+{
+    const int threshold = f.value(QStringLiteral("completion")).toInt();
+    if (threshold <= 0)
+        return true;
+
+    const int percent = completionOf(task);
+    if (f.value(QStringLiteral("completionMode")).toString() == QLatin1String("atMost"))
+        return percent <= threshold;
+    return percent >= threshold;
+}
+
+// The first day of the calendar week the locale starts on, so "this week" runs
+// Monday to Sunday where that is the week and Sunday to Saturday where it is not.
+QDate weekStart(const QDate &day)
+{
+    int delta = day.dayOfWeek() - QLocale().firstDayOfWeek();
+    if (delta < 0)
+        delta += 7;
+    return day.addDays(-delta);
+}
+
+// Each span is a calendar one and holds whole: a day already past this week
+// still falls in it, just as a day still to come does.
+bool dayInSpan(const QDate &due, const QDate &now, const QString &within)
+{
+    if (within == QLatin1String("today"))
+        return due == now;
+    if (within == QLatin1String("month"))
+        return due.year() == now.year() && due.month() == now.month();
+
+    const QDate start = weekStart(now);
+    return due >= start && due <= start.addDays(6);
+}
+
+// A task with no due day answers no span: it is due neither this week nor any
+// other.
+bool dueWithinPasses(const LocalTask &task, const QVariantMap &f)
+{
+    const QString within = dueWithinKey(f);
+    if (within.isEmpty())
+        return true;
+
+    const QDate due = QDate::fromString(Ics::dateFromDue(task.due),
+                                        QStringLiteral("yyyy-MM-dd"));
+    return due.isValid() && dayInSpan(due, QDate::currentDate(), within);
+}
+
+bool startPasses(const LocalTask &task, const QVariantMap &f)
+{
+    const QString chosen = f.value(QStringLiteral("startDate")).toString();
+    if (chosen.isEmpty())
+        return true;
+    const QString day = Ics::dateFromDue(Ics::parse(task.ics).start);
+    return dayMatches(day, chosen, f.value(QStringLiteral("startMode")).toString());
+}
+
+bool duePasses(const LocalTask &task, const QVariantMap &f)
+{
+    const QString chosen = f.value(QStringLiteral("dueDate")).toString();
+    if (chosen.isEmpty())
+        return true;
+    return dayMatches(Ics::dateFromDue(task.due), chosen,
+                      f.value(QStringLiteral("dueMode")).toString());
+}
+
+bool reminderPasses(const LocalTask &task, const QVariantMap &f)
+{
+    const QString want = f.value(QStringLiteral("reminder")).toString();
+    if (want == QLatin1String("yes"))
+        return task.reminder >= 0;
+    if (want == QLatin1String("no"))
+        return task.reminder < 0;
+    return true;
+}
+
+// A task is kept only when every filter that is set accepts it.
+bool passesFilters(const LocalTask &task, const QVariantMap &f)
+{
+    return statusPasses(task, f) && listPasses(task, f) && priorityPasses(task, f)
+            && tagsPass(task, f) && completionPasses(task, f) && dueWithinPasses(task, f)
+            && startPasses(task, f) && duePasses(task, f) && reminderPasses(task, f);
+}
+
+QVector<LocalTask> filteredBy(const QVector<LocalTask> &tasks, const QVariantMap &f)
+{
+    QVector<LocalTask> out;
+    for (const LocalTask &task : tasks) {
+        if (passesFilters(task, f))
+            out.append(task);
+    }
+    return out;
+}
+
 // A row shows which list owns it by colour, so the colours are read once per
 // reload instead of once per row.
 QHash<QString, QString> colorsOf(const QVector<CalendarInfo> &calendars)
@@ -154,8 +383,10 @@ TaskModel::TaskModel(Store *store, QObject *parent)
     : QAbstractListModel(parent)
     , m_store(store)
     , m_filter(QStringLiteral("all"))
+    , m_smartListId(-1)
     , m_showCompleted(true)
     , m_showCancelled(false)
+    , m_searching(false)
 {
 }
 
@@ -184,6 +415,16 @@ void TaskModel::setShowCancelled(bool show)
     reload();
 }
 
+void TaskModel::setSearching(bool searching)
+{
+    if (searching == m_searching)
+        return;
+
+    m_searching = searching;
+    emit searchingChanged();
+    reload();
+}
+
 QString TaskModel::title() const
 {
     if (m_filter == QLatin1String("current"))
@@ -198,6 +439,9 @@ QString TaskModel::title() const
         return m_calendarName;
     if (m_filter == QLatin1String("tag"))
         return m_tag;
+    // A smart view carries its own name, as a calendar does.
+    if (m_filter == QLatin1String("smart"))
+        return m_calendarName;
     return tr("All");
 }
 
@@ -242,6 +486,51 @@ void TaskModel::showTag(const QString &tag)
     apply(QStringLiteral("tag"), QString(), tag);
 }
 
+void TaskModel::showSmart(int id, const QString &name, const QVariantMap &filters)
+{
+    if (id != m_smartListId) {
+        m_smartListId = id;
+        emit smartListIdChanged();
+    }
+    m_viewFilters = filters;
+    // The saved search carries its own query. One left over from the live
+    // search would otherwise narrow it further.
+    if (!m_search.isEmpty()) {
+        m_search.clear();
+        emit searchChanged();
+    }
+    if (!m_filters.isEmpty()) {
+        m_filters.clear();
+        emit filtersChanged();
+    }
+    apply(QStringLiteral("smart"), QString(), name);
+}
+
+void TaskModel::forgetSmartList()
+{
+    m_viewFilters.clear();
+    if (m_smartListId < 0)
+        return;
+
+    m_smartListId = -1;
+    emit smartListIdChanged();
+}
+
+int TaskModel::countMatching(const QVariantMap &filters) const
+{
+    return matchedBy(searchOf(filters), filters).size();
+}
+
+QVariantMap TaskModel::searchSet() const
+{
+    QVariantMap out = m_filters;
+    // Left out when nothing is typed, so a set of filters alone is saved as
+    // plainly as it reads.
+    if (!m_search.isEmpty())
+        out.insert(QStringLiteral("search"), m_search);
+    return out;
+}
+
 void TaskModel::setSearch(const QString &text)
 {
     const QString next = text.trimmed();
@@ -253,8 +542,33 @@ void TaskModel::setSearch(const QString &text)
     reload();
 }
 
+void TaskModel::setFilters(const QVariantMap &filters)
+{
+    if (filters == m_filters)
+        return;
+
+    m_filters = filters;
+    emit filtersChanged();
+    reload();
+}
+
+int TaskModel::filterCount() const
+{
+    return activeFilterCount(m_filters);
+}
+
+bool TaskModel::filtersActive() const
+{
+    return filterCount() > 0;
+}
+
 void TaskModel::apply(const QString &filter, const QString &href, const QString &name)
 {
+    // Every other view leaves the smart one behind; showSmart() sets its own
+    // state before calling here, so only the others clear it.
+    if (filter != QLatin1String("smart"))
+        forgetSmartList();
+
     const bool same = filter == m_filter && href == m_calendarHref && name == m_calendarName;
     m_filter = filter;
     m_calendarHref = href;
@@ -378,28 +692,100 @@ QVector<LocalTask> TaskModel::filtered() const
     return m_store->topLevelTasks();
 }
 
-// A tag or a smart list already lays every task out flat, so searching them
-// narrows what is there. All and a single list show parents only, so a search
-// widens to every task in scope, or a matching subtask would hide behind a
-// parent that does not match.
-QVector<LocalTask> TaskModel::searched(const QVector<LocalTask> &tasks) const
+// Every list, at every depth, finished and cancelled included. The view the
+// search was opened from plays no part, or a matching subtask would stay
+// hidden behind a parent, a due date, or a list the user was not looking at.
+// The query and the filters each narrow the set and are applied together, and
+// either of them may be empty.
+QVector<LocalTask> TaskModel::matchedBy(const QString &query, const QVariantMap &filters) const
 {
-    if (m_filter == QLatin1String("all") || m_filter == QLatin1String("calendar"))
-        return withSettings(matchingOf(m_store->tasks(m_calendarHref), m_search));
-    return matchingOf(tasks, m_search);
+    QVector<LocalTask> out = m_store->tasks();
+    if (!query.isEmpty())
+        out = matchingOf(out, query);
+    return filteredBy(out, filters);
+}
+
+QVector<LocalTask> TaskModel::searched() const
+{
+    return matchedBy(m_search, m_filters);
+}
+
+// A smart view is a search that was saved, so it is read the same way: the
+// query it kept and the filters it kept, together.
+QVector<LocalTask> TaskModel::smartFiltered() const
+{
+    return matchedBy(searchOf(m_viewFilters), m_viewFilters);
+}
+
+// The search view draws from every list, and a query or a filter does the
+// same from any view; otherwise the view holds, and only the mixed views
+// answer the completed and cancelled settings.
+QVector<LocalTask> TaskModel::computeItems() const
+{
+    if (m_searching || !m_search.isEmpty() || filtersActive())
+        return searched();
+    if (m_filter == QLatin1String("smart"))
+        return smartFiltered();
+
+    QVector<LocalTask> items = filtered();
+    if (isMixedView())
+        items = withSettings(items);
+    return items;
 }
 
 void TaskModel::reload()
 {
-    beginResetModel();
-    m_items = filtered();
-    // Only the mixed views answer the two settings; the actionable views and
-    // the completed one already decide membership by status.
-    if (isMixedView())
-        m_items = withSettings(m_items);
-    if (!m_search.isEmpty())
-        m_items = searched(m_items);
+    const QVector<LocalTask> next = computeItems();
+    // Read before the rows change, so a dataChanged below reflects the fresh
+    // tallies and colours.
     m_tallies = talliesOf(m_store->tasks());
     m_colors = colorsOf(m_store->calendars());
-    endResetModel();
+    syncItems(next);
+}
+
+// The existing row carrying this href at or after \a from, or -1. Hrefs are
+// unique, and every row before \a from is already settled, so a match can only
+// lie ahead.
+int TaskModel::indexOfHref(const QString &href, int from) const
+{
+    for (int i = from; i < m_items.size(); ++i) {
+        if (m_items.at(i).href == href)
+            return i;
+    }
+    return -1;
+}
+
+// Rows are matched by href and edited in place, never cleared: a row the user
+// is deleting carries its remorse inside its delegate, and a model reset would
+// destroy that countdown before it could run. Deleting one task reloads the
+// list, so a reset would silently drop a delete already begun on another row -
+// which is what left that row stuck dimmed.
+void TaskModel::syncItems(const QVector<LocalTask> &next)
+{
+    for (int i = 0; i < next.size(); ++i) {
+        const int at = indexOfHref(next.at(i).href, i);
+        if (at < 0) {
+            beginInsertRows(QModelIndex(), i, i);
+            m_items.insert(i, next.at(i));
+            endInsertRows();
+            continue;
+        }
+
+        // A match always lies ahead of i, so this only ever moves a row up.
+        if (at != i) {
+            beginMoveRows(QModelIndex(), at, at, QModelIndex(), i);
+            const LocalTask moved = m_items.at(at);
+            m_items.remove(at);
+            m_items.insert(i, moved);
+            endMoveRows();
+        }
+        m_items[i] = next.at(i);
+        emit dataChanged(index(i), index(i));
+    }
+
+    if (m_items.size() > next.size()) {
+        beginRemoveRows(QModelIndex(), next.size(), m_items.size() - 1);
+        m_items.remove(next.size(), m_items.size() - next.size());
+        endRemoveRows();
+    }
 }

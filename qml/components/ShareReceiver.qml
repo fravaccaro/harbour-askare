@@ -1,3 +1,4 @@
+import Nemo.DBus 2.0
 /*!
     \qmltype ShareReceiver
     \brief Hands on the text and the links other apps share with this one.
@@ -29,7 +30,6 @@
 */
 import QtQuick 2.0
 import Sailfish.Share 1.0
-import Nemo.DBus 2.0
 
 Item {
     id: receiver
@@ -52,7 +52,6 @@ Item {
             receiver.takeLink(resources);
         else
             receiver.takeText(resources);
-
     }
 
     // The first link of a share, which arrives as the address the sender was
@@ -88,15 +87,14 @@ Item {
     // never reach here. One method also keeps the sharing dialog from naming
     // Askare twice over.
     DBusAdaptor {
-        path: "/share/task"
-        iface: "org.sailfishos.share"
-
         // Named for the method the share framework calls, not for what it does.
         function share(configuration) {
             sharedAction.loadConfiguration(configuration);
             receiver.takeShared(sharedAction.resources);
         }
 
+        path: "/share/task"
+        iface: "org.sailfishos.share"
     }
 
 }

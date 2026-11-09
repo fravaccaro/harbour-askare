@@ -212,6 +212,17 @@
     </message>
 </context>
 <context>
+    <name>FilterItem</name>
+    <message>
+        <source>Deleting</source>
+        <translation type="unfinished">Deleting</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished">Delete</translation>
+    </message>
+</context>
+<context>
     <name>LicenseListPart</name>
     <message>
         <source>License text</source>
@@ -272,6 +283,10 @@
         <source>Important</source>
         <translation>Important</translation>
     </message>
+    <message>
+        <source>Smart lists</source>
+        <translation>Smart lists</translation>
+    </message>
 </context>
 <context>
     <name>LoginFlow</name>
@@ -325,6 +340,13 @@
     <message>
         <source>The server opens inside the app. Sign in as you would in a browser. Askare will save the password the server creates.</source>
         <translation>The server opens inside the app. Sign in as you would in a browser. Askare will save the password the server creates.</translation>
+    </message>
+</context>
+<context>
+    <name>MultiSelectBox</name>
+    <message>
+        <source>Any</source>
+        <translation>Any</translation>
     </message>
 </context>
 <context>
@@ -577,6 +599,171 @@
     </message>
 </context>
 <context>
+    <name>SearchFilters</name>
+    <message>
+        <source>Filters</source>
+        <translation>Filters</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>Status</translation>
+    </message>
+    <message>
+        <source>List</source>
+        <translation>List</translation>
+    </message>
+    <message>
+        <source>Priority</source>
+        <translation>Priority</translation>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation>Tags</translation>
+    </message>
+    <message>
+        <source>Completion</source>
+        <translation>Completion</translation>
+    </message>
+    <message>
+        <source>Any</source>
+        <translation>Any</translation>
+    </message>
+    <message>
+        <source>Schedule</source>
+        <translation>Schedule</translation>
+    </message>
+    <message>
+        <source>Start date</source>
+        <translation>Start date</translation>
+    </message>
+    <message>
+        <source>Start is</source>
+        <translation>Start is</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>On</translation>
+    </message>
+    <message>
+        <source>Before</source>
+        <translation>Before</translation>
+    </message>
+    <message>
+        <source>After</source>
+        <translation>After</translation>
+    </message>
+    <message>
+        <source>Clear start date</source>
+        <translation>Clear start date</translation>
+    </message>
+    <message>
+        <source>Due date</source>
+        <translation>Due date</translation>
+    </message>
+    <message>
+        <source>Due is</source>
+        <translation>Due is</translation>
+    </message>
+    <message>
+        <source>Clear due date</source>
+        <translation>Clear due date</translation>
+    </message>
+    <message>
+        <source>Reminder set</source>
+        <translation>Reminder set</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation>Yes</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation>No</translation>
+    </message>
+    <message>
+        <source>Clear filters</source>
+        <translation>Clear filters</translation>
+    </message>
+    <message>
+        <source>Completion is</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>At least</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>At most</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Due within</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Today</source>
+        <translation type="unfinished">Today</translation>
+    </message>
+    <message>
+        <source>This week</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This month</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SearchPage</name>
+    <message>
+        <source>Search</source>
+        <translation>Search</translation>
+    </message>
+    <message>
+        <source>Search tasks</source>
+        <translation>Search tasks</translation>
+    </message>
+    <message>
+        <source>No matches</source>
+        <translation>No matches</translation>
+    </message>
+    <message>
+        <source>No tasks</source>
+        <translation>No tasks</translation>
+    </message>
+    <message>
+        <source>Try another search</source>
+        <translation>Try another search</translation>
+    </message>
+    <message>
+        <source>Cancelled</source>
+        <translation>Cancelled</translation>
+    </message>
+    <message>
+        <source>Completed</source>
+        <translation>Completed</translation>
+    </message>
+    <message>
+        <source>To do</source>
+        <translation>To do</translation>
+    </message>
+    <message>
+        <source>Filters</source>
+        <translation type="unfinished">Filters</translation>
+    </message>
+    <message>
+        <source>Save as smart list</source>
+        <translation>Save as smart list</translation>
+    </message>
+    <message numerus="yes">
+        <source>Filters (%n)</source>
+        <translation>
+            <numerusform>Filters (%n)</numerusform>
+            <numerusform>Filters (%n)</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>Session</name>
     <message>
         <source>Choose a list for the task.</source>
@@ -726,6 +913,25 @@
     </message>
 </context>
 <context>
+    <name>SmartListDialog</name>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Save</translation>
+    </message>
+    <message>
+        <source>New smart list</source>
+        <translation>New smart list</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Name</translation>
+    </message>
+    <message>
+        <source>Smart lists save what you searched for and the filters you set, to automatically group matching tasks.</source>
+        <translation>Smart lists save what you searched for and the filters you set, to automatically group matching tasks.</translation>
+    </message>
+</context>
+<context>
     <name>StartPage</name>
     <message>
         <source>The password could not be read from the secure storage of Sailfish OS.</source>
@@ -839,10 +1045,6 @@
     <message>
         <source>New tag</source>
         <translation>New tag</translation>
-    </message>
-    <message>
-        <source>Tags already in use</source>
-        <translation>Tags already in use</translation>
     </message>
     <message>
         <source>Add a tag...</source>
@@ -983,10 +1185,6 @@
         <translation>Start time</translation>
     </message>
     <message>
-        <source>All day</source>
-        <translation>All day</translation>
-    </message>
-    <message>
         <source>Clear start date</source>
         <translation>Clear start date</translation>
     </message>
@@ -1040,23 +1238,27 @@
     </message>
     <message>
         <source>Start date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Start date</translation>
     </message>
     <message>
         <source>Due date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Due date</translation>
     </message>
     <message>
         <source>Due time</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Set a time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please set a time for the start and due dates.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TaskListHeader</name>
-    <message>
-        <source>Search tasks</source>
-        <translation>Search tasks</translation>
-    </message>
     <message numerus="yes">
         <source>%n task(s) changed on the server as well</source>
         <translation>
@@ -1089,6 +1291,40 @@
     </message>
 </context>
 <context>
+    <name>TaskRow</name>
+    <message numerus="yes">
+        <source>Deleting %n tasks</source>
+        <translation>
+            <numerusform>Deleting %n task</numerusform>
+            <numerusform>Deleting %n tasks</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Deleting</source>
+        <translation>Deleting</translation>
+    </message>
+    <message>
+        <source>Subtasks %1/%2</source>
+        <translation>Subtasks %1/%2</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Edit</translation>
+    </message>
+    <message>
+        <source>Mark to-do</source>
+        <translation>Mark to-do</translation>
+    </message>
+    <message>
+        <source>Mark done</source>
+        <translation>Mark done</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Delete</translation>
+    </message>
+</context>
+<context>
     <name>TasksPage</name>
     <message>
         <source>Cancelled</source>
@@ -1117,49 +1353,6 @@
     <message>
         <source>New task</source>
         <translation>New task</translation>
-    </message>
-    <message>
-        <source>Mark to-do</source>
-        <translation>Mark to-do</translation>
-    </message>
-    <message>
-        <source>Mark done</source>
-        <translation>Mark done</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation>Delete</translation>
-    </message>
-    <message>
-        <source>Deleting</source>
-        <translation>Deleting</translation>
-    </message>
-    <message numerus="yes">
-        <source>Deleting %n tasks</source>
-        <translation>
-            <numerusform>Deleting %n task</numerusform>
-            <numerusform>Deleting %n tasks</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Subtasks %1/%2</source>
-        <translation>Subtasks %1/%2</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <translation>Edit</translation>
-    </message>
-    <message>
-        <source>No matches</source>
-        <translation>No matches</translation>
-    </message>
-    <message>
-        <source>Try another search</source>
-        <translation>Try another search</translation>
-    </message>
-    <message>
-        <source>Hide search</source>
-        <translation>Hide search</translation>
     </message>
     <message>
         <source>Search</source>

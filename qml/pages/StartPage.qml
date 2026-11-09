@@ -4,11 +4,11 @@ import Sailfish.Silica 1.0
 Page {
     id: page
 
+    readonly property bool stalled: !Askare.ready && Askare.secretsError !== ""
+
     // Named so a share waiting for the app to leave this page can tell it
     // from the tasks: a dialog pushed here is thrown away by showMain().
     objectName: "startPage"
-    readonly property bool stalled: !Askare.ready && Askare.secretsError !== ""
-
     allowedOrientations: Orientation.All
 
     BusyIndicator {

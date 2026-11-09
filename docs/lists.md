@@ -19,13 +19,21 @@ Above the task lists of the server sit views that read across all of them:
 * **Important** - tasks with high priority
 * **Completed** - everything no longer open: finished tasks, and cancelled ones in a section of their own
 
+## Smart lists
+
+A search worth returning to can be kept by name. Once there is something to keep - words in the field, a filter, or both - **Save as smart list** in the search page's pulley menu asks for a name, offering the words searched for as one, and files the search under it. What is saved is the whole search: the words and the filters that were on, together.
+
+Saved searches stand in a **Smart lists** section of their own on the Lists page, between the views above and the task lists of the server, each with the number of tasks it keeps. Choosing one shows what the search showed: every list, at every depth, finished and cancelled tasks included, narrowed by the words and the filters it holds. The section only appears once something has been saved.
+
+Press and hold a smart list for **Delete**, which waits behind a remorse timer. Deleting the one on show leaves the task list on All. Smart lists are kept on the device rather than on the server, so they are yours alone and they outlive a sign-out.
+
 ## Tags
 
-Under the views stands a **Tags** section, one row per tag in use, with the number of tasks still open under it. The section only appears once something carries a tag. Choosing a tag shows every task wearing it, from any list and at any depth, so a tagged subtask stands beside the rest rather than behind its parent. The view holds open and finished tasks alike, and answers the two settings below just as All does.
+Last on the page stands a **Tags** section, one row per tag in use, with the number of tasks still open under it. The section only appears once something carries a tag. Choosing a tag shows every task wearing it, from any list and at any depth, so a tagged subtask stands beside the rest rather than behind its parent. The view holds open and finished tasks alike, and answers the two settings below just as All does.
 
 Tags are kept on the task itself, as its categories on the server, so they match what the Nextcloud web interface shows. See [Viewing and editing](editing) for putting them on a task.
 
-Below them stand the task lists the server keeps, each with the colour you gave it in Nextcloud and the number of tasks still open in it. Choosing one narrows the task list to it.
+Above them stand the task lists the server keeps, each with the colour you gave it in Nextcloud and the number of tasks still open in it. Choosing one narrows the task list to it.
 
 All and the view of one list count a subtask behind its parent; Current, Today and Completed lay every task out flat, so a subtask due today is not hidden under a parent that is not.
 
@@ -49,7 +57,20 @@ The pulley menu offers **Refresh**, **Search** and **New task**. A new task star
 
 ## Searching
 
-**Search** in the pulley menu opens a field above the list; **Hide search** closes it again and clears it. Typing narrows the list to the tasks that carry the text, matched without regard to case against the title, the notes, the location and the tags. The search stays with whichever view is shown: in a smart list or a tag it narrows what is already there, while in **All** or a single list it reaches every task in scope, so a matching subtask surfaces instead of hiding behind a parent that does not match. When nothing matches, the list says so.
+**Search** in the pulley menu opens its own page, with the field ready to type in and every task already listed, whichever view it was opened over. Typing looks through every task in every list, including subtasks and tasks that are finished or cancelled, matched without regard to case against the title, the notes, the location and the tags. A matching subtask shows on its own. The view you came from plays no part. When nothing matches, the page says so. Going back clears the search, and the list is as it was. A task opened from a result keeps the search underneath, so coming back to it finds the same matches.
+
+### Filters
+
+**Filters** under the search field slides out a panel of filters. The line turns highlighted and counts them, **Filters (2)**, once any filter is on. Each one is optional, and the results narrow as soon as a filter is set, even with the field empty. Where a filter offers several choices, a task matches any one of them; across filters, every filter that is set must match.
+
+- **Status**, **List** and **Priority** each open a list of toggles, so more than one choice can be on at once.
+- **Tags** lays the tags already in use out as chips, the ones the task editor offers. A tap puts a tag in the filter and another takes it out, and several can be on at once.
+- **Completion** sets a percentage, then **At least** or **At most** keeps tasks at or above, or at or below, that mark.
+- **Due within** keeps tasks whose due day falls in the span you pick - **Today**, **This week** or **This month** - finished and cancelled ones included. The week and the month are calendar ones and hold whole, so a day already past this week counts as much as one still to come, and a task with no due day falls in no span at all. **Any** leaves the filter off.
+- **Start date** and **Due date** are set apart from each other, each matching on, before or after the day you pick.
+- **Reminder set** keeps tasks that do, or do not, carry a reminder.
+
+**Clear filters** empties the panel. Leaving the search page clears the filters along with the text; a search worth keeping is saved as a [smart list](#smart-lists) first.
 
 On the Lists page the pulley menu leads to **About**, **Settings** and **Refresh**. About shows the version, donations, translations, and the licence.
 

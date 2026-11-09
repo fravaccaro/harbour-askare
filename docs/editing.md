@@ -22,14 +22,14 @@ The editor takes:
 * **Completion** - from 0 to 100 percent in steps of 5; 100 marks the task done
 * **Status** - No status, Needs action, In process, Completed or Cancelled; it moves with Completion, so marking a task done sets it Completed and dropping the bar below full sends a completed task back to in process. **No status** clears it, leaving the task without a state at all, the way a task created on the Nextcloud side starts out
 * **Priority** - 1 to 4 high, 5 medium, 6 to 9 low, 0 none
-* **Start** and **Due** - a date each, with a time or left as all day
+* **Start** and **Due** - a date each, with a time of day that must be set; picking a date fills in a time you can then adjust
 * **Reminder** - see [Reminders](reminders); a due date is needed first
 * **Location** - a place in plain words
 * **URL** - a link, opened in the browser from the task view
 * **Tags** - see below
 * **Notes**
 
-A task may not start after it is due; the editor says so and refuses to save until one of the two dates moves. **Clear start date** and **Clear due date** remove a date again, and clearing the due date clears the reminder with it.
+A task may not start after it is due; the editor says so and refuses to save until one of the two dates moves. A date must carry a time of day, so the editor refuses to save a date left without one, as a task first made all-day on the Nextcloud side arrives. **Clear start date** and **Clear due date** remove a date again, and clearing the due date clears the reminder with it.
 
 ## Sharing into Askare
 

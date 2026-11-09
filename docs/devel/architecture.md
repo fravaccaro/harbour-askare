@@ -25,6 +25,7 @@ nav_order: 1
 | `src/askare/session.*` | QML-facing controller: login, sync, save, delete |
 | `src/askare/calendarmodel.*` | Task lists, with their colour and open count |
 | `src/askare/taskmodel.*` | The tasks of one view, grouped and ordered for the list |
+| `src/askare/smartlistmodel.*` | The saved searches, with the number of tasks each keeps |
 | `src/askare/reminders.*` | Watches stored tasks and reports a reminder whose moment has passed |
 | `qml/pages/*` | Silica UI |
 | `qml/components/*` | Shared QML such as the SupportMe dialog |
@@ -50,6 +51,8 @@ The package deliberately installs no `dbus-1/services` file - the `Paths` suite 
 
 A sync walks the server in a fixed order: PROPFIND for the current user principal, PROPFIND for its calendar home set, PROPFIND for the calendars under it, then one REPORT per calendar for its VTODOs. Only afterwards does it upload what the device changed, with PUT and DELETE.
 
+The principal request goes to the stored server address with `/remote.php/dav/` appended, through `Url::serverBase()`. The path is kept, so a Nextcloud that lives under a directory is asked for there. Asking the host root for that path is what a server in a subdirectory answers with 404, and the lists then stay empty.
+
 Collection hrefs keep their **trailing slash**, through `Url::pathWithSlash()`, so a task href built from a calendar href matches what the server returns.
 
 A change is uploaded with `If-Match` carrying the ETag the task was last read at, and a new task with `If-None-Match: *`, so neither a task changed on both sides nor a name already taken is overwritten. A task the server refuses stays marked dirty and is offered again on the next run; only a run that uploaded something may pull afterwards, so a rejected task cannot drive an endless loop.
@@ -73,6 +76,12 @@ The whole subtree travels together, since `RELATED-TO` would otherwise point at 
 A move changes the href a page may be holding, so `Session` emits `taskMoved(oldHref, newHref)` and `TaskDetailPage` follows it. Without that the page would keep acting on the row left behind, and `editedTask()` clears the deleted flag, so the next pulley action there would put the task back in both lists.
 
 A list is a model and reads itself again, but a single task has no model of its own: `TaskDetailPage` holds one task in its own properties, which `Session::taskFields()` names and `pushTask()` builds the page from. The page keeps nothing of its own beyond that, and reads every field again on `tasksChanged` - its `reload()` is the one place a field is copied, over properties named after the keys `taskFields()` returns. An editor that mirrored its fields back on `accepted` would answer only for the edit the page itself opened, leaving a row's own **Edit**, a quick toggle and an incoming sync to go unseen until the page was pushed again.
+
+`TaskModel::reload()` brings `m_items` to the new set **in place** through `syncItems()`, by insert, move and remove, rather than `beginResetModel()`. A reset destroys every delegate, and a delegate is where a Silica remorse lives: `remorseAction()` parents its countdown inside the row it covers, and a destroyed countdown never runs its callback. Deleting a task reloads the list, so a reset threw away a delete the user had already begun on another row, leaving that row stuck dimmed. Rows are matched by `href`, which is unique, so a match for row `i` can only lie at or after `i` and a move is always upward, which keeps `beginMoveRows()` within its rules. The tallies and colours are read before the rows change, so the `dataChanged()` each surviving row emits carries the fresh subtask counts and list colour.
+
+Dropping the reset cost the search page its header, which it had to win back. `SearchPage` reparents its title, field and filter row into the list's `header`, and pins the view to the top with `contentY = originY` once that height is known, because the model is already full when the page opens. The pin used to be the last word: `Tasks.searching = true` reset the model, and a reset leaves the view at its origin. In place, that same line now inserts and moves rows under a view that has already pinned itself, and `QQuickListView` works its origin out from the rows it has measured, so the origin slid away from the content it was pinned to and the page opened below its own title - by one row where the search merely widens the set, by the whole header where the view it was opened from was a prefix of it. The page therefore sets `searchReady` after `Tasks.searching`, and its `Loader` builds the list only then: the model is final before the view exists, so the origin the view pins to is the one it keeps. Typing was never affected, since the view is settled and laid out by the time a query narrows the set.
+
+`SmartListModel` is the same story for the saved searches, which carry a delete of their own on the lists page. It replaced a `QVariantList` property: a `Repeater` handed a new list rebuilds every delegate, and the counts are read again on each edit and sync, so even a background refresh cancelled a remorse that was running. The model holds the saved sets with their counts and syncs in place through `syncItems()` matched on the `id`, which `Config` never reuses. `Session` no longer composes that list; it reloads the model from `Config::smartListsChanged` and from `reloadModels()`, which is what keeps the counts on the same beat as the ones beside the built-in views. The lists page reads the roles as `model.name`, `model.count`, `model.id` and `model.filters`, since `FilterItem` declares `name` and `count` of its own and a bare role name would bind those properties to themselves.
 
 ## Sandbox layout
 

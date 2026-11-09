@@ -89,7 +89,7 @@ void DavClient::propfind(const QUrl &url, const QByteArray &body)
 void DavClient::discoverPrincipal()
 {
     m_operation = Principal;
-    propfind(QUrl(Url::origin(m_server) + QStringLiteral("/remote.php/dav/")),
+    propfind(QUrl(Url::serverBase(m_server) + QStringLiteral("/remote.php/dav/")),
              PrincipalBody);
 }
 

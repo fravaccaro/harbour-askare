@@ -40,7 +40,7 @@
     <name>AskForSupport</name>
     <message>
         <source>Please take a moment to consider if you can contribute to this project in one way or another.</source>
-        <translation>Prenditi un momento per valutare se puoi contribuire a questo progetto in un modo o nell&amp;apos;altro.</translation>
+        <translation>Prenditi un momento per valutare se puoi contribuire a questo progetto in un modo o nell&apos;altro.</translation>
     </message>
 </context>
 <context>
@@ -99,7 +99,7 @@
     </message>
     <message>
         <source>Report what breaks, suggest what is missing, or tell other Nextcloud users about the app.</source>
-        <translation>Segnala ciò che si rompe, proponi ciò che manca o parla dell&amp;apos;app ad altri utenti di Nextcloud.</translation>
+        <translation>Segnala ciò che si rompe, proponi ciò che manca o parla dell&apos;app ad altri utenti di Nextcloud.</translation>
     </message>
 </context>
 <context>
@@ -138,7 +138,7 @@
     <message numerus="yes">
         <source>%n more task(s) wait after this one.</source>
         <translation>
-            <numerusform>C&amp;apos;è ancora %n attività in attesa dopo questa.</numerusform>
+            <numerusform>C&apos;è ancora %n attività in attesa dopo questa.</numerusform>
             <numerusform>Ci sono ancora %n attività in attesa dopo questa.</numerusform>
         </translation>
     </message>
@@ -204,11 +204,22 @@
     <name>ExternalUrlPage</name>
     <message>
         <source>Swipe left to preview.</source>
-        <translation>Scorri a sinistra per l&amp;apos;anteprima.</translation>
+        <translation>Scorri a sinistra per l&apos;anteprima.</translation>
     </message>
     <message>
         <source>You are using a mobile data connection.</source>
         <translation>Stai usando una connessione dati mobile.</translation>
+    </message>
+</context>
+<context>
+    <name>FilterItem</name>
+    <message>
+        <source>Deleting</source>
+        <translation>Eliminazione</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Elimina</translation>
     </message>
 </context>
 <context>
@@ -272,6 +283,10 @@
         <source>Important</source>
         <translation>Importanti</translation>
     </message>
+    <message>
+        <source>Smart lists</source>
+        <translation>Elenchi intelligenti</translation>
+    </message>
 </context>
 <context>
     <name>LoginFlow</name>
@@ -325,6 +340,13 @@
     <message>
         <source>The server opens inside the app. Sign in as you would in a browser. Askare will save the password the server creates.</source>
         <translation>Il server si apre all&apos;interno dell&apos;app. Accedi come faresti in un browser. Askare salverà la password creata dal server.</translation>
+    </message>
+</context>
+<context>
+    <name>MultiSelectBox</name>
+    <message>
+        <source>Any</source>
+        <translation>Qualsiasi</translation>
     </message>
 </context>
 <context>
@@ -579,6 +601,171 @@
     </message>
 </context>
 <context>
+    <name>SearchFilters</name>
+    <message>
+        <source>Filters</source>
+        <translation>Filtri</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>Stato</translation>
+    </message>
+    <message>
+        <source>List</source>
+        <translation>Elenco</translation>
+    </message>
+    <message>
+        <source>Priority</source>
+        <translation>Priorità</translation>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation>Etichette</translation>
+    </message>
+    <message>
+        <source>Completion</source>
+        <translation>Completamento</translation>
+    </message>
+    <message>
+        <source>Any</source>
+        <translation>Qualsiasi</translation>
+    </message>
+    <message>
+        <source>Schedule</source>
+        <translation>Pianificazione</translation>
+    </message>
+    <message>
+        <source>Start date</source>
+        <translation>Data di inizio</translation>
+    </message>
+    <message>
+        <source>Start is</source>
+        <translation>L&apos;inizio è</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>Il giorno</translation>
+    </message>
+    <message>
+        <source>Before</source>
+        <translation>Prima</translation>
+    </message>
+    <message>
+        <source>After</source>
+        <translation>Dopo</translation>
+    </message>
+    <message>
+        <source>Clear start date</source>
+        <translation>Rimuovi data di inizio</translation>
+    </message>
+    <message>
+        <source>Due date</source>
+        <translation>Data di scadenza</translation>
+    </message>
+    <message>
+        <source>Due is</source>
+        <translation>La scadenza è</translation>
+    </message>
+    <message>
+        <source>Clear due date</source>
+        <translation>Rimuovi data di scadenza</translation>
+    </message>
+    <message>
+        <source>Reminder set</source>
+        <translation>Promemoria impostato</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation>Sì</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation>No</translation>
+    </message>
+    <message>
+        <source>Clear filters</source>
+        <translation>Rimuovi filtri</translation>
+    </message>
+    <message>
+        <source>Completion is</source>
+        <translation>Completamento è</translation>
+    </message>
+    <message>
+        <source>At least</source>
+        <translation>Almeno</translation>
+    </message>
+    <message>
+        <source>At most</source>
+        <translation>Al massimo</translation>
+    </message>
+    <message>
+        <source>Due within</source>
+        <translation>In scadenza entro</translation>
+    </message>
+    <message>
+        <source>Today</source>
+        <translation>Oggi</translation>
+    </message>
+    <message>
+        <source>This week</source>
+        <translation>Questa settimana</translation>
+    </message>
+    <message>
+        <source>This month</source>
+        <translation>Questo mese</translation>
+    </message>
+</context>
+<context>
+    <name>SearchPage</name>
+    <message>
+        <source>Search</source>
+        <translation>Cerca</translation>
+    </message>
+    <message>
+        <source>Search tasks</source>
+        <translation>Cerca attività</translation>
+    </message>
+    <message>
+        <source>No matches</source>
+        <translation>Nessun risultato</translation>
+    </message>
+    <message>
+        <source>No tasks</source>
+        <translation>Nessuna attività</translation>
+    </message>
+    <message>
+        <source>Try another search</source>
+        <translation>Prova con un altro termine</translation>
+    </message>
+    <message>
+        <source>Cancelled</source>
+        <translation>Annullate</translation>
+    </message>
+    <message>
+        <source>Completed</source>
+        <translation>Completate</translation>
+    </message>
+    <message>
+        <source>To do</source>
+        <translation>Da fare</translation>
+    </message>
+    <message>
+        <source>Filters</source>
+        <translation>Filtri</translation>
+    </message>
+    <message>
+        <source>Save as smart list</source>
+        <translation>Salva come elenco intelligente</translation>
+    </message>
+    <message numerus="yes">
+        <source>Filters (%n)</source>
+        <translation>
+            <numerusform>Filtro (%n)</numerusform>
+            <numerusform>Filtri (%n)</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>Session</name>
     <message>
         <source>Choose a list for the task.</source>
@@ -728,10 +915,29 @@
     </message>
 </context>
 <context>
+    <name>SmartListDialog</name>
+    <message>
+        <source>Save</source>
+        <translation>Salva</translation>
+    </message>
+    <message>
+        <source>New smart list</source>
+        <translation>Nuovo elenco intelligente</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Nome</translation>
+    </message>
+    <message>
+        <source>Smart lists save what you searched for and the filters you set, to automatically group matching tasks.</source>
+        <translation>Gli elenchi intelligenti salvano le parole cercate e i filtri impostati, per raggruppare automaticamente le attività.</translation>
+    </message>
+</context>
+<context>
     <name>StartPage</name>
     <message>
         <source>The password could not be read from the secure storage of Sailfish OS.</source>
-        <translation>Non è stato possibile leggere la password dall&amp;apos;archivio sicuro di Sailfish OS</translation>
+        <translation>Non è stato possibile leggere la password dall&apos;archivio sicuro di Sailfish OS</translation>
     </message>
     <message>
         <source>Try again</source>
@@ -841,10 +1047,6 @@
     <message>
         <source>New tag</source>
         <translation>Nuova etichetta</translation>
-    </message>
-    <message>
-        <source>Tags already in use</source>
-        <translation>Etichette già in uso</translation>
     </message>
     <message>
         <source>Add a tag...</source>
@@ -985,10 +1187,6 @@
         <translation>Ora di inizio</translation>
     </message>
     <message>
-        <source>All day</source>
-        <translation>Tutto il giorno</translation>
-    </message>
-    <message>
         <source>Clear start date</source>
         <translation>Rimuovi data di inizio</translation>
     </message>
@@ -1052,13 +1250,17 @@
         <source>Due time</source>
         <translation>Ora di scadenza</translation>
     </message>
+    <message>
+        <source>Set a time</source>
+        <translation>Imposta un&apos;ora</translation>
+    </message>
+    <message>
+        <source>Please set a time for the start and due dates.</source>
+        <translation>Imposta un&apos;ora per la data di inizio e di scadenza.</translation>
+    </message>
 </context>
 <context>
     <name>TaskListHeader</name>
-    <message>
-        <source>Search tasks</source>
-        <translation>Cerca attività</translation>
-    </message>
     <message numerus="yes">
         <source>%n task(s) changed on the server as well</source>
         <translation>
@@ -1091,6 +1293,40 @@
     </message>
 </context>
 <context>
+    <name>TaskRow</name>
+    <message numerus="yes">
+        <source>Deleting %n tasks</source>
+        <translation>
+            <numerusform>Eliminazione %n attività</numerusform>
+            <numerusform>Eliminazione %n attività</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Deleting</source>
+        <translation>Eliminazione</translation>
+    </message>
+    <message>
+        <source>Subtasks %1/%2</source>
+        <translation>Sottoattività %1/%2</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Modifica</translation>
+    </message>
+    <message>
+        <source>Mark to-do</source>
+        <translation>Segna come da fare</translation>
+    </message>
+    <message>
+        <source>Mark done</source>
+        <translation>Segna come completata</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Elimina</translation>
+    </message>
+</context>
+<context>
     <name>TasksPage</name>
     <message>
         <source>Cancelled</source>
@@ -1119,49 +1355,6 @@
     <message>
         <source>New task</source>
         <translation>Nuova attività</translation>
-    </message>
-    <message>
-        <source>Mark to-do</source>
-        <translation>Segna come da fare</translation>
-    </message>
-    <message>
-        <source>Mark done</source>
-        <translation>Segna come completata</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation>Elimina</translation>
-    </message>
-    <message>
-        <source>Deleting</source>
-        <translation>Eliminazione</translation>
-    </message>
-    <message numerus="yes">
-        <source>Deleting %n tasks</source>
-        <translation>
-            <numerusform>Eliminazione %n attività</numerusform>
-            <numerusform>Eliminazione %n attività</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Subtasks %1/%2</source>
-        <translation>Sottoattività %1/%2</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <translation>Modifica</translation>
-    </message>
-    <message>
-        <source>No matches</source>
-        <translation>Nessun risultato</translation>
-    </message>
-    <message>
-        <source>Try another search</source>
-        <translation>Prova con un altro termine</translation>
-    </message>
-    <message>
-        <source>Hide search</source>
-        <translation>Nascondi ricerca</translation>
     </message>
     <message>
         <source>Search</source>

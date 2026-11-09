@@ -206,7 +206,8 @@ Page {
                 visible: page.tags.length > 0
                 topPadding: Theme.paddingMedium
                 description: qsTr("Tags")
-                icon.source: "image://theme/icon-m-asterisk"
+                icon.source: Qt.resolvedUrl("../icons/icon-m-tag.svg")
+                icon.color: Theme.primaryColor
 
                 TagChips {
                     x: tagsField.grooveLeftMargin

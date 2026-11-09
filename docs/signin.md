@@ -7,7 +7,7 @@ nav_order: 1
 
 # Signing in
 
-Enter the address of your Nextcloud server, for example `https://cloud.example.org`, and tap **Sign in**. The sign-in page of the server then opens inside Askare: sign in there as you would in a browser. Single sign-on and two-factor authentication work, because whatever the page accepts is what grants access.
+Enter the address of your Nextcloud server, for example `https://cloud.example.org`, and tap **Sign in**. When the server lives under a path, include that path, as in `https://example.org/nextcloud`. The sign-in page of the server then opens inside Askare: sign in there as you would in a browser. Single sign-on and two-factor authentication work, because whatever the page accepts is what grants access.
 
 Once the server grants access it creates an app password named Askare, and Askare keeps that. Your own password is never asked for and never stored. The app password can be revoked at any time on the server, under *Settings → Security*; Askare then asks to sign in again.
 

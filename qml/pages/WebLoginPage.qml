@@ -5,13 +5,13 @@ import Sailfish.WebView 1.0
 Page {
     id: page
 
+    property string loginUrl
+    property string errorMessage
+
     // Named with StartPage and LoginPage so a pending share waits until the
     // tasks are on the stack: replaceAbove on a successful sign-in would
     // throw away a dialog pushed here.
     objectName: "webLoginPage"
-    property string loginUrl
-    property string errorMessage
-
     allowedOrientations: Orientation.All
     Component.onDestruction: {
         if (!Askare.configured)

@@ -17,6 +17,7 @@
 #include "types.h"
 
 class CalendarModel;
+class SmartListModel;
 class TaskModel;
 
 class Session : public QObject
@@ -53,7 +54,8 @@ class Session : public QObject
 
 public:
     explicit Session(Config *config, Store *store, CalendarModel *calendars,
-                     TaskModel *tasks, QObject *parent = nullptr);
+                     TaskModel *tasks, SmartListModel *smartLists,
+                     QObject *parent = nullptr);
 
     bool isReady() const;
     bool isConfigured() const;
@@ -105,6 +107,10 @@ public:
     Q_INVOKABLE QVariantList conflicts() const;
     Q_INVOKABLE void resolveKeepMine(const QString &href);
     Q_INVOKABLE void resolveKeepTheirs(const QString &href);
+    // Files the filters as a view of its own, under the name given.
+    Q_INVOKABLE int saveSmartList(const QString &name, const QVariantMap &filters);
+    // Deleting the set now on show leaves the task list on All.
+    Q_INVOKABLE void deleteSmartList(int id);
 
 signals:
     void readyChanged();
@@ -186,6 +192,7 @@ private:
     Store *m_store;
     CalendarModel *m_calendars;
     TaskModel *m_tasks;
+    SmartListModel *m_smartLists;
     LoginFlow m_login;
     DavClient m_dav;
     QTimer m_syncTimer;

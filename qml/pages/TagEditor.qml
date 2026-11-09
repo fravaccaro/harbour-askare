@@ -1,3 +1,4 @@
+import "../components"
 /*!
     \qmltype TagEditor
     \brief Edits the tags of a task as removable chips.
@@ -70,7 +71,8 @@ Column {
         width: parent.width
         topPadding: Theme.paddingMedium
         description: qsTr("Tags")
-        icon.source: "image://theme/icon-m-asterisk"
+        icon.source: Qt.resolvedUrl("../icons/icon-m-tag.svg")
+        icon.color: Theme.primaryColor
 
         Flow {
             x: chipsField.grooveLeftMargin
@@ -87,41 +89,37 @@ Column {
             Repeater {
                 model: root.tags
 
-                Rectangle {
-                    width: chipRow.width + 2 * Theme.paddingMedium
-                    height: chipRow.height + Theme.paddingSmall
-                    radius: height / 2
-                    color: Theme.rgba(Theme.highlightColor, chipArea.pressed ? 0.4 : 0.2)
-
-                    Row {
-                        id: chipRow
-
-                        anchors.centerIn: parent
-                        spacing: Theme.paddingSmall
-
-                        Label {
-                            color: Theme.highlightColor
-                            font.pixelSize: Theme.fontSizeSmall
-                            text: modelData
-                        }
-
-                        Label {
-                            color: Theme.highlightColor
-                            font.pixelSize: Theme.fontSizeSmall
-                            text: "\u00d7"
-                        }
-
-                    }
-
-                    MouseArea {
-                        id: chipArea
-
-                        anchors.fill: parent
-                        onClicked: root.removeAt(index)
-                    }
-
+                TagChip {
+                    text: modelData
+                    suffix: "\u00d7"
+                    onClicked: root.removeAt(index)
                 }
 
+            }
+
+        }
+
+    }
+
+    Label {
+        x: chipsField.contentLeft
+        visible: root.available.length > 0
+        color: Theme.secondaryColor
+        font.pixelSize: Theme.fontSizeSmall
+    }
+
+    Flow {
+        x: chipsField.contentLeft
+        width: parent.width - x - Theme.horizontalPageMargin
+        spacing: Theme.paddingSmall
+
+        Repeater {
+            model: root.available
+
+            TagChip {
+                text: modelData
+                filled: false
+                onClicked: root.addTag(modelData)
             }
 
         }
@@ -141,52 +139,6 @@ Column {
             root.addTag(entry.text);
             entry.text = "";
         }
-    }
-
-    Label {
-        x: chipsField.contentLeft
-        visible: root.available.length > 0
-        color: Theme.secondaryColor
-        font.pixelSize: Theme.fontSizeSmall
-        text: qsTr("Tags already in use")
-    }
-
-    Flow {
-        x: chipsField.contentLeft
-        width: parent.width - x - Theme.horizontalPageMargin
-        spacing: Theme.paddingSmall
-
-        Repeater {
-            model: root.available
-
-            Rectangle {
-                width: offerLabel.width + 2 * Theme.paddingMedium
-                height: offerLabel.height + Theme.paddingSmall
-                radius: height / 2
-                border.width: 1
-                border.color: Theme.rgba(Theme.highlightColor, 0.4)
-                color: offerArea.pressed ? Theme.rgba(Theme.highlightColor, 0.2) : "transparent"
-
-                Label {
-                    id: offerLabel
-
-                    anchors.centerIn: parent
-                    color: Theme.secondaryColor
-                    font.pixelSize: Theme.fontSizeSmall
-                    text: modelData
-                }
-
-                MouseArea {
-                    id: offerArea
-
-                    anchors.fill: parent
-                    onClicked: root.addTag(modelData)
-                }
-
-            }
-
-        }
-
     }
 
 }

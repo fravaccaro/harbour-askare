@@ -4,6 +4,7 @@
 #include "ics.h"
 #include "markdown.h"
 #include "sharedtext.h"
+#include "smartlistmodel.h"
 #include "taskmodel.h"
 #include "url.h"
 
@@ -94,12 +95,13 @@ LocalTask detached(const LocalTask &task)
 }
 
 Session::Session(Config *config, Store *store, CalendarModel *calendars,
-                 TaskModel *tasks, QObject *parent)
+                 TaskModel *tasks, SmartListModel *smartLists, QObject *parent)
     : QObject(parent)
     , m_config(config)
     , m_store(store)
     , m_calendars(calendars)
     , m_tasks(tasks)
+    , m_smartLists(smartLists)
     , m_busy(false)
     , m_pushOnly(false)
     , m_pullAfterConflict(false)
@@ -136,8 +138,12 @@ Session::Session(Config *config, Store *store, CalendarModel *calendars,
     connect(m_config, &Config::showCancelledChanged, this,
             &Session::showCancelledTasksChanged);
     connect(m_config, &Config::showCancelledChanged, this, &Session::applyShowCancelled);
+    connect(m_config, &Config::smartListsChanged, m_smartLists, &SmartListModel::reload);
     connect(m_config, &Config::readyChanged, this, &Session::syncIfStartupWanted);
     m_store->open();
+    // The saved sets are a preference of this device and outlive a sign-out, so
+    // their rows stand before any sync and whether or not anyone is signed in.
+    m_smartLists->reload();
     applyShowCompleted();
     applyShowCancelled();
     if (m_config->isReady() && m_config->isConfigured())
@@ -284,6 +290,19 @@ int Session::importantCount() const
     return m_store->isOpen() ? m_store->importantCount() : 0;
 }
 
+int Session::saveSmartList(const QString &name, const QVariantMap &filters)
+{
+    return m_config->addSmartList(name, filters);
+}
+
+void Session::deleteSmartList(int id)
+{
+    // The view would otherwise go on showing a set that no longer exists.
+    if (m_tasks->smartListId() == id)
+        m_tasks->showAll();
+    m_config->removeSmartList(id);
+}
+
 QVariantList Session::tags() const
 {
     QVariantList out;
@@ -329,6 +348,9 @@ void Session::reloadModels()
 {
     m_calendars->reload();
     m_tasks->reload();
+    // The counts beside the saved sets are read from the store, so they follow
+    // the same beat as the counts beside the built-in views.
+    m_smartLists->reload();
     emit coverChanged();
     emit tasksChanged();
 }

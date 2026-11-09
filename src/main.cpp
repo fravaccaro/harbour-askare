@@ -17,6 +17,7 @@
 #include "askare/config.h"
 #include "askare/reminders.h"
 #include "askare/session.h"
+#include "askare/smartlistmodel.h"
 #include "askare/store.h"
 #include "askare/taskmodel.h"
 
@@ -38,7 +39,8 @@ int main(int argc, char *argv[])
     Store store;
     CalendarModel calendars(&store);
     TaskModel tasks(&store);
-    Session session(&config, &store, &calendars, &tasks);
+    SmartListModel smartLists(&config, &tasks, &store);
+    Session session(&config, &store, &calendars, &tasks, &smartLists);
     Reminders reminders(&store);
 
     QScopedPointer<QQuickView> view(SailfishApp::createView());
@@ -51,6 +53,7 @@ int main(int argc, char *argv[])
     context->setContextProperty(QStringLiteral("Askare"), &session);
     context->setContextProperty(QStringLiteral("Calendars"), &calendars);
     context->setContextProperty(QStringLiteral("Tasks"), &tasks);
+    context->setContextProperty(QStringLiteral("SmartLists"), &smartLists);
     context->setContextProperty(QStringLiteral("Reminders"), &reminders);
 
     view->setSource(SailfishApp::pathTo(QStringLiteral("qml/harbour-askare.qml")));
