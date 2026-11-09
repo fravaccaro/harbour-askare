@@ -68,6 +68,7 @@ Dialog {
             page.dueDate = iso;
             if (page.dueTime === "")
                 page.dueTime = "09:00";
+
         });
     }
 
@@ -82,6 +83,7 @@ Dialog {
             page.startDate = iso;
             if (page.startTime === "")
                 page.startTime = "09:00";
+
         });
     }
 
@@ -121,8 +123,7 @@ Dialog {
     // value, which a server rejects beside a dated partner, so each date here
     // carries a time of day. A task first set all-day elsewhere asks for one.
     function missingTime() {
-        return (page.startDate !== "" && page.startTime === "")
-                || (page.dueDate !== "" && page.dueTime === "");
+        return (page.startDate !== "" && page.startTime === "") || (page.dueDate !== "" && page.dueTime === "");
     }
 
     // A subtask being created stays where its parent is; anything else follows
@@ -263,8 +264,8 @@ Dialog {
 
                         MenuItem {
                             text: displayName
-                        horizontalAlignment: Text.AlignLeft
-                        leftPadding: Theme.iconSizeMedium + Theme.paddingMedium
+                            horizontalAlignment: Text.AlignLeft
+                            leftPadding: Theme.iconSizeMedium + Theme.paddingMedium
                         }
 
                     }

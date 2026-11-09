@@ -100,9 +100,9 @@ IconComboBox {
     description: root.summary()
     icon.source: root.activeIcon()
     onCurrentIndexChanged: {
-        if (currentIndex >= 0) {
+        if (currentIndex >= 0)
             currentIndex = -1;
-        }
+
     }
 
     menu: ContextMenu {

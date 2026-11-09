@@ -101,7 +101,6 @@ Column {
 
     }
 
-
     Label {
         x: chipsField.contentLeft
         visible: root.available.length > 0
@@ -126,7 +125,6 @@ Column {
         }
 
     }
-
 
     TextField {
         id: entry

@@ -4,6 +4,13 @@ import Sailfish.Silica 1.0
 Page {
     id: page
 
+    // True once the model holds the search's own set. The list waits for it:
+    // one built earlier pins itself to an origin worked out for the rows of the
+    // view the search was opened over, and the rows the search then adds move
+    // that origin without moving the content, which opened the page below its
+    // own title.
+    property bool searchReady: false
+
     function clearQuery() {
         Tasks.search = "";
         Tasks.filters = {
@@ -32,8 +39,12 @@ Page {
 
     allowedOrientations: Orientation.All
     // The search spans every list from the moment it opens, not the view it was
-    // opened over, so the model is told it is searching before the first word.
-    Component.onCompleted: Tasks.searching = true
+    // opened over, so the model is told it is searching before the first word -
+    // and before the list is built, which is what searchReady carries.
+    Component.onCompleted: {
+        Tasks.searching = true;
+        page.searchReady = true;
+    }
     // A page pushed on top deactivates this one too. Back is what says the
     // search itself is leaving, so the list underneath is whole again before
     // it shows. A task opened from a result leaves the query in place.
@@ -56,11 +67,12 @@ Page {
             anchors.fill: parent
 
             // Loader first, column second — same order as the gallery. The
-            // Loader defers the list until the column has its final height, so
-            // a page opened on an already-filled model still shows the title.
+            // Loader defers the list until the column has its final height and
+            // the model its final rows, so a page opened on an already-filled
+            // model still shows the title.
             Loader {
                 anchors.fill: parent
-                sourceComponent: listViewComponent
+                sourceComponent: page.searchReady ? listViewComponent : null
             }
 
             MouseArea {

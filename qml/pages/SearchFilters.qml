@@ -157,8 +157,8 @@ SilicaFlickable {
 
         width: form.width
 
-        SectionHeader {
-            text: qsTr("Filters")
+        PageHeader {
+            title: qsTr("Filters")
         }
 
         MultiSelectBox {
@@ -168,9 +168,9 @@ SilicaFlickable {
             defaultIcon: "image://theme/icon-m-events"
             options: form.listOptions
             onSelectionChanged: {
-                if (!form.resetting) {
+                if (!form.resetting)
                     form.apply();
-                }
+
             }
         }
 
@@ -181,9 +181,9 @@ SilicaFlickable {
             defaultIcon: "image://theme/icon-m-diagnostic"
             options: form.statusOptions
             onSelectionChanged: {
-                if (!form.resetting) {
+                if (!form.resetting)
                     form.apply();
-                }
+
             }
         }
 
@@ -194,9 +194,9 @@ SilicaFlickable {
             defaultIcon: "image://theme/icon-m-levels"
             options: form.priorityOptions
             onSelectionChanged: {
-                if (!form.resetting) {
+                if (!form.resetting)
                     form.apply();
-                }
+
             }
         }
 
@@ -220,9 +220,9 @@ SilicaFlickable {
                 stepSize: 5
                 valueText: value === 0 ? qsTr("Any") : value + "%"
                 onValueChanged: {
-                    if (!form.resetting) {
+                    if (!form.resetting)
                         form.apply();
-                    }
+
                 }
             }
 
@@ -273,9 +273,9 @@ SilicaFlickable {
                 width: parent.width - x - tagField.grooveRightMargin
                 options: form.tagOptions
                 onSelectionChanged: {
-                    if (!form.resetting) {
+                    if (!form.resetting)
                         form.apply();
-                    }
+
                 }
             }
 
@@ -295,9 +295,9 @@ SilicaFlickable {
             icon.source: "image://theme/icon-m-day-view"
             currentIndex: 0
             onCurrentIndexChanged: {
-                if (!form.resetting) {
+                if (!form.resetting)
                     form.apply();
-                }
+
             }
 
             // A ContextMenu centres its rows. These read down the same left
@@ -454,9 +454,9 @@ SilicaFlickable {
             icon.source: "image://theme/icon-m-alarm"
             currentIndex: 0
             onCurrentIndexChanged: {
-                if (!form.resetting) {
+                if (!form.resetting)
                     form.apply();
-                }
+
             }
 
             menu: ContextMenu {
@@ -474,6 +474,11 @@ SilicaFlickable {
 
             }
 
+        }
+
+        Item {
+            width: parent.width
+            height: Theme.paddingLarge
         }
 
         Button {
