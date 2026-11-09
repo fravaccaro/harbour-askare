@@ -100,6 +100,7 @@ This document is a living contract. Keeping it accurate is part of the implement
 | `src/askare/session.*` | QML-facing controller |
 | `src/askare/calendarmodel.*` | Task list model |
 | `src/askare/taskmodel.*` | Tasks of one list |
+| `src/askare/smartlistmodel.*` | Saved searches, with the count of each |
 | `qml/pages/*` | Silica pages |
 | `qml/components/*` | Shared QML such as the SupportMe dialog |
 | `qml/modules/Opal/*` | Bundled Opal About, SupportMe, and LinkHandler modules |
@@ -109,7 +110,9 @@ This document is a living contract. Keeping it accurate is part of the implement
 | `README.md`, `docs/*` | Documentation site: Jekyll with `just-the-docs`, configured in `_config.yml` |
 | `landing/index.html` | Marketing page, kept out of the Jekyll build; published copy lives in the portfolio site |
 
-Networking and ICS stay in C++. Pages bind to `Askare`, `Calendars`, and `Tasks`.
+Networking and ICS stay in C++. Pages bind to `Askare`, `Calendars`, `Tasks`, and `SmartLists`.
+
+A list model is brought to its new contents **in place** - insert, move, remove and `dataChanged`, matched on a stable key - and never through `beginResetModel()`. A reset destroys every delegate, and a delegate is where a Silica remorse lives, so a reload would throw away a delete the user had already begun on another row.
 
 The name the sharing list calls the app, `Description` in the `[X-Share Method task]` section, is a string of the desktop file like `Comment`, and is translated there with `Description[<code>]` lines. Neither can come from the `.ts` files: the catalog route of `MDesktopEntry` reads `/usr/share/translations`, where a Harbour package may install nothing. The two of them are a gettext resource of their own instead - `harbour-askare.desktop.in` and `translations/desktop/` - and `harbour-askare.desktop` is **generated from them by `scripts/desktop-translations.sh` and committed**, so that no build needs gettext. Edit the template, never the desktop file.
 

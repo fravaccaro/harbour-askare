@@ -32,6 +32,7 @@ SOURCES += \
     src/askare/secretsstore.cpp \
     src/askare/session.cpp \
     src/askare/sharedtext.cpp \
+    src/askare/smartlistmodel.cpp \
     src/askare/store.cpp \
     src/askare/taskmodel.cpp \
     src/askare/url.cpp
@@ -49,6 +50,7 @@ HEADERS += \
     src/askare/secretsstore.h \
     src/askare/session.h \
     src/askare/sharedtext.h \
+    src/askare/smartlistmodel.h \
     src/askare/store.h \
     src/askare/taskmodel.h \
     src/askare/types.h \

@@ -25,6 +25,7 @@ nav_order: 1
 | `src/askare/session.*` | QML-facing controller: login, sync, save, delete |
 | `src/askare/calendarmodel.*` | Task lists, with their colour and open count |
 | `src/askare/taskmodel.*` | The tasks of one view, grouped and ordered for the list |
+| `src/askare/smartlistmodel.*` | The saved searches, with the number of tasks each keeps |
 | `src/askare/reminders.*` | Watches stored tasks and reports a reminder whose moment has passed |
 | `qml/pages/*` | Silica UI |
 | `qml/components/*` | Shared QML such as the SupportMe dialog |
@@ -77,6 +78,8 @@ A move changes the href a page may be holding, so `Session` emits `taskMoved(old
 A list is a model and reads itself again, but a single task has no model of its own: `TaskDetailPage` holds one task in its own properties, which `Session::taskFields()` names and `pushTask()` builds the page from. The page keeps nothing of its own beyond that, and reads every field again on `tasksChanged` - its `reload()` is the one place a field is copied, over properties named after the keys `taskFields()` returns. An editor that mirrored its fields back on `accepted` would answer only for the edit the page itself opened, leaving a row's own **Edit**, a quick toggle and an incoming sync to go unseen until the page was pushed again.
 
 `TaskModel::reload()` brings `m_items` to the new set **in place** through `syncItems()`, by insert, move and remove, rather than `beginResetModel()`. A reset destroys every delegate, and a delegate is where a Silica remorse lives: `remorseAction()` parents its countdown inside the row it covers, and a destroyed countdown never runs its callback. Deleting a task reloads the list, so a reset threw away a delete the user had already begun on another row, leaving that row stuck dimmed. Rows are matched by `href`, which is unique, so a match for row `i` can only lie at or after `i` and a move is always upward, which keeps `beginMoveRows()` within its rules. The tallies and colours are read before the rows change, so the `dataChanged()` each surviving row emits carries the fresh subtask counts and list colour.
+
+`SmartListModel` is the same story for the saved searches, which carry a delete of their own on the lists page. It replaced a `QVariantList` property: a `Repeater` handed a new list rebuilds every delegate, and the counts are read again on each edit and sync, so even a background refresh cancelled a remorse that was running. The model holds the saved sets with their counts and syncs in place through `syncItems()` matched on the `id`, which `Config` never reuses. `Session` no longer composes that list; it reloads the model from `Config::smartListsChanged` and from `reloadModels()`, which is what keeps the counts on the same beat as the ones beside the built-in views. The lists page reads the roles as `model.name`, `model.count`, `model.id` and `model.filters`, since `FilterItem` declares `name` and `count` of its own and a bare role name would bind those properties to themselves.
 
 ## Sandbox layout
 

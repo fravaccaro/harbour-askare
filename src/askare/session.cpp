@@ -4,6 +4,7 @@
 #include "ics.h"
 #include "markdown.h"
 #include "sharedtext.h"
+#include "smartlistmodel.h"
 #include "taskmodel.h"
 #include "url.h"
 
@@ -94,12 +95,13 @@ LocalTask detached(const LocalTask &task)
 }
 
 Session::Session(Config *config, Store *store, CalendarModel *calendars,
-                 TaskModel *tasks, QObject *parent)
+                 TaskModel *tasks, SmartListModel *smartLists, QObject *parent)
     : QObject(parent)
     , m_config(config)
     , m_store(store)
     , m_calendars(calendars)
     , m_tasks(tasks)
+    , m_smartLists(smartLists)
     , m_busy(false)
     , m_pushOnly(false)
     , m_pullAfterConflict(false)
@@ -136,12 +138,12 @@ Session::Session(Config *config, Store *store, CalendarModel *calendars,
     connect(m_config, &Config::showCancelledChanged, this,
             &Session::showCancelledTasksChanged);
     connect(m_config, &Config::showCancelledChanged, this, &Session::applyShowCancelled);
-    connect(m_config, &Config::smartListsChanged, this, &Session::smartListsChanged);
-    // The counts beside the saved sets are read from the store, so they follow
-    // the same beat as the counts beside the built-in views.
-    connect(this, &Session::coverChanged, this, &Session::smartListsChanged);
+    connect(m_config, &Config::smartListsChanged, m_smartLists, &SmartListModel::reload);
     connect(m_config, &Config::readyChanged, this, &Session::syncIfStartupWanted);
     m_store->open();
+    // The saved sets are a preference of this device and outlive a sign-out, so
+    // their rows stand before any sync and whether or not anyone is signed in.
+    m_smartLists->reload();
     applyShowCompleted();
     applyShowCancelled();
     if (m_config->isReady() && m_config->isConfigured())
@@ -288,21 +290,6 @@ int Session::importantCount() const
     return m_store->isOpen() ? m_store->importantCount() : 0;
 }
 
-// The saved sets with the number of tasks each keeps, worked out against the
-// store as it stands rather than stored beside the filters.
-QVariantList Session::smartLists() const
-{
-    QVariantList out = m_config->smartLists();
-    for (int i = 0; i < out.size(); ++i) {
-        QVariantMap entry = out.at(i).toMap();
-        const QVariantMap filters = entry.value(QStringLiteral("filters")).toMap();
-        entry.insert(QStringLiteral("count"),
-                     m_store->isOpen() ? m_tasks->countMatching(filters) : 0);
-        out[i] = entry;
-    }
-    return out;
-}
-
 int Session::saveSmartList(const QString &name, const QVariantMap &filters)
 {
     return m_config->addSmartList(name, filters);
@@ -361,6 +348,9 @@ void Session::reloadModels()
 {
     m_calendars->reload();
     m_tasks->reload();
+    // The counts beside the saved sets are read from the store, so they follow
+    // the same beat as the counts beside the built-in views.
+    m_smartLists->reload();
     emit coverChanged();
     emit tasksChanged();
 }
