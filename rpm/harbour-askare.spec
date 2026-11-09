@@ -8,7 +8,7 @@ Name:       harbour-askare
 
 Summary:    Nextcloud Tasks for Sailfish OS
 Version:    0.3.0
-Release:    3
+Release:    4
 License:    GPLv3
 URL:        https://github.com/fravaccaro/harbour-askare
 Source0:    %{name}-%{version}.tar.bz2
