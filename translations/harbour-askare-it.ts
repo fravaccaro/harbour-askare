@@ -631,10 +631,6 @@
         <translation>Qualsiasi</translation>
     </message>
     <message>
-        <source>Tasks due today</source>
-        <translation>Attività in scadenza oggi</translation>
-    </message>
-    <message>
         <source>Schedule</source>
         <translation>Pianificazione</translation>
     </message>
@@ -675,10 +671,6 @@
         <translation>Rimuovi data di scadenza</translation>
     </message>
     <message>
-        <source>Reminder</source>
-        <translation>Promemoria</translation>
-    </message>
-    <message>
         <source>Reminder set</source>
         <translation>Promemoria impostato</translation>
     </message>
@@ -705,6 +697,22 @@
     <message>
         <source>At most</source>
         <translation>Al massimo</translation>
+    </message>
+    <message>
+        <source>Due within</source>
+        <translation>In scadenza entro</translation>
+    </message>
+    <message>
+        <source>Today</source>
+        <translation>Oggi</translation>
+    </message>
+    <message>
+        <source>This week</source>
+        <translation>Questa settimana</translation>
+    </message>
+    <message>
+        <source>This month</source>
+        <translation>Questo mese</translation>
     </message>
 </context>
 <context>
@@ -1179,10 +1187,6 @@
         <translation>Ora di inizio</translation>
     </message>
     <message>
-        <source>All day</source>
-        <translation>Tutto il giorno</translation>
-    </message>
-    <message>
         <source>Clear start date</source>
         <translation>Rimuovi data di inizio</translation>
     </message>
@@ -1245,6 +1249,14 @@
     <message>
         <source>Due time</source>
         <translation>Ora di scadenza</translation>
+    </message>
+    <message>
+        <source>Set a time</source>
+        <translation>Imposta un&apos;ora</translation>
+    </message>
+    <message>
+        <source>Please set a time for the start and due dates.</source>
+        <translation>Imposta un&apos;ora per la data di inizio e di scadenza.</translation>
     </message>
 </context>
 <context>

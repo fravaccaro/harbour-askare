@@ -263,6 +263,8 @@ Dialog {
 
                         MenuItem {
                             text: displayName
+                        horizontalAlignment: Text.AlignLeft
+                        leftPadding: Theme.iconSizeMedium + Theme.paddingMedium
                         }
 
                     }
@@ -488,7 +490,7 @@ Dialog {
                 visible: page.missingTime()
                 color: Theme.errorColor
                 font.pixelSize: Theme.fontSizeExtraSmall
-                text: qsTr("A start or due date needs a time of day.")
+                text: qsTr("Please set a time for the start and due dates.")
             }
 
             Button {

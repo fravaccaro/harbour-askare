@@ -10,7 +10,9 @@
     \c defaultIcon is the leading icon while nothing (or more than one option)
     is selected. Each entry of \c options may carry an optional \c icon; that
     icon is shown beside the label in the menu, and replaces \c defaultIcon on
-    the closed box when that option is the only one selected.
+    the closed box when that option is the only one selected. The labels hold
+    one text column either way, so a menu of plain rows lines up with one whose
+    rows are led by icons.
 
     \c options is a list of \c {{ value, text, icon? }}. \c selected is the list
     of chosen values, which the box both reads and writes; \l selectionChanged
@@ -110,8 +112,10 @@ IconComboBox {
             MenuItem {
                 text: modelData.text
                 horizontalAlignment: Text.AlignLeft
-                // Icon on the left when the option has one; switch on the right.
-                leftPadding: modelData.icon ? Theme.iconSizeMedium + Theme.paddingMedium : 0
+                // The text column is held whether or not the option carries an
+                // icon, so a menu of plain rows reads down the same edge as one
+                // whose rows are led by icons. Switch on the right.
+                leftPadding: Theme.iconSizeMedium + Theme.paddingMedium
                 rightPadding: Theme.itemSizeExtraSmall
                 onClicked: root.toggle(modelData.value)
 

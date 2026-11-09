@@ -66,7 +66,7 @@ The pulley menu offers **Refresh**, **Search** and **New task**. A new task star
 - **Status**, **List** and **Priority** each open a list of toggles, so more than one choice can be on at once.
 - **Tags** lays the tags already in use out as chips, the ones the task editor offers. A tap puts a tag in the filter and another takes it out, and several can be on at once.
 - **Completion** sets a percentage, then **At least** or **At most** keeps tasks at or above, or at or below, that mark.
-- **Tasks due today** keeps tasks due today, finished and cancelled ones included.
+- **Due within** keeps tasks whose due day falls in the span you pick - **Today**, **This week** or **This month** - finished and cancelled ones included. The week and the month are calendar ones and hold whole, so a day already past this week counts as much as one still to come, and a task with no due day falls in no span at all. **Any** leaves the filter off.
 - **Start date** and **Due date** are set apart from each other, each matching on, before or after the day you pick.
 - **Reminder set** keeps tasks that do, or do not, carry a reminder.
 

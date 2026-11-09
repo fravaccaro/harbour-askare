@@ -629,10 +629,6 @@
         <translation>Any</translation>
     </message>
     <message>
-        <source>Tasks due today</source>
-        <translation>Tasks due today</translation>
-    </message>
-    <message>
         <source>Schedule</source>
         <translation>Schedule</translation>
     </message>
@@ -673,10 +669,6 @@
         <translation>Clear due date</translation>
     </message>
     <message>
-        <source>Reminder</source>
-        <translation>Reminder</translation>
-    </message>
-    <message>
         <source>Reminder set</source>
         <translation>Reminder set</translation>
     </message>
@@ -702,6 +694,22 @@
     </message>
     <message>
         <source>At most</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Due within</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Today</source>
+        <translation type="unfinished">Today</translation>
+    </message>
+    <message>
+        <source>This week</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This month</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1177,10 +1185,6 @@
         <translation>Start time</translation>
     </message>
     <message>
-        <source>All day</source>
-        <translation>All day</translation>
-    </message>
-    <message>
         <source>Clear start date</source>
         <translation>Clear start date</translation>
     </message>
@@ -1242,6 +1246,14 @@
     </message>
     <message>
         <source>Due time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set a time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please set a time for the start and due dates.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

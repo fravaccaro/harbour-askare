@@ -629,10 +629,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Tasks due today</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Schedule</source>
         <translation type="unfinished"></translation>
     </message>
@@ -673,10 +669,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Reminder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Reminder set</source>
         <translation type="unfinished"></translation>
     </message>
@@ -702,6 +694,22 @@
     </message>
     <message>
         <source>At most</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Due within</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Today</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This week</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This month</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1177,10 +1185,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>All day</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Clear start date</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1242,6 +1246,14 @@
     </message>
     <message>
         <source>Due time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set a time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please set a time for the start and due dates.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

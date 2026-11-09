@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include <QDate>
+#include <QLocale>
 
 #include "ics.h"
 #include "store.h"
@@ -190,11 +191,6 @@ bool dayMatches(const QString &day, const QString &chosen, const QString &mode)
     return day == chosen;
 }
 
-QString today()
-{
-    return QDate::currentDate().toString(QStringLiteral("yyyy-MM-dd"));
-}
-
 bool reminderWanted(const QVariantMap &f)
 {
     const QString want = f.value(QStringLiteral("reminder")).toString();
@@ -208,6 +204,18 @@ QString searchOf(const QVariantMap &f)
     return f.value(QStringLiteral("search")).toString();
 }
 
+// The span that was chosen, honouring a set saved before this filter, which
+// named today with a boolean of its own.
+QString dueWithinKey(const QVariantMap &f)
+{
+    const QString within = f.value(QStringLiteral("dueWithin")).toString();
+    if (!within.isEmpty())
+        return within;
+
+    return f.value(QStringLiteral("dueToday")).toBool() ? QStringLiteral("today")
+                                                        : QString();
+}
+
 // How many of the form's rows are set. One being set is what makes the filters
 // active at all, so the two answers come from this one list.
 int activeFilterCount(const QVariantMap &f)
@@ -218,7 +226,7 @@ int activeFilterCount(const QVariantMap &f)
         !f.value(QStringLiteral("priority")).toList().isEmpty(),
         !f.value(QStringLiteral("tags")).toList().isEmpty(),
         f.value(QStringLiteral("completion")).toInt() > 0,
-        f.value(QStringLiteral("dueToday")).toBool(),
+        !dueWithinKey(f).isEmpty(),
         !f.value(QStringLiteral("startDate")).toString().isEmpty(),
         !f.value(QStringLiteral("dueDate")).toString().isEmpty(),
         reminderWanted(f)
@@ -262,11 +270,40 @@ bool completionPasses(const LocalTask &task, const QVariantMap &f)
     return percent >= threshold;
 }
 
-bool dueTodayPasses(const LocalTask &task, const QVariantMap &f)
+// The first day of the calendar week the locale starts on, so "this week" runs
+// Monday to Sunday where that is the week and Sunday to Saturday where it is not.
+QDate weekStart(const QDate &day)
 {
-    if (!f.value(QStringLiteral("dueToday")).toBool())
+    int delta = day.dayOfWeek() - QLocale().firstDayOfWeek();
+    if (delta < 0)
+        delta += 7;
+    return day.addDays(-delta);
+}
+
+// Each span is a calendar one and holds whole: a day already past this week
+// still falls in it, just as a day still to come does.
+bool dayInSpan(const QDate &due, const QDate &now, const QString &within)
+{
+    if (within == QLatin1String("today"))
+        return due == now;
+    if (within == QLatin1String("month"))
+        return due.year() == now.year() && due.month() == now.month();
+
+    const QDate start = weekStart(now);
+    return due >= start && due <= start.addDays(6);
+}
+
+// A task with no due day answers no span: it is due neither this week nor any
+// other.
+bool dueWithinPasses(const LocalTask &task, const QVariantMap &f)
+{
+    const QString within = dueWithinKey(f);
+    if (within.isEmpty())
         return true;
-    return Ics::dateFromDue(task.due) == today();
+
+    const QDate due = QDate::fromString(Ics::dateFromDue(task.due),
+                                        QStringLiteral("yyyy-MM-dd"));
+    return due.isValid() && dayInSpan(due, QDate::currentDate(), within);
 }
 
 bool startPasses(const LocalTask &task, const QVariantMap &f)
@@ -301,7 +338,7 @@ bool reminderPasses(const LocalTask &task, const QVariantMap &f)
 bool passesFilters(const LocalTask &task, const QVariantMap &f)
 {
     return statusPasses(task, f) && listPasses(task, f) && priorityPasses(task, f)
-            && tagsPass(task, f) && completionPasses(task, f) && dueTodayPasses(task, f)
+            && tagsPass(task, f) && completionPasses(task, f) && dueWithinPasses(task, f)
             && startPasses(task, f) && duePasses(task, f) && reminderPasses(task, f);
 }
 

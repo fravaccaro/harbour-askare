@@ -101,20 +101,6 @@ Column {
 
     }
 
-    TextField {
-        id: entry
-
-        width: parent.width
-        textLeftMargin: chipsField.contentLeft
-        label: qsTr("New tag")
-        placeholderText: qsTr("Add a tag...")
-        inputMethodHints: Qt.ImhNoAutoUppercase
-        EnterKey.iconSource: "image://theme/icon-m-add"
-        EnterKey.onClicked: {
-            root.addTag(entry.text);
-            entry.text = "";
-        }
-    }
 
     Label {
         x: chipsField.contentLeft
@@ -139,6 +125,22 @@ Column {
 
         }
 
+    }
+
+
+    TextField {
+        id: entry
+
+        width: parent.width
+        textLeftMargin: chipsField.contentLeft
+        label: qsTr("New tag")
+        placeholderText: qsTr("Add a tag...")
+        inputMethodHints: Qt.ImhNoAutoUppercase
+        EnterKey.iconSource: "image://theme/icon-m-add"
+        EnterKey.onClicked: {
+            root.addTag(entry.text);
+            entry.text = "";
+        }
     }
 
 }

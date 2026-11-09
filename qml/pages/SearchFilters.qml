@@ -25,6 +25,10 @@ SilicaFlickable {
     readonly property var dateModes: ["on", "before", "after"]
     readonly property var completionModes: ["atLeast", "atMost"]
     readonly property var reminderModes: ["any", "yes", "no"]
+    // The empty first span is Any, which leaves the filter off. The labels run
+    // beside the spans, so the menu and what it writes stay in step.
+    readonly property var dueWithinModes: ["", "today", "week", "month"]
+    readonly property var dueWithinLabels: [qsTr("Any"), qsTr("Today"), qsTr("This week"), qsTr("This month")]
     readonly property var priorityOptions: [{
         "value": "none",
         "text": priorityHelper.labelFor(0),
@@ -108,7 +112,7 @@ SilicaFlickable {
             "tags": tagChips.selected,
             "completion": completionSlider.value,
             "completionMode": form.completionMode,
-            "dueToday": dueTodaySwitch.checked,
+            "dueWithin": form.dueWithinModes[dueWithinBox.currentIndex],
             "startDate": form.startDate,
             "startMode": form.startMode,
             "dueDate": form.dueDate,
@@ -125,7 +129,7 @@ SilicaFlickable {
         tagChips.clear();
         completionSlider.value = 0;
         form.completionMode = "atLeast";
-        dueTodaySwitch.checked = false;
+        dueWithinBox.currentIndex = 0;
         form.startDate = "";
         form.startMode = "on";
         form.dueDate = "";
@@ -281,74 +285,33 @@ SilicaFlickable {
             text: qsTr("Schedule")
         }
 
-        // IconTextSwitch parks its icon on the right. Here the date icon joins
-        // the left column used by the rows above, and the toggle sits on the
-        // right so a tap on the label still flips it.
-        Item {
-            id: dueTodayRow
+        // The three spans are mutually exclusive, so they read as one choice
+        // rather than as three toggles.
+        IconComboBox {
+            id: dueWithinBox
 
             width: parent.width
-            height: Theme.itemSizeSmall
-
-            HighlightImage {
-                id: dueTodayIcon
-
-                source: "image://theme/icon-m-date"
-                sourceSize.width: Theme.iconSizeMedium
-                sourceSize.height: Theme.iconSizeMedium
-                highlighted: dueTodayArea.pressed
-
-                anchors {
-                    left: parent.left
-                    leftMargin: Theme.horizontalPageMargin
-                    verticalCenter: parent.verticalCenter
+            label: qsTr("Due within")
+            icon.source: "image://theme/icon-m-day-view"
+            currentIndex: 0
+            onCurrentIndexChanged: {
+                if (!form.resetting) {
+                    form.apply();
                 }
-
             }
 
-            Label {
-                text: qsTr("Tasks due today")
-                color: dueTodayArea.pressed ? Theme.highlightColor : Theme.primaryColor
-                truncationMode: TruncationMode.Fade
+            // A ContextMenu centres its rows. These read down the same left
+            // edge as the option menus above them instead.
+            menu: ContextMenu {
+                Repeater {
+                    model: form.dueWithinLabels
 
-                anchors {
-                    left: dueTodayIcon.right
-                    leftMargin: Theme.paddingMedium
-                    right: dueTodaySwitch.left
-                    rightMargin: Theme.paddingMedium
-                    verticalCenter: parent.verticalCenter
-                }
-
-            }
-
-            MouseArea {
-                id: dueTodayArea
-
-                onClicked: dueTodaySwitch.checked = !dueTodaySwitch.checked
-
-                anchors {
-                    left: parent.left
-                    right: dueTodaySwitch.left
-                    top: parent.top
-                    bottom: parent.bottom
-                }
-
-            }
-
-            Switch {
-                id: dueTodaySwitch
-
-                automaticCheck: true
-                onCheckedChanged: {
-                    if (!form.resetting) {
-                        form.apply();
+                    MenuItem {
+                        text: modelData
+                        horizontalAlignment: Text.AlignLeft
+                        leftPadding: Theme.iconSizeMedium + Theme.paddingMedium
                     }
-                }
 
-                anchors {
-                    right: parent.right
-                    rightMargin: Theme.horizontalPageMargin - Theme.paddingLarge
-                    verticalCenter: parent.verticalCenter
                 }
 
             }
@@ -481,10 +444,6 @@ SilicaFlickable {
                 form.dueDate = "";
                 form.apply();
             }
-        }
-
-        SectionHeader {
-            text: qsTr("Reminder")
         }
 
         IconComboBox {
