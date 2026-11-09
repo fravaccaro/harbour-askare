@@ -66,6 +66,8 @@ Dialog {
     function pickDue() {
         page.pickDate(page.dueDate, function(iso) {
             page.dueDate = iso;
+            if (page.dueTime === "")
+                page.dueTime = "09:00";
         });
     }
 
@@ -78,6 +80,8 @@ Dialog {
     function pickStart() {
         page.pickDate(page.startDate, function(iso) {
             page.startDate = iso;
+            if (page.startTime === "")
+                page.startTime = "09:00";
         });
     }
 
@@ -111,6 +115,14 @@ Dialog {
             return false;
 
         return (page.startTime === "" ? "00:00" : page.startTime) > page.dueTime;
+    }
+
+    // A dated moment must name a time: a date on its own would store an all-day
+    // value, which a server rejects beside a dated partner, so each date here
+    // carries a time of day. A task first set all-day elsewhere asks for one.
+    function missingTime() {
+        return (page.startDate !== "" && page.startTime === "")
+                || (page.dueDate !== "" && page.dueTime === "");
     }
 
     // A subtask being created stays where its parent is; anything else follows
@@ -187,7 +199,7 @@ Dialog {
     // the cover raises it instead of opening a second copy of it.
     objectName: "taskEditPage"
     allowedOrientations: Orientation.All
-    canAccept: page.chosenCalendar() !== "" && summaryField.text.length > 0 && !page.startAfterDue()
+    canAccept: page.chosenCalendar() !== "" && summaryField.text.length > 0 && !page.startAfterDue() && !page.missingTime()
     onAccepted: page.save()
 
     ReminderOptions {
@@ -391,7 +403,7 @@ Dialog {
                 width: parent.width
                 enabled: page.startDate !== ""
                 label: qsTr("Start time")
-                value: page.startTime === "" ? qsTr("All day") : page.startTime
+                value: page.startTime === "" ? qsTr("Set a time") : page.startTime
                 labelMargin: leftMargin + Theme.iconSizeMedium + Theme.paddingMedium
                 minimumContentHeight: Theme.itemSizeMedium + Theme.paddingSmall
                 onClicked: page.pickStartTime()
@@ -441,7 +453,7 @@ Dialog {
                 width: parent.width
                 enabled: page.dueDate !== ""
                 label: qsTr("Due time")
-                value: page.dueTime === "" ? qsTr("All day") : page.dueTime
+                value: page.dueTime === "" ? qsTr("Set a time") : page.dueTime
                 labelMargin: leftMargin + Theme.iconSizeMedium + Theme.paddingMedium
                 minimumContentHeight: Theme.itemSizeMedium + Theme.paddingSmall
                 onClicked: page.pickDueTime()
@@ -467,6 +479,16 @@ Dialog {
                 color: Theme.errorColor
                 font.pixelSize: Theme.fontSizeExtraSmall
                 text: qsTr("The start must not be after the due date.")
+            }
+
+            Label {
+                x: Theme.horizontalPageMargin
+                width: parent.width - 2 * Theme.horizontalPageMargin
+                wrapMode: Text.WordWrap
+                visible: page.missingTime()
+                color: Theme.errorColor
+                font.pixelSize: Theme.fontSizeExtraSmall
+                text: qsTr("A start or due date needs a time of day.")
             }
 
             Button {
