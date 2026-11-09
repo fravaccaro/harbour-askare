@@ -8,6 +8,7 @@ Page {
         Tasks.search = "";
         Tasks.filters = {
         };
+        Tasks.searching = false;
         drawer.open = false;
     }
 
@@ -30,6 +31,9 @@ Page {
     }
 
     allowedOrientations: Orientation.All
+    // The search spans every list from the moment it opens, not the view it was
+    // opened over, so the model is told it is searching before the first word.
+    Component.onCompleted: Tasks.searching = true
     // A page pushed on top deactivates this one too. Back is what says the
     // search itself is leaving, so the list underneath is whole again before
     // it shows. A task opened from a result leaves the query in place.

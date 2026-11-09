@@ -349,6 +349,7 @@ TaskModel::TaskModel(Store *store, QObject *parent)
     , m_smartListId(-1)
     , m_showCompleted(true)
     , m_showCancelled(false)
+    , m_searching(false)
 {
 }
 
@@ -374,6 +375,16 @@ void TaskModel::setShowCancelled(bool show)
         return;
 
     m_showCancelled = show;
+    reload();
+}
+
+void TaskModel::setSearching(bool searching)
+{
+    if (searching == m_searching)
+        return;
+
+    m_searching = searching;
+    emit searchingChanged();
     reload();
 }
 
@@ -672,9 +683,10 @@ QVector<LocalTask> TaskModel::smartFiltered() const
 void TaskModel::reload()
 {
     beginResetModel();
-    // A query or a filter searches every list; otherwise the view holds, and
-    // only the mixed views answer the completed and cancelled settings.
-    if (!m_search.isEmpty() || filtersActive()) {
+    // The search view draws from every list, and a query or a filter does the
+    // same from any view; otherwise the view holds, and only the mixed views
+    // answer the completed and cancelled settings.
+    if (m_searching || !m_search.isEmpty() || filtersActive()) {
         m_items = searched();
     } else if (m_filter == QLatin1String("smart")) {
         m_items = smartFiltered();

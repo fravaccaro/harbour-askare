@@ -57,7 +57,7 @@ The pulley menu offers **Refresh**, **Search** and **New task**. A new task star
 
 ## Searching
 
-**Search** in the pulley menu opens its own page, with the field ready to type in. Typing looks through every task in every list, including subtasks and tasks that are finished or cancelled, matched without regard to case against the title, the notes, the location and the tags. A matching subtask shows on its own. The view you came from plays no part. When nothing matches, the page says so. Going back clears the search, and the list is as it was. A task opened from a result keeps the search underneath, so coming back to it finds the same matches.
+**Search** in the pulley menu opens its own page, with the field ready to type in and every task already listed, whichever view it was opened over. Typing looks through every task in every list, including subtasks and tasks that are finished or cancelled, matched without regard to case against the title, the notes, the location and the tags. A matching subtask shows on its own. The view you came from plays no part. When nothing matches, the page says so. Going back clears the search, and the list is as it was. A task opened from a result keeps the search underneath, so coming back to it finds the same matches.
 
 ### Filters
 

@@ -23,6 +23,7 @@ class TaskModel : public QAbstractListModel
     Q_PROPERTY(QVariantMap filters READ filters WRITE setFilters NOTIFY filtersChanged)
     Q_PROPERTY(bool filtersActive READ filtersActive NOTIFY filtersChanged)
     Q_PROPERTY(int filterCount READ filterCount NOTIFY filtersChanged)
+    Q_PROPERTY(bool searching READ searching WRITE setSearching NOTIFY searchingChanged)
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
 
 public:
@@ -62,6 +63,9 @@ public:
     // How many of the filters are set, which the search page shows beside its
     // Filters row.
     int filterCount() const;
+    // Whether the search view is open. While it is, the model draws from every
+    // list even before a word is typed, instead of the view it was opened over.
+    bool searching() const { return m_searching; }
     QString title() const;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -94,6 +98,9 @@ public:
     void setShowCompleted(bool show);
     // The same for cancelled tasks, which the actionable views never show.
     void setShowCancelled(bool show);
+    // Opens or closes the search view. Closing it restores the view the search
+    // was opened over.
+    void setSearching(bool searching);
     void reload();
 
 signals:
@@ -103,6 +110,7 @@ signals:
     void tagChanged();
     void searchChanged();
     void filtersChanged();
+    void searchingChanged();
     void titleChanged();
 
 private:
@@ -133,6 +141,7 @@ private:
     int m_smartListId;
     bool m_showCompleted;
     bool m_showCancelled;
+    bool m_searching;
     QVector<LocalTask> m_items;
     QHash<QString, ChildTally> m_tallies;
     QHash<QString, QString> m_colors;
